@@ -1,7 +1,7 @@
-const CACHE_NAME = 'health-workbench-v4';
+const CACHE_NAME = 'health-workbench-v5';
 const ASSETS = [
     './',
-    './个人健康记录.html',
+    './index.html',
     './manifest.json',
     './icon-512.jpg',
     'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js',
@@ -43,7 +43,7 @@ self.addEventListener('fetch', (event) => {
                 });
                 return response;
             }).catch(() => {
-                return caches.match('./个人健康记录.html');
+                return caches.match('./index.html');
             });
         })
     );
