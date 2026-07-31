@@ -1,0 +1,37 @@
+{
+    "name": "个人健康工作台",
+    "short_name": "健康记录",
+    "description": "个人健康体重管理工作台，记录体重、趋势分析、目标管理",
+    "start_url": "./个人健康记录.html",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#F5F6FA",
+    "theme_color": "#2AB5B0",
+    "lang": "zh-CN",
+    "icons": [
+        {
+            "src": "icon-512.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-512.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg",
+            "purpose": "any"
+        },
+        {
+            "src": "icon-512.jpg",
+            "sizes": "192x192",
+            "type": "image/jpeg",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icon-512.jpg",
+            "sizes": "512x512",
+            "type": "image/jpeg",
+            "purpose": "maskable"
+        }
+    ]
+}
