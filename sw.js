@@ -1,9 +1,10 @@
-const CACHE_NAME = 'health-workbench-v6';
+const CACHE_NAME = 'health-workbench-v7';
 const ASSETS = [
     './',
     './index.html',
     './manifest.json',
-    './icon-512.jpg',
+    './icon-192.png',
+    './icon-512.png',
     'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js',
     'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'
 ];
