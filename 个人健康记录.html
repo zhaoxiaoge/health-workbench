@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -93,7 +93,7 @@
         /* ========== 每日记录 头部 ========== */
         .header-gradient {
             background: var(--teal-gradient);
-            padding: calc(env(safe-area-inset-top, 0px) + 32px) 20px 24px;
+            padding: 8px 20px 24px;
             border-radius: 0 0 28px 28px;
             color: white;
             position: relative;
@@ -206,7 +206,7 @@
 
         /* FAB */
         .fab {
-            position: absolute; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); right: 20px;
+            position: fixed; bottom: calc(100px + env(safe-area-inset-bottom, 0px)); right: 20px;
             width: 56px; height: 56px; border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: none; color: white; font-size: 28px; cursor: pointer;
@@ -240,12 +240,32 @@
         .nav-item .nav-icon { font-size: 22px; line-height: 1; }
         .nav-item .nav-label { font-size: 11px; font-weight: 500; }
 
+        /* ========== 固定顶部导航栏 ========== */
+        .sticky-nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--teal-gradient);
+            padding-top: env(safe-area-inset-top, 0px);
+            color: white;
+        }
+        .sticky-nav-bar .header-top {
+            padding: 12px 20px;
+            margin-bottom: 0;
+        }
+        .sticky-nav-bar .header-title { color: white; }
+        .sticky-nav-bar .icon-btn { color: white; }
+        .trend-sticky-nav .trend-nav {
+            padding: 12px 20px;
+        }
+        .trend-sticky-nav .nav-center { color: white; }
+
         /* ========== 趋势页 - 全屏青绿背景 ========== */
         .trend-page-bg {
             background: var(--teal-gradient);
             min-height: 100%;
             color: white;
-            padding-top: calc(env(safe-area-inset-top, 0px) + 32px);
+            padding-top: 0;
         }
 
         .trend-nav {
@@ -276,11 +296,22 @@
             background: white; color: var(--primary-dark);
             border-color: white; font-weight: 600;
         }
+        .date-quick-btn {
+            padding: 5px 12px; border-radius: 16px;
+            border: 1px solid #ddd; background: var(--bg);
+            color: var(--text); font-size: 12px; cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .date-quick-btn.active {
+            background: #2AB5B0; color: white; border-color: #2AB5B0;
+        }
 
         .trend-info-bar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 20px 8px;
             font-size: 13px; opacity: 0.85;
+            position: relative;
+            z-index: 10;
         }
         .trend-info-bar .left { display: flex; align-items: center; gap: 8px; }
         .trend-info-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: white; }
@@ -485,6 +516,32 @@
         .sheet-btn.primary:active { background: var(--primary-dark); }
         .sheet-btn.secondary { background: var(--bg); color: var(--text-secondary); }
 
+        /* 备注显示框 */
+        .note-display {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+            cursor: pointer; font-size: 14px; color: var(--text); transition: all 0.2s;
+        }
+        .note-display:active { border-color: var(--primary); }
+        .note-arrow { color: var(--text-secondary); font-size: 18px; }
+
+        /* 备注选择网格 */
+        .remark-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            margin-bottom: 8px;
+        }
+        .remark-option {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            padding: 13px 10px; border: 1.5px solid var(--primary); border-radius: 12px;
+            background: white; color: var(--primary); font-size: 14px;
+            cursor: pointer; transition: all 0.2s; text-align: center;
+        }
+        .remark-option:active { opacity: 0.7; }
+        .remark-option.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+        }
+        .custom-remark-area { margin-top: 14px; }
+
         .gender-select { display: flex; gap: 10px; }
         .gender-option {
             flex: 1; padding: 12px;
@@ -672,18 +729,15 @@
         <div class="page-container">
             <!-- ============ 每日记录 ============ -->
             <div class="page active" id="page-record">
-                <div class="header-gradient">
+                <div class="sticky-nav-bar">
                     <div class="header-top">
                         <div class="header-title">体重记录</div>
                         <div class="header-icons" style="position:relative;">
-                            <div class="icon-btn" onclick="exportData()">☁️</div>
+                            <div class="icon-btn" onclick="exportData()">📤</div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenu')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenu">
                                 <div class="dropdown-item" onclick="openQuickView('health')">
                                     <span class="icon">💓</span> 健康指标
-                                </div>
-                                <div class="dropdown-item" onclick="openQuickView('profile')">
-                                    <span class="icon">👤</span> 个人信息
                                 </div>
                                 <div class="dropdown-item" onclick="openQuickView('target')">
                                     <span class="icon">🎯</span> 目标管理
@@ -691,6 +745,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="header-gradient">
                     <div class="weight-display">
                         <span class="number" id="latestWeight">--</span>
                         <span class="unit">公斤</span>
@@ -730,18 +786,15 @@
 
             <!-- ============ 趋势 ============ -->
             <div class="page" id="page-trend">
-                <div class="trend-page-bg">
+                <div class="sticky-nav-bar trend-sticky-nav">
                     <div class="trend-nav">
                         <div class="nav-center">趋势 · 体重 ▾</div>
                         <div class="header-icons">
-                            <div class="icon-btn" onclick="exportData()">☁️</div>
+                            <div class="icon-btn" onclick="exportData()">📤</div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenuTrend')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenuTrend">
                                 <div class="dropdown-item" onclick="openQuickView('health')">
                                     <span class="icon">💓</span> 健康指标
-                                </div>
-                                <div class="dropdown-item" onclick="openQuickView('profile')">
-                                    <span class="icon">👤</span> 个人信息
                                 </div>
                                 <div class="dropdown-item" onclick="openQuickView('target')">
                                     <span class="icon">🎯</span> 目标管理
@@ -749,6 +802,8 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="trend-page-bg">
                     <div class="trend-filters">
                         <button class="trend-filter active" data-period="7">默认</button>
                         <button class="trend-filter" data-period="30">近一月</button>
@@ -761,12 +816,31 @@
                             <span class="dot"></span>
                             <span id="trendDays">0天</span>
                         </div>
-                        <div style="opacity:0.7;">日期 ▾</div>
+                        <div style="opacity:0.85; cursor:pointer; position:relative;" id="dateRangeBtn" onclick="event.stopPropagation(); toggleDateDropdown();">
+                            <span id="dateRangeText">日期 ▾</span>
+                        </div>
+                        <div class="dropdown-menu" id="dateDropdown" style="top:36px; right:0; min-width:220px; padding:12px; z-index:9999;">
+                            <div style="font-size:12px; color:var(--text); margin-bottom:8px; font-weight:600;">快速选择</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
+                                <button class="date-quick-btn active" onclick="selectPeriod('7')">默认</button>
+                                <button class="date-quick-btn" onclick="selectPeriod('30')">近一月</button>
+                                <button class="date-quick-btn" onclick="selectPeriod('90')">近三月</button>
+                                <button class="date-quick-btn" onclick="selectPeriod('all')">全部</button>
+                            </div>
+                            <div style="font-size:12px; color:var(--text); margin-bottom:8px; font-weight:600;">自定义范围</div>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <label style="font-size:12px; color:var(--text);">开始日期</label>
+                                <input type="date" id="customDateStart" style="padding:6px 8px; border:1px solid #ddd; border-radius:8px; font-size:13px; color:var(--text);">
+                                <label style="font-size:12px; color:var(--text);">结束日期</label>
+                                <input type="date" id="customDateEnd" style="padding:6px 8px; border:1px solid #ddd; border-radius:8px; font-size:13px; color:var(--text);">
+                                <button onclick="applyCustomDateRange()" style="margin-top:4px; padding:8px; background:#2AB5B0; color:white; border:none; border-radius:8px; font-size:13px; cursor:pointer;">应用</button>
+                            </div>
+                        </div>
                     </div>
                     <div id="trendChart"></div>
                     <div class="trend-stats-card">
                         <div class="trend-stat-item">
-                            <div class="label">记录天数</div>
+                            <div class="label">减肥天数</div>
                             <div class="value" id="trendCount">0</div>
                         </div>
                         <div class="trend-stat-item">
@@ -787,8 +861,8 @@
 
             <!-- ============ 我的 ============ -->
             <div class="page" id="page-profile">
-                <div class="profile-header">
-                    <div class="profile-avatar-wrap" onclick="document.getElementById('avatarFileInput').click()">
+                <div class="profile-header" onclick="openProfileSheet()">
+                    <div class="profile-avatar-wrap" onclick="event.stopPropagation(); document.getElementById('avatarFileInput').click()">
                         <div class="profile-avatar" id="avatarIcon">👤</div>
                         <div class="avatar-upload-hint">📷</div>
                     </div>
@@ -937,7 +1011,7 @@
                     </div>
                     <div class="collapsible-body">
                         <div class="setting-item" onclick="exportData()">
-                            <div class="setting-icon" style="background:#EBF5FB; color:#2980B9;">☁️</div>
+                            <div class="setting-icon" style="background:#EBF5FB; color:#2980B9;">📤</div>
                             <div class="setting-label">导出数据</div>
                             <div class="setting-value"><span class="arrow">›</span></div>
                         </div>
@@ -965,7 +1039,7 @@
 
         <nav class="bottom-nav">
             <button class="nav-item active" data-page="record">
-                <span class="nav-icon">📝</span><span class="nav-label">每日记录</span>
+                <span class="nav-icon">📝</span><span class="nav-label">体重记录</span>
             </button>
             <button class="nav-item" data-page="trend">
                 <span class="nav-icon">📈</span><span class="nav-label">趋势</span>
@@ -999,9 +1073,41 @@
             <input type="hidden" id="editRecordId">
             <div class="sheet-form-group"><label>日期</label><input type="date" id="recordDate"></div>
             <div class="sheet-form-group"><label>体重 (kg)</label><input type="number" id="recordWeight" step="0.1" min="20" max="300" placeholder="例如：65.5"></div>
-            <div class="sheet-form-group"><label>备注 (可选)</label><input type="text" id="recordNote" placeholder="例如：早晨空腹" maxlength="50"></div>
+            <div class="sheet-form-group">
+                <label>备注</label>
+                <input type="hidden" id="recordNote">
+                <div class="note-display" id="noteDisplay" onclick="openRemarkSheet()">
+                    <span id="noteDisplayText">无</span>
+                    <span class="note-arrow">›</span>
+                </div>
+            </div>
             <button class="sheet-btn primary" id="saveRecordBtn">保存</button>
             <button class="sheet-btn secondary" onclick="closeRecordSheet()">取消</button>
+        </div>
+    </div>
+
+    <!-- 备注选择 -->
+    <div class="sheet-overlay" id="remarkSheet">
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">选择备注</div>
+            <div class="remark-grid">
+                <div class="remark-option" onclick="selectRemark('进餐前', this)">🍴 进餐前</div>
+                <div class="remark-option" onclick="selectRemark('进餐后', this)">🍴 进餐后</div>
+                <div class="remark-option" onclick="selectRemark('运动前', this)">🏃 运动前</div>
+                <div class="remark-option" onclick="selectRemark('运动后', this)">🏃 运动后</div>
+                <div class="remark-option" onclick="selectRemark('睡觉前', this)">🌙 睡觉前</div>
+                <div class="remark-option" onclick="selectRemark('起床后', this)">☀️ 起床后</div>
+                <div class="remark-option" onclick="selectRemark('如厕前', this)">🚽 如厕前</div>
+                <div class="remark-option" onclick="selectRemark('如厕后', this)">🚽 如厕后</div>
+                <div class="remark-option active" onclick="selectRemark('', this)">无</div>
+                <div class="remark-option" onclick="openCustomRemark()">➕ 自定义</div>
+            </div>
+            <div class="custom-remark-area" id="customRemarkArea" style="display:none;">
+                <input type="text" id="customRemarkInput" placeholder="输入自定义备注" maxlength="20" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:10px; font-size:14px; margin-bottom:10px;">
+                <button class="sheet-btn primary" onclick="confirmCustomRemark()" style="margin:0;">确认自定义</button>
+            </div>
+            <button class="sheet-btn secondary" onclick="closeRemarkSheet()" style="margin-top:16px;">关闭</button>
         </div>
     </div>
 
@@ -1058,6 +1164,7 @@
         };
         let trendChart = null;
         let currentPeriod = 7;
+        let customDateRange = null;
         let selectedGender = '';
 
         function loadData() {
@@ -1118,7 +1225,7 @@
             document.getElementById(menuId).classList.toggle('show');
         }
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('.header-icons')) {
+            if (!e.target.closest('.header-icons') && !e.target.closest('#dateDropdown') && !e.target.closest('#dateRangeBtn')) {
                 document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
             }
         });
@@ -1219,6 +1326,7 @@
             document.getElementById('recordDate').value = todayStr();
             document.getElementById('recordWeight').value = '';
             document.getElementById('recordNote').value = '';
+            document.getElementById('noteDisplayText').textContent = '无';
             document.getElementById('recordSheet').classList.add('show');
             setTimeout(() => document.getElementById('recordWeight').focus(), 300);
         }
@@ -1230,9 +1338,60 @@
             document.getElementById('recordDate').value = r.date;
             document.getElementById('recordWeight').value = r.weight;
             document.getElementById('recordNote').value = r.note || '';
+            document.getElementById('noteDisplayText').textContent = r.note || '无';
             document.getElementById('recordSheet').classList.add('show');
         }
         function closeRecordSheet() { document.getElementById('recordSheet').classList.remove('show'); }
+
+        // 备注选择
+        function openRemarkSheet() {
+            const currentNote = document.getElementById('recordNote').value || '';
+            document.querySelectorAll('.remark-option').forEach(opt => opt.classList.remove('active'));
+            let matched = false;
+            document.querySelectorAll('.remark-option').forEach(opt => {
+                if (opt.textContent.trim().replace(/^[^\u4e00-\u9fa5]+/, '') === currentNote || (currentNote === '' && opt.textContent.trim() === '无')) {
+                    opt.classList.add('active');
+                    matched = true;
+                }
+            });
+            if (!matched && currentNote) {
+                document.querySelectorAll('.remark-option').forEach(opt => {
+                    if (opt.textContent.trim() === '➕ 自定义') {
+                        opt.classList.add('active');
+                    }
+                });
+                document.getElementById('customRemarkArea').style.display = 'block';
+                document.getElementById('customRemarkInput').value = currentNote;
+            } else {
+                document.getElementById('customRemarkArea').style.display = 'none';
+                document.getElementById('customRemarkInput').value = '';
+            }
+            document.getElementById('remarkSheet').classList.add('show');
+        }
+        function closeRemarkSheet() { document.getElementById('remarkSheet').classList.remove('show'); }
+        function selectRemark(remark, el) {
+            document.querySelectorAll('.remark-option').forEach(o => o.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('recordNote').value = remark;
+            document.getElementById('noteDisplayText').textContent = remark || '无';
+            document.getElementById('customRemarkArea').style.display = 'none';
+            closeRemarkSheet();
+        }
+        function openCustomRemark() {
+            document.querySelectorAll('.remark-option').forEach(o => o.classList.remove('active'));
+            event.target.closest('.remark-option').classList.add('active');
+            document.getElementById('customRemarkArea').style.display = 'block';
+            document.getElementById('customRemarkInput').value = document.getElementById('recordNote').value || '';
+            setTimeout(() => document.getElementById('customRemarkInput').focus(), 300);
+        }
+        function confirmCustomRemark() {
+            const val = document.getElementById('customRemarkInput').value.trim();
+            if (!val) { showToast('请输入自定义备注', 'error'); return; }
+            document.getElementById('recordNote').value = val;
+            document.getElementById('noteDisplayText').textContent = val;
+            closeRemarkSheet();
+        }
+        document.getElementById('remarkSheet').addEventListener('click', function(e) { if (e.target === this) closeRemarkSheet(); });
 
         document.getElementById('saveRecordBtn').addEventListener('click', () => {
             const id = document.getElementById('editRecordId').value;
@@ -1621,8 +1780,15 @@
         function renderTrendStats() {
             const weights = appData.weights.map(w => w.weight);
             const count = appData.weights.length;
-            document.getElementById('trendCount').textContent = count;
-            document.getElementById('trendDays').textContent = `${count}天`;
+            // 减肥天数 = 从第一条记录到今天的天数
+            let weightLossDays = 0;
+            if (count > 0) {
+                const sorted = [...appData.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+                const firstDate = new Date(sorted[0].date);
+                const today = new Date();
+                weightLossDays = Math.floor((today - firstDate) / (1000 * 60 * 60 * 24)) + 1;
+            }
+            document.getElementById('trendCount').textContent = weightLossDays;
             if (weights.length === 0) {
                 document.getElementById('trendChange').textContent = '--';
                 document.getElementById('trendMax').textContent = '--';
@@ -1643,22 +1809,34 @@
             const dom = document.getElementById('trendChart');
             if (!trendChart) trendChart = echarts.init(dom);
 
+            // 更新日期范围显示
+            updateDateRangeText();
+
             if (appData.weights.length === 0) {
                 trendChart.clear();
                 trendChart.setOption({
                     title: { text: '暂无数据', subtext: '添加记录后查看趋势', left:'center', top:'center',
                         textStyle:{color:'rgba(255,255,255,0.6)',fontSize:16}, subtextStyle:{color:'rgba(255,255,255,0.4)',fontSize:13} }
                 });
+                document.getElementById('trendDays').textContent = '0天';
                 return;
             }
 
             let sorted = [...appData.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
-            if (currentPeriod !== 'all') {
+            if (customDateRange) {
+                sorted = sorted.filter(w => {
+                    return new Date(w.date) >= new Date(customDateRange.start) &&
+                           new Date(w.date) <= new Date(customDateRange.end);
+                });
+            } else if (currentPeriod !== 'all') {
                 const days = parseInt(currentPeriod);
                 const cutoff = new Date();
                 cutoff.setDate(cutoff.getDate() - days);
                 sorted = sorted.filter(w => new Date(w.date) >= cutoff);
             }
+
+            // 更新趋势图信息栏的记录天数
+            document.getElementById('trendDays').textContent = `${sorted.length}天`;
 
             if (sorted.length === 0) {
                 trendChart.clear();
@@ -1735,6 +1913,95 @@
                 renderTrendChart();
             });
         });
+
+        function toggleDateDropdown() {
+            const dd = document.getElementById('dateDropdown');
+            const isShown = dd.classList.contains('show');
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+            if (!isShown) {
+                dd.classList.add('show');
+                initCustomDateInputs();
+            }
+        }
+
+        function selectPeriod(period) {
+            currentPeriod = period;
+            customDateRange = null;
+            document.querySelectorAll('.trend-filter').forEach(t => {
+                t.classList.toggle('active', t.dataset.period === period);
+            });
+            document.querySelectorAll('.date-quick-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('onclick').includes(`'${period}'`));
+            });
+            document.getElementById('dateDropdown').classList.remove('show');
+            renderTrendChart();
+        }
+
+        function formatDateShort(dateStr) {
+            const parts = dateStr.split('-');
+            return `${parts[1]}/${parts[2]}`;
+        }
+
+        function updateDateRangeText() {
+            const el = document.getElementById('dateRangeText');
+            if (!el) return;
+            if (customDateRange) {
+                el.textContent = `${formatDateShort(customDateRange.start)} - ${formatDateShort(customDateRange.end)} ▾`;
+            } else if (currentPeriod === 'all') {
+                const sorted = [...appData.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+                if (sorted.length > 0) {
+                    el.textContent = `${formatDateShort(sorted[0].date)} - ${formatDateShort(sorted[sorted.length-1].date)} ▾`;
+                } else {
+                    el.textContent = '全部 ▾';
+                }
+            } else {
+                const days = parseInt(currentPeriod);
+                const end = new Date();
+                const start = new Date();
+                start.setDate(start.getDate() - days + 1);
+                el.textContent = `${formatDateShort(start.toISOString().split('T')[0])} - ${formatDateShort(end.toISOString().split('T')[0])} ▾`;
+            }
+        }
+
+        function initCustomDateInputs() {
+            const startInput = document.getElementById('customDateStart');
+            const endInput = document.getElementById('customDateEnd');
+            if (customDateRange) {
+                startInput.value = customDateRange.start;
+                endInput.value = customDateRange.end;
+            } else if (currentPeriod === 'all') {
+                const sorted = [...appData.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
+                if (sorted.length > 0) {
+                    startInput.value = sorted[0].date;
+                    endInput.value = sorted[sorted.length-1].date;
+                }
+            } else {
+                const days = parseInt(currentPeriod);
+                const end = new Date();
+                const start = new Date();
+                start.setDate(start.getDate() - days + 1);
+                startInput.value = start.toISOString().split('T')[0];
+                endInput.value = end.toISOString().split('T')[0];
+            }
+        }
+
+        function applyCustomDateRange() {
+            const start = document.getElementById('customDateStart').value;
+            const end = document.getElementById('customDateEnd').value;
+            if (!start || !end) {
+                showToast('请选择开始和结束日期');
+                return;
+            }
+            if (new Date(start) > new Date(end)) {
+                showToast('开始日期不能晚于结束日期');
+                return;
+            }
+            customDateRange = { start, end };
+            document.querySelectorAll('.trend-filter').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.date-quick-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('dateDropdown').classList.remove('show');
+            renderTrendChart();
+        }
 
         // 渲染：我的页
         function renderProfilePage() {
