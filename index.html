@@ -57,6 +57,7 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
+            overflow-x: hidden;
         }
 
         .app-frame {
@@ -68,28 +69,32 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
         }
 
         @media (min-width: 431px) {
-            body { background: #E0E0E0; padding: 20px 0; }
-            .app-frame { border-radius: 32px; min-height: calc(100vh - 40px); max-height: 900px; }
+            body { background: #E0E0E0; padding: 20px 0; overflow: hidden; }
+            .app-frame { border-radius: 32px; height: calc(100vh - 40px); max-height: 900px; overflow: hidden; }
         }
 
         .page-container {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
             padding-bottom: 80px;
-            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 431px) {
+            .page-container {
+                flex: 1;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
         }
 
         .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* ========== 每日记录 头部 ========== */
@@ -435,6 +440,13 @@
             overflow: hidden;
             box-shadow: var(--shadow);
         }
+        .setting-group {
+            margin: 0 16px 12px;
+            background: var(--card-bg);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
         .collapsible-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 14px 16px; cursor: pointer;
@@ -474,6 +486,63 @@
             display: flex; align-items: center; gap: 4px;
         }
         .setting-item .arrow { color: var(--text-light); font-size: 14px; }
+
+        /* ========== 体重表情主题 ========== */
+        .emoji-theme-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .emoji-theme-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 14px 12px;
+            border: 2px solid transparent;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .emoji-theme-card:active { transform: scale(0.97); }
+        .emoji-theme-card.active {
+            border-color: #F39C12;
+            box-shadow: 0 2px 12px rgba(243, 156, 18, 0.25);
+        }
+        .emoji-theme-card .badge-in-use {
+            position: absolute;
+            top: 8px; right: 8px;
+            background: #F39C12;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+        }
+        .emoji-theme-card.active .badge-in-use { display: block; }
+        .emoji-theme-card .theme-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        .emoji-theme-card .theme-icons {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .emoji-theme-card .theme-icon-item {
+            text-align: center;
+        }
+        .emoji-theme-card .theme-icon-emoji {
+            font-size: 28px;
+            line-height: 1.2;
+        }
+        .emoji-theme-card .theme-icon-label {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
 
         /* ========== 底部弹窗 ========== */
         .sheet-overlay {
@@ -735,7 +804,7 @@
                     <div class="header-top">
                         <div class="header-title">体重记录</div>
                         <div class="header-icons" style="position:relative;">
-                            <div class="icon-btn" onclick="exportData()">📤</div>
+                            <div class="icon-btn" onclick="openDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenu')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenu">
                                 <div class="dropdown-item" onclick="openQuickView('health')">
@@ -792,7 +861,7 @@
                     <div class="trend-nav">
                         <div class="nav-center">趋势 · 体重 ▾</div>
                         <div class="header-icons">
-                            <div class="icon-btn" onclick="exportData()">📤</div>
+                            <div class="icon-btn" onclick="openDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenuTrend')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenuTrend">
                                 <div class="dropdown-item" onclick="openQuickView('health')">
@@ -863,7 +932,7 @@
 
             <!-- ============ 我的 ============ -->
             <div class="page" id="page-profile">
-                <div class="profile-header" onclick="openProfileSheet()">
+                <div class="profile-header" onclick="openProfileEdit()">
                     <div class="profile-avatar-wrap" onclick="event.stopPropagation(); document.getElementById('avatarFileInput').click()">
                         <div class="profile-avatar" id="avatarIcon">👤</div>
                         <div class="avatar-upload-hint">📷</div>
@@ -912,127 +981,176 @@
                     </div>
                 </div>
 
-                <!-- 个人信息 (可折叠) -->
-                <div class="collapsible-group collapsed" id="group-profile">
-                    <div class="collapsible-header" onclick="toggleCollapse('group-profile')">
-                        <div class="title-area">
-                            <div class="group-icon" style="background:var(--primary-bg);">👤</div>
-                            <span class="title">个人信息</span>
-                        </div>
-                        <span class="chevron">▼</span>
-                    </div>
-                    <div class="collapsible-body">
-                        <div class="setting-item" onclick="openProfileSheet()">
-                            <div class="setting-icon" style="background:var(--primary-bg);">👤</div>
-                            <div class="setting-label">姓名</div>
-                            <div class="setting-value"><span id="showName">未设置</span><span class="arrow">›</span></div>
-                        </div>
-                        <div class="setting-item" onclick="openProfileSheet()">
-                            <div class="setting-icon" style="background:#EBF5FB; color:#2980B9;">⚧</div>
-                            <div class="setting-label">性别</div>
-                            <div class="setting-value"><span id="showGender">未设置</span><span class="arrow">›</span></div>
-                        </div>
-                        <div class="setting-item" onclick="openProfileSheet()">
-                            <div class="setting-icon" style="background:#FEF9E7; color:#F39C12;">🎂</div>
-                            <div class="setting-label">生日</div>
-                            <div class="setting-value"><span id="showBirthday">未设置</span><span class="arrow">›</span></div>
-                        </div>
-                        <div class="setting-item" onclick="openProfileSheet()">
-                            <div class="setting-icon" style="background:#FDEDEC; color:#E74C3C;">📅</div>
-                            <div class="setting-label">年龄</div>
-                            <div class="setting-value"><span id="showAge">--</span><span class="arrow">›</span></div>
-                        </div>
-                        <div class="setting-item" onclick="openProfileSheet()">
-                            <div class="setting-icon" style="background:#E8DAEF; color:#8E44AD;">📏</div>
-                            <div class="setting-label">身高</div>
-                            <div class="setting-value"><span id="showHeight">未设置</span><span class="arrow">›</span></div>
-                        </div>
+                <!-- 个人信息 -->
+                <div class="setting-group">
+                    <div class="setting-item" onclick="openProfileEdit()" style="border-top:none;">
+                        <div class="setting-icon" style="background:var(--primary-bg);">👤</div>
+                        <div class="setting-label">个人信息</div>
+                        <div class="setting-value"><span id="showName">未设置</span><span class="arrow">›</span></div>
                     </div>
                 </div>
 
-                <!-- 目标管理 (可折叠) -->
-                <div class="collapsible-group collapsed" id="group-target">
-                    <div class="collapsible-header" onclick="toggleCollapse('group-target')">
-                        <div class="title-area">
-                            <div class="group-icon" style="background:var(--success-light); color:var(--success);">🎯</div>
-                            <span class="title">目标管理</span>
-                        </div>
-                        <span class="chevron">▼</span>
+                <!-- 目标管理 -->
+                <div class="setting-group">
+                    <div class="setting-item" onclick="openTargetEdit()" style="border-top:none;">
+                        <div class="setting-icon" style="background:var(--success-light); color:var(--success);">🎯</div>
+                        <div class="setting-label">目标管理</div>
+                        <div class="setting-value"><span id="showTarget">未设置</span><span class="arrow">›</span></div>
                     </div>
-                    <div class="collapsible-body">
-                        <div class="setting-item" onclick="openTargetSheet()">
-                            <div class="setting-icon" style="background:var(--success-light); color:var(--success);">🎯</div>
-                            <div class="setting-label">目标体重</div>
-                            <div class="setting-value"><span id="showTarget">未设置</span><span class="arrow">›</span></div>
-                        </div>
-                        <!-- 进度可视化卡片 -->
-                        <div class="goal-progress-card" id="goalProgressCard">
-                            <div class="goal-progress-top">
-                                <div>
-                                    <div class="goal-progress-label">完成进度</div>
-                                    <div class="goal-progress-value"><span id="goalProgressNum">0</span><span class="pct">%</span></div>
-                                </div>
-                                <div class="goal-progress-side">
-                                    <div class="lbl">距目标</div>
-                                    <div class="num" id="goalDiffNum">--</div>
-                                </div>
-                            </div>
-                            <div class="goal-bar-wrap">
-                                <div class="goal-bar-fill" id="goalBarFill" style="width:0%;"></div>
-                            </div>
-                            <div class="goal-stats-row">
-                                <div class="goal-stat-box">
-                                    <div class="stat-val" id="goalStartWeight">--</div>
-                                    <div class="stat-lbl">起始体重</div>
-                                </div>
-                                <div class="goal-stat-box">
-                                    <div class="stat-val" id="goalCurrentWeight">--</div>
-                                    <div class="stat-lbl">当前体重</div>
-                                </div>
-                                <div class="goal-stat-box">
-                                    <div class="stat-val" id="goalTargetWeight">--</div>
-                                    <div class="stat-lbl">目标体重</div>
-                                </div>
-                                <div class="goal-stat-box">
-                                    <div class="stat-val" id="goalLostWeight">--</div>
-                                    <div class="stat-lbl">已减/增</div>
-                                </div>
-                            </div>
-                        </div>
+                </div>
+
+                <!-- 更多体重表情 -->
+                <div class="setting-group">
+                    <div class="setting-item" onclick="openEmojiEdit()" style="border-top:none;">
+                        <div class="setting-icon" style="background:#FEF9E7; color:#F39C12;">😀</div>
+                        <div class="setting-label">更多体重表情</div>
+                        <div class="setting-value"><span id="showEmojiName">小圆脸</span><span class="arrow">›</span></div>
                     </div>
                 </div>
 
                 <!-- 数据管理 -->
-                <div class="collapsible-group collapsed" id="group-data">
-                    <div class="collapsible-header" onclick="toggleCollapse('group-data')">
-                        <div class="title-area">
-                            <div class="group-icon" style="background:#EBF5FB; color:#2980B9;">☁️</div>
-                            <span class="title">数据管理</span>
-                        </div>
-                        <span class="chevron">▼</span>
-                    </div>
-                    <div class="collapsible-body">
-                        <div class="setting-item" onclick="exportData()">
-                            <div class="setting-icon" style="background:#EBF5FB; color:#2980B9;">📤</div>
-                            <div class="setting-label">导出数据</div>
-                            <div class="setting-value"><span class="arrow">›</span></div>
-                        </div>
-                        <div class="setting-item" onclick="document.getElementById('importFileInput').click()">
-                            <div class="setting-icon" style="background:var(--success-light); color:var(--success);">📥</div>
-                            <div class="setting-label">导入数据</div>
-                            <div class="setting-value"><span class="arrow">›</span></div>
-                        </div>
-                        <input type="file" id="importFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleImport(event)">
-                        <div class="setting-item" onclick="clearAllData()">
-                            <div class="setting-icon" style="background:var(--danger-light); color:var(--danger);">🗑️</div>
-                            <div class="setting-label">清空所有数据</div>
-                            <div class="setting-value"><span class="arrow">›</span></div>
-                        </div>
+                <div class="setting-group">
+                    <div class="setting-item" onclick="openDataEdit()" style="border-top:none;">
+                        <div class="setting-icon" style="background:#EBF5FB; color:#2980B9;">☁️</div>
+                        <div class="setting-label">数据管理</div>
+                        <div class="setting-value"><span class="arrow">›</span></div>
                     </div>
                 </div>
 
                 <div style="text-align:center; padding:16px; color:var(--text-light); font-size:12px;">
                     个人健康工作台 v4.0 · 数据本地存储
+                </div>
+            </div>
+
+            <!-- ============ 个人信息编辑页 (二级页面) ============ -->
+            <div class="page" id="page-profile-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="header-title">个人信息</div>
+                    </div>
+                </div>
+                <div style="padding:20px;">
+                    <div class="sheet-form-group"><label>姓名</label><input type="text" id="inputName" placeholder="请输入姓名" maxlength="20"></div>
+                    <div class="sheet-form-group">
+                        <label>性别</label>
+                        <div class="gender-select">
+                            <div class="gender-option" data-gender="male" onclick="selectGender('male')">👨 男性</div>
+                            <div class="gender-option" data-gender="female" onclick="selectGender('female')">👩 女性</div>
+                        </div>
+                    </div>
+                    <div class="sheet-form-group"><label>生日</label><input type="date" id="inputBirthday" onchange="syncAgeFromBirthday()"></div>
+                    <div class="sheet-form-group"><label>年龄 (直接输入会自动推算生日)</label><input type="number" id="inputAge" min="1" max="150" placeholder="例如：25" onchange="syncBirthdayFromAge()"></div>
+                    <div class="sheet-form-group"><label>身高 (cm)</label><input type="number" id="inputHeight" min="100" max="250" placeholder="例如：170"></div>
+                    <button class="sheet-btn primary" onclick="saveProfile()">保存</button>
+                </div>
+            </div>
+
+            <!-- ============ 目标管理编辑页 (二级页面) ============ -->
+            <div class="page" id="page-target-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="header-title">目标管理</div>
+                    </div>
+                </div>
+                <div style="padding:20px;">
+                    <div class="sheet-form-group"><label>目标体重 (kg)</label><input type="number" id="inputTarget" step="0.1" min="20" max="300" placeholder="例如：60.0"></div>
+                    <div id="targetSuggestion" style="font-size:13px; color:var(--text-secondary); padding:8px 0; text-align:center;"></div>
+                    <button class="sheet-btn primary" onclick="saveTarget()">保存目标</button>
+
+                    <!-- 进度可视化卡片 -->
+                    <div class="goal-progress-card" id="goalProgressCard" style="margin-top:20px;">
+                        <div class="goal-progress-top">
+                            <div>
+                                <div class="goal-progress-label">完成进度</div>
+                                <div class="goal-progress-value"><span id="goalProgressNum">0</span><span class="pct">%</span></div>
+                            </div>
+                            <div class="goal-progress-side">
+                                <div class="lbl">距目标</div>
+                                <div class="num" id="goalDiffNum">--</div>
+                            </div>
+                        </div>
+                        <div class="goal-bar-wrap">
+                            <div class="goal-bar-fill" id="goalBarFill" style="width:0%;"></div>
+                        </div>
+                        <div class="goal-stats-row">
+                            <div class="goal-stat-box">
+                                <div class="stat-val" id="goalStartWeight">--</div>
+                                <div class="stat-lbl">起始体重</div>
+                            </div>
+                            <div class="goal-stat-box">
+                                <div class="stat-val" id="goalCurrentWeight">--</div>
+                                <div class="stat-lbl">当前体重</div>
+                            </div>
+                            <div class="goal-stat-box">
+                                <div class="stat-val" id="goalTargetWeight">--</div>
+                                <div class="stat-lbl">目标体重</div>
+                            </div>
+                            <div class="goal-stat-box">
+                                <div class="stat-val" id="goalLostWeight">--</div>
+                                <div class="stat-lbl">已减/增</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ 数据管理页 (二级页面) ============ -->
+            <div class="page" id="page-data-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="header-title">数据管理</div>
+                    </div>
+                </div>
+                <div style="padding:16px;">
+                    <!-- 下载数据 -->
+                    <div class="setting-group" style="margin-bottom:16px;">
+                        <div class="setting-item" onclick="openDownloadSheet()" style="border-top:none;">
+                            <div class="setting-icon" style="background:#EBF5FB;"><img src="icon/icon-export.png" style="width:18px; height:18px; object-fit:contain;"></div>
+                            <div class="setting-label">下载数据</div>
+                            <div class="setting-value"><span class="arrow">›</span></div>
+                        </div>
+                        <div style="padding:0 16px 12px; font-size:12px; color:var(--text-secondary); line-height:1.5;">将上传过的数据下载到本地。建议先下载再上传，保持数据一致</div>
+                    </div>
+
+                    <!-- 上传数据 -->
+                    <div class="setting-group" style="margin-bottom:16px;">
+                        <div class="setting-item" onclick="document.getElementById('importFileInput').click()" style="border-top:none;">
+                            <div class="setting-icon" style="background:var(--success-light);"><img src="icon/icon-import.png" style="width:18px; height:18px; object-fit:contain;"></div>
+                            <div class="setting-label">上传数据</div>
+                            <div class="setting-value"><span class="arrow">›</span></div>
+                        </div>
+                        <div style="padding:0 16px 12px; font-size:12px; color:var(--text-secondary); line-height:1.5;">将数据上传到该应用，保证数据不丢失。建议先下载再上传，保持数据一致</div>
+                        <input type="file" id="importFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleImport(event)">
+                    </div>
+
+                    <!-- 清空所有数据 -->
+                    <div class="setting-group">
+                        <div class="setting-item" onclick="clearAllData()" style="border-top:none;">
+                            <div class="setting-icon" style="background:var(--danger-light);"><img src="icon/icon-delete.png" style="width:18px; height:18px; object-fit:contain;"></div>
+                            <div class="setting-label">清空所有数据</div>
+                            <div class="setting-value"><span class="arrow">›</span></div>
+                        </div>
+                        <div style="padding:0 16px 12px; font-size:12px; color:var(--danger); line-height:1.5;">请谨慎操作！清空该应用所有数据，恢复出厂设置</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ 更多体重表情页 (二级页面) ============ -->
+            <div class="page" id="page-emoji-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="header-title">更多体重表情</div>
+                    </div>
+                </div>
+                <div style="padding:16px;">
+                    <div style="font-size:13px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5;">
+                        选择体重变化时显示的表情主题，点击卡片即可切换
+                    </div>
+                    <div class="emoji-theme-grid" id="emojiThemeGrid"></div>
                 </div>
             </div>
         </div>
@@ -1113,39 +1231,6 @@
         </div>
     </div>
 
-    <!-- 个人信息 -->
-    <div class="sheet-overlay" id="profileSheet">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <div class="sheet-title">编辑个人信息</div>
-            <div class="sheet-form-group"><label>姓名</label><input type="text" id="inputName" placeholder="请输入姓名" maxlength="20"></div>
-            <div class="sheet-form-group">
-                <label>性别</label>
-                <div class="gender-select">
-                    <div class="gender-option" data-gender="male" onclick="selectGender('male')">👨 男性</div>
-                    <div class="gender-option" data-gender="female" onclick="selectGender('female')">👩 女性</div>
-                </div>
-            </div>
-            <div class="sheet-form-group"><label>生日</label><input type="date" id="inputBirthday" onchange="syncAgeFromBirthday()"></div>
-            <div class="sheet-form-group"><label>年龄 (直接输入会自动推算生日)</label><input type="number" id="inputAge" min="1" max="150" placeholder="例如：25" onchange="syncBirthdayFromAge()"></div>
-            <div class="sheet-form-group"><label>身高 (cm)</label><input type="number" id="inputHeight" min="100" max="250" placeholder="例如：170"></div>
-            <button class="sheet-btn primary" onclick="saveProfile()">保存</button>
-            <button class="sheet-btn secondary" onclick="closeProfileSheet()">取消</button>
-        </div>
-    </div>
-
-    <!-- 目标设置 -->
-    <div class="sheet-overlay" id="targetSheet">
-        <div class="bottom-sheet">
-            <div class="sheet-handle"></div>
-            <div class="sheet-title">设置目标体重</div>
-            <div class="sheet-form-group"><label>目标体重 (kg)</label><input type="number" id="inputTarget" step="0.1" min="20" max="300" placeholder="例如：60.0"></div>
-            <div id="targetSuggestion" style="font-size:13px; color:var(--text-secondary); padding:8px 0; text-align:center;"></div>
-            <button class="sheet-btn primary" onclick="saveTarget()">保存目标</button>
-            <button class="sheet-btn secondary" onclick="closeTargetSheet()">取消</button>
-        </div>
-    </div>
-
     <!-- 快捷查看 (三点菜单展开) -->
     <div class="sheet-overlay" id="quickSheet">
         <div class="bottom-sheet">
@@ -1156,13 +1241,50 @@
         </div>
     </div>
 
+    <!-- 下载数据弹窗 -->
+    <div class="sheet-overlay" id="downloadSheet">
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">下载数据</div>
+            <div style="padding:4px 0 16px; font-size:13px; color:var(--text-secondary); line-height:1.5;">
+                默认导出全部记录，可选择日期范围和数据分类进行筛选
+            </div>
+            <div class="sheet-form-group">
+                <label>日期范围</label>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;" id="downloadRangeBtns">
+                    <button class="date-quick-btn active" onclick="setDownloadRange('all')">全部</button>
+                    <button class="date-quick-btn" onclick="setDownloadRange('7')">近7天</button>
+                    <button class="date-quick-btn" onclick="setDownloadRange('30')">近30天</button>
+                    <button class="date-quick-btn" onclick="setDownloadRange('90')">近90天</button>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="date" id="downloadStartDate" style="flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:10px; font-size:14px; font-family:inherit;">
+                    <span style="color:var(--text-light); font-size:13px;">至</span>
+                    <input type="date" id="downloadEndDate" style="flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:10px; font-size:14px; font-family:inherit;">
+                </div>
+            </div>
+            <div class="sheet-form-group">
+                <label>数据分类</label>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;" id="downloadCatBtns">
+                    <button class="date-quick-btn active" onclick="toggleDownloadCat('all', this)">全部</button>
+                    <button class="date-quick-btn active" onclick="toggleDownloadCat('weight', this)">体重</button>
+                    <button class="date-quick-btn" disabled style="opacity:0.5; cursor:not-allowed;">经期</button>
+                    <button class="date-quick-btn" disabled style="opacity:0.5; cursor:not-allowed;">日记</button>
+                </div>
+            </div>
+            <button class="sheet-btn primary" onclick="exportData()">下载</button>
+            <button class="sheet-btn secondary" onclick="closeDownloadSheet()">取消</button>
+        </div>
+    </div>
+
     <script>
         const STORAGE_KEY = 'health_workbench_v3';
         let appData = {
             weights: [],
             profile: { name: '', gender: '', birthday: '', height: '' },
             targetWeight: null,
-            avatarImage: null
+            avatarImage: null,
+            emojiTheme: 'faces'
         };
         let trendChart = null;
         let currentPeriod = 7;
@@ -1421,7 +1543,7 @@
         }
 
         // 个人信息
-        function openProfileSheet() {
+        function openProfileEdit() {
             document.getElementById('inputName').value = appData.profile.name || '';
             document.getElementById('inputBirthday').value = appData.profile.birthday || '';
             const age = calcAge(appData.profile.birthday);
@@ -1429,9 +1551,19 @@
             document.getElementById('inputHeight').value = appData.profile.height || '';
             selectedGender = appData.profile.gender || '';
             document.querySelectorAll('.gender-option').forEach(o => o.classList.toggle('active', o.dataset.gender === selectedGender));
-            document.getElementById('profileSheet').classList.add('show');
+            // 切换到二级页面，隐藏底部导航和FAB
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-profile-edit').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
         }
-        function closeProfileSheet() { document.getElementById('profileSheet').classList.remove('show'); }
+        function backToProfile() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-profile').classList.add('active');
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            document.querySelector('.page-container').scrollTop = 0;
+        }
         function selectGender(g) {
             selectedGender = g;
             document.querySelectorAll('.gender-option').forEach(o => o.classList.toggle('active', o.dataset.gender === g));
@@ -1451,27 +1583,95 @@
             if (!birthday) { showToast('请选择生日或输入年龄', 'error'); return; }
             if (!height || height < 100 || height > 250) { showToast('请输入有效身高 (100-250cm)', 'error'); return; }
             appData.profile = { name, gender: selectedGender, birthday, height };
-            saveData(); closeProfileSheet(); renderAll(); showToast('个人信息已保存');
+            saveData(); renderAll(); showToast('个人信息已保存');
+            backToProfile();
         }
-        document.getElementById('profileSheet').addEventListener('click', function(e) { if (e.target === this) closeProfileSheet(); });
 
         // 目标
-        function openTargetSheet() {
+        function openTargetEdit() {
             document.getElementById('inputTarget').value = appData.targetWeight || '';
             const ideal = getIdealWeight(appData.profile.height);
             const s = document.getElementById('targetSuggestion');
             s.textContent = ideal ? `建议目标：${ideal.toFixed(1)} kg（标准体重 = 身高 - 105）` : '请先在个人信息中设置身高';
-            document.getElementById('targetSheet').classList.add('show');
+            // 切换到二级页面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-target-edit').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+            renderProfilePage();
         }
-        function closeTargetSheet() { document.getElementById('targetSheet').classList.remove('show'); }
         function saveTarget() {
             const target = parseFloat(document.getElementById('inputTarget').value);
             if (isNaN(target) || target < 20 || target > 300) { showToast('请输入有效的目标体重', 'error'); return; }
-            appData.targetWeight = target; saveData(); closeTargetSheet(); renderAll(); showToast('目标已设置');
+            appData.targetWeight = target; saveData(); renderAll(); showToast('目标已设置');
+            backToProfile();
         }
-        document.getElementById('targetSheet').addEventListener('click', function(e) { if (e.target === this) closeTargetSheet(); });
 
-        // 快捷查看
+        // 体重表情主题
+        const emojiThemes = [
+            { id: 'weather', name: '晴雨', down: '☀️', up: '🌧️', flat: '⛅' },
+            { id: 'faces', name: '小圆脸', down: '😊', up: '🤢', flat: '😐' },
+            { id: 'arrows', name: '箭头', down: '⬇️', up: '⬆️', flat: '➡️' },
+            { id: 'pets', name: '萌宠', down: '🐶', up: '🐱', flat: '🦆' },
+            { id: 'dog', name: '焦糖狗', down: '🐕', up: '🦴', flat: '🐩' },
+            { id: 'cat', name: '毛线猫', down: '😺', up: '😼', flat: '💤' },
+            { id: 'flowers', name: '花朵', down: '🌸', up: '🌺', flat: '🌻' },
+            { id: 'fruits', name: '水果', down: '🍎', up: '🍇', flat: '🥭' },
+            { id: 'pixels', name: '像素', down: '❤️', up: '🌵', flat: 'icon/emoji-frog.png' },
+            { id: 'vegetables', name: '蔬菜', down: 'icon/emoji-tomato.png', up: 'icon/emoji-macadamia.png', flat: 'icon/emoji-avocado.png' },
+            { id: 'trendy', name: '潮流表情', down: 'icon/emoji-smile.png', up: 'icon/emoji-flame.png', flat: 'icon/emoji-confused.png' },
+            { id: 'icecream', name: '雪糕', down: 'icon/emoji-icecream-red.png', up: 'icon/emoji-icecream-black.png', flat: 'icon/emoji-icecream-green.png' },
+            { id: 'animals', name: '动物', down: 'icon/emoji-whale.png', up: 'icon/emoji-crab.png', flat: 'icon/emoji-lion.png' },
+            { id: 'childhood', name: '童年', down: 'icon/emoji-pikachu.png', up: 'icon/emoji-blackcat.png', flat: 'icon/emoji-snoopy.png' }
+        ];
+        function renderEmojiIcon(val) {
+            if (val && val.endsWith('.png')) {
+                return `<img src="${val}" style="width:32px; height:32px; object-fit:contain;" alt="${val}">`;
+            }
+            return val;
+        }
+        function openEmojiEdit() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-emoji-edit').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+            renderEmojiThemes();
+        }
+        function renderEmojiThemes() {
+            const current = appData.emojiTheme || 'faces';
+            const grid = document.getElementById('emojiThemeGrid');
+            grid.innerHTML = emojiThemes.map(t => `
+                <div class="emoji-theme-card ${t.id === current ? 'active' : ''}" onclick="selectEmojiTheme('${t.id}')">
+                    <div class="badge-in-use">✓ 在用</div>
+                    <div class="theme-name">${t.name}</div>
+                    <div class="theme-icons">
+                        <div class="theme-icon-item">
+                            <div class="theme-icon-emoji">${renderEmojiIcon(t.down)}</div>
+                            <div class="theme-icon-label">下降</div>
+                        </div>
+                        <div class="theme-icon-item">
+                            <div class="theme-icon-emoji">${renderEmojiIcon(t.up)}</div>
+                            <div class="theme-icon-label">上涨</div>
+                        </div>
+                        <div class="theme-icon-item">
+                            <div class="theme-icon-emoji">${renderEmojiIcon(t.flat)}</div>
+                            <div class="theme-icon-label">不变</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function selectEmojiTheme(themeId) {
+            appData.emojiTheme = themeId;
+            saveData();
+            const theme = emojiThemes.find(t => t.id === themeId);
+            document.getElementById('showEmojiName').textContent = theme ? theme.name : '小圆脸';
+            renderEmojiThemes();
+            renderRecordPage();
+            showToast('表情主题已切换');
+        }
         function openQuickView(type) {
             document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
             const titles = { health: '健康指标', profile: '个人信息', target: '目标管理' };
@@ -1509,7 +1709,7 @@
                                 ${p.height ? `<div class="quick-info-row"><span class="lbl">正常范围</span><span class="val">${(18.5*(p.height/100)**2).toFixed(1)}-${(24*(p.height/100)**2).toFixed(1)} kg</span></div>` : ''}
                             </div>
                         </div>
-                        <button class="quick-edit-btn" onclick="closeQuickSheet(); openProfileSheet();">编辑个人信息</button>
+                        <button class="quick-edit-btn" onclick="closeQuickSheet(); openProfileEdit();">编辑个人信息</button>
                     </div>
                 `;
             } else if (type === 'profile') {
@@ -1521,7 +1721,7 @@
                         <div class="quick-info-row"><span class="lbl">生日</span><span class="val">${p.birthday || '未设置'}</span></div>
                         <div class="quick-info-row"><span class="lbl">年龄</span><span class="val">${age != null ? age + ' 岁' : '--'}</span></div>
                         <div class="quick-info-row"><span class="lbl">身高</span><span class="val">${p.height ? p.height + ' cm' : '未设置'}</span></div>
-                        <button class="quick-edit-btn" onclick="closeQuickSheet(); openProfileSheet();">编辑信息</button>
+                        <button class="quick-edit-btn" onclick="closeQuickSheet(); openProfileEdit();">编辑信息</button>
                     </div>
                 `;
             } else if (type === 'target') {
@@ -1566,7 +1766,7 @@
                             <div class="goal-stat-box"><div class="stat-val">${appData.targetWeight ? appData.targetWeight + ' kg' : '--'}</div><div class="stat-lbl">目标</div></div>
                             <div class="goal-stat-box"><div class="stat-val">${lostHtml}</div><div class="stat-lbl">已减/增</div></div>
                         </div>
-                        <button class="quick-edit-btn" onclick="closeQuickSheet(); openTargetSheet();">设置目标</button>
+                        <button class="quick-edit-btn" onclick="closeQuickSheet(); openTargetEdit();">设置目标</button>
                     </div>
                 `;
             }
@@ -1575,21 +1775,100 @@
         function closeQuickSheet() { document.getElementById('quickSheet').classList.remove('show'); }
         document.getElementById('quickSheet').addEventListener('click', function(e) { if (e.target === this) closeQuickSheet(); });
 
+        // 数据管理二级页面
+        function openDataEdit() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-data-edit').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+        }
+        function openDownloadSheet() {
+            // 重置为默认值
+            setDownloadRange('all');
+            // 重置分类按钮：全部和体重默认激活
+            const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
+            catBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.trim() === '全部' || btn.textContent.trim() === '体重') {
+                    btn.classList.add('active');
+                }
+            });
+            document.getElementById('downloadSheet').classList.add('show');
+        }
+        function closeDownloadSheet() {
+            document.getElementById('downloadSheet').classList.remove('show');
+        }
+        document.getElementById('downloadSheet').addEventListener('click', function(e) { if (e.target === this) closeDownloadSheet(); });
+        function setDownloadRange(type) {
+            const startEl = document.getElementById('downloadStartDate');
+            const endEl = document.getElementById('downloadEndDate');
+            const today = new Date();
+            if (type === 'all') {
+                startEl.value = '';
+                endEl.value = '';
+            } else {
+                const days = parseInt(type);
+                const start = new Date(today);
+                start.setDate(start.getDate() - days + 1);
+                startEl.value = start.toISOString().split('T')[0];
+                endEl.value = today.toISOString().split('T')[0];
+            }
+            // 更新按钮激活状态
+            document.querySelectorAll('#downloadRangeBtns .date-quick-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.trim() === '全部' && type === 'all') btn.classList.add('active');
+                else if (btn.textContent.trim() === '近7天' && type === '7') btn.classList.add('active');
+                else if (btn.textContent.trim() === '近30天' && type === '30') btn.classList.add('active');
+                else if (btn.textContent.trim() === '近90天' && type === '90') btn.classList.add('active');
+            });
+        }
+        function toggleDownloadCat(cat, btn) {
+            btn.classList.toggle('active');
+            // "全部"激活时体重默认激活
+            if (cat === 'all' && btn.classList.contains('active')) {
+                const weightBtn = Array.from(document.querySelectorAll('#downloadCatBtns .date-quick-btn'))
+                    .find(b => b.textContent.trim() === '体重');
+                if (weightBtn) weightBtn.classList.add('active');
+            }
+        }
+
         // 导出/清空
         function exportData() {
-            if (appData.weights.length === 0 && !appData.profile.name) { showToast('暂无数据可导出', 'error'); return; }
+            // 获取日期范围
+            const startDate = document.getElementById('downloadStartDate')?.value || '';
+            const endDate = document.getElementById('downloadEndDate')?.value || '';
+
+            // 按日期范围筛选体重记录
+            let filteredWeights = [...appData.weights];
+            if (startDate) {
+                filteredWeights = filteredWeights.filter(w => w.date >= startDate);
+            }
+            if (endDate) {
+                filteredWeights = filteredWeights.filter(w => w.date <= endDate);
+            }
+
+            // 获取选中的分类（从按钮激活状态读取）
+            const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
+            const catAll = Array.from(catBtns).find(b => b.textContent.trim() === '全部')?.classList.contains('active') ?? true;
+            const catWeight = Array.from(catBtns).find(b => b.textContent.trim() === '体重')?.classList.contains('active') ?? true;
+
+            if (filteredWeights.length === 0 && !appData.profile.name) { showToast('暂无数据可下载', 'error'); return; }
+
             const wb = XLSX.utils.book_new();
 
-            // Sheet 1: 体重记录
-            const recordsData = appData.weights.map(w => ({
-                '日期': w.date,
-                '体重(kg)': w.weight,
-                '备注': w.note || '',
-                '记录时间': new Date(w.createdAt).toLocaleString('zh-CN')
-            }));
-            const ws1 = XLSX.utils.json_to_sheet(recordsData);
-            ws1['!cols'] = [{ wch: 12 }, { wch: 10 }, { wch: 20 }, { wch: 20 }];
-            XLSX.utils.book_append_sheet(wb, ws1, '体重记录');
+            // Sheet 1: 体重记录 (仅当勾选体重或全部时)
+            if (catWeight || catAll) {
+                const recordsData = filteredWeights.map(w => ({
+                    '日期': w.date,
+                    '体重(kg)': w.weight,
+                    '备注': w.note || '',
+                    '记录时间': new Date(w.createdAt).toLocaleString('zh-CN')
+                }));
+                const ws1 = XLSX.utils.json_to_sheet(recordsData.length > 0 ? recordsData : [{ '日期': '', '体重(kg)': '', '备注': '', '记录时间': '' }]);
+                ws1['!cols'] = [{ wch: 12 }, { wch: 10 }, { wch: 20 }, { wch: 20 }];
+                XLSX.utils.book_append_sheet(wb, ws1, '体重记录');
+            }
 
             // Sheet 2: 个人信息
             const p = appData.profile;
@@ -1607,7 +1886,7 @@
             XLSX.utils.book_append_sheet(wb, ws2, '个人信息');
 
             // Sheet 3: 健康指标
-            const sorted = [...appData.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const sorted = [...filteredWeights].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latest = sorted[0];
             const bmi = calcBMI(latest?.weight, p.height);
             const fat = calcBodyFat(bmi, age, p.gender);
@@ -1622,14 +1901,15 @@
                 { '指标': '理想体重', '数值': ideal ? ideal + ' kg' : '--' },
                 { '指标': '目标体重', '数值': appData.targetWeight ? appData.targetWeight + ' kg' : '未设置' },
                 { '指标': '距目标', '数值': (latest && appData.targetWeight) ? (latest.weight - appData.targetWeight).toFixed(1) + ' kg' : '--' },
-                { '指标': '记录总数', '数值': appData.weights.length + ' 条' }
+                { '指标': '记录总数', '数值': filteredWeights.length + ' 条' }
             ];
             const ws3 = XLSX.utils.json_to_sheet(healthData);
             ws3['!cols'] = [{ wch: 15 }, { wch: 20 }];
             XLSX.utils.book_append_sheet(wb, ws3, '健康指标');
 
             XLSX.writeFile(wb, `健康数据_${todayStr()}.xlsx`);
-            showToast('Excel文件已导出');
+            closeDownloadSheet();
+            showToast('数据已下载');
         }
 
         // 导入数据
@@ -1707,7 +1987,7 @@
         }
         function clearAllData() {
             showConfirm('清空数据', '将删除所有体重记录和个人信息，此操作不可撤销！', () => {
-                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null };
+                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces' };
                 saveData(); renderAll(); showToast('所有数据已清空');
             });
         }
@@ -1756,18 +2036,20 @@
             const emptyEl = document.getElementById('emptyState');
             if (sorted.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
             emptyEl.style.display = 'none';
+            const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
             listEl.innerHTML = sorted.map((item, index) => {
                 const prev = sorted[index + 1];
                 let changeHtml = '<span class="change flat">— 首条</span>';
+                let emojiType = 'flat';
                 if (prev) {
                     const diff = item.weight - prev.weight;
-                    if (diff > 0) changeHtml = `<span class="change up">▲ +${diff.toFixed(1)}</span>`;
-                    else if (diff < 0) changeHtml = `<span class="change down">▼ ${diff.toFixed(1)}</span>`;
+                    if (diff > 0) { changeHtml = `<span class="change up">▲ +${diff.toFixed(1)}</span>`; emojiType = 'up'; }
+                    else if (diff < 0) { changeHtml = `<span class="change down">▼ ${diff.toFixed(1)}</span>`; emojiType = 'down'; }
                     else changeHtml = '<span class="change flat">— 持平</span>';
                 }
                 const noteText = item.note ? ` · ${item.note}` : '';
                 return `<div class="record-card">
-                    <div class="record-icon">⚖️</div>
+                    <div class="record-icon">${renderEmojiIcon(currentTheme[emojiType])}</div>
                     <div class="record-info"><div class="date">${item.date}${noteText}</div><div class="time">${formatTime(item.createdAt)}</div></div>
                     <div class="record-weight"><div class="value">${item.weight}<span class="unit"> kg</span></div>${changeHtml}</div>
                     <div class="record-actions">
@@ -2020,11 +2302,9 @@
             document.getElementById('profileSub').textContent = subText || '点击编辑个人信息';
 
             document.getElementById('showName').textContent = p.name || '未设置';
-            document.getElementById('showGender').textContent = p.gender ? (p.gender === 'male' ? '男' : '女') : '未设置';
-            document.getElementById('showBirthday').textContent = p.birthday || '未设置';
-            document.getElementById('showAge').textContent = age != null ? `${age} 岁` : '--';
-            document.getElementById('showHeight').textContent = p.height ? `${p.height} cm` : '未设置';
             document.getElementById('showTarget').textContent = appData.targetWeight ? `${appData.targetWeight} kg` : '未设置';
+            const emojiTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces'));
+            document.getElementById('showEmojiName').textContent = emojiTheme ? emojiTheme.name : '小圆脸';
 
             const sorted = [...appData.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latest = sorted[0];
