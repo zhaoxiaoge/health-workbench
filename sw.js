@@ -1,4 +1,4 @@
-const CACHE_NAME = 'health-workbench-v7';
+const CACHE_NAME = 'health-workbench-v9';
 const ASSETS = [
     './',
     './index.html',
