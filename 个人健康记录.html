@@ -57,6 +57,7 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
+            overflow-x: hidden;
         }
 
         .app-frame {
@@ -68,28 +69,32 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
         }
 
         @media (min-width: 431px) {
-            body { background: #E0E0E0; padding: 20px 0; }
-            .app-frame { border-radius: 32px; min-height: calc(100vh - 40px); max-height: 900px; }
+            body { background: #E0E0E0; padding: 20px 0; overflow: hidden; }
+            .app-frame { border-radius: 32px; height: calc(100vh - 40px); max-height: 900px; overflow: hidden; }
         }
 
         .page-container {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
             padding-bottom: 80px;
-            -webkit-overflow-scrolling: touch;
+        }
+
+        @media (min-width: 431px) {
+            .page-container {
+                flex: 1;
+                overflow-y: auto;
+                overflow-x: hidden;
+                -webkit-overflow-scrolling: touch;
+            }
         }
 
         .page { display: none; animation: fadeIn 0.3s ease; }
         .page.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         /* ========== 每日记录 头部 ========== */
@@ -475,6 +480,63 @@
         }
         .setting-item .arrow { color: var(--text-light); font-size: 14px; }
 
+        /* ========== 体重表情主题 ========== */
+        .emoji-theme-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .emoji-theme-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 14px 12px;
+            border: 2px solid transparent;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .emoji-theme-card:active { transform: scale(0.97); }
+        .emoji-theme-card.active {
+            border-color: #F39C12;
+            box-shadow: 0 2px 12px rgba(243, 156, 18, 0.25);
+        }
+        .emoji-theme-card .badge-in-use {
+            position: absolute;
+            top: 8px; right: 8px;
+            background: #F39C12;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+        }
+        .emoji-theme-card.active .badge-in-use { display: block; }
+        .emoji-theme-card .theme-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 10px;
+        }
+        .emoji-theme-card .theme-icons {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .emoji-theme-card .theme-icon-item {
+            text-align: center;
+        }
+        .emoji-theme-card .theme-icon-emoji {
+            font-size: 28px;
+            line-height: 1.2;
+        }
+        .emoji-theme-card .theme-icon-label {
+            font-size: 10px;
+            color: var(--text-light);
+            margin-top: 2px;
+        }
+
         /* ========== 底部弹窗 ========== */
         .sheet-overlay {
             display: none; position: fixed; top: 0; left: 0;
@@ -735,7 +797,7 @@
                     <div class="header-top">
                         <div class="header-title">体重记录</div>
                         <div class="header-icons" style="position:relative;">
-                            <div class="icon-btn" onclick="exportData()">📤</div>
+                            <div class="icon-btn" onclick="exportData()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenu')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenu">
                                 <div class="dropdown-item" onclick="openQuickView('health')">
@@ -792,7 +854,7 @@
                     <div class="trend-nav">
                         <div class="nav-center">趋势 · 体重 ▾</div>
                         <div class="header-icons">
-                            <div class="icon-btn" onclick="exportData()">📤</div>
+                            <div class="icon-btn" onclick="exportData()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenuTrend')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenuTrend">
                                 <div class="dropdown-item" onclick="openQuickView('health')">
@@ -1002,6 +1064,15 @@
                     </div>
                 </div>
 
+                <!-- 更多体重表情 -->
+                <div class="setting-group">
+                    <div class="setting-item" onclick="openEmojiEdit()" style="border-top:none;">
+                        <div class="setting-icon" style="background:#FEF9E7; color:#F39C12;">😀</div>
+                        <div class="setting-label">更多体重表情</div>
+                        <div class="setting-value"><span id="showEmojiName">小圆脸</span><span class="arrow">›</span></div>
+                    </div>
+                </div>
+
                 <!-- 数据管理 -->
                 <div class="collapsible-group collapsed" id="group-data">
                     <div class="collapsible-header" onclick="toggleCollapse('group-data')">
@@ -1013,18 +1084,18 @@
                     </div>
                     <div class="collapsible-body">
                         <div class="setting-item" onclick="exportData()">
-                            <div class="setting-icon" style="background:#EBF5FB; color:#2980B9;">📤</div>
+                            <div class="setting-icon" style="background:#EBF5FB;"><img src="icon/icon-export.png" style="width:18px; height:18px; object-fit:contain;"></div>
                             <div class="setting-label">导出数据</div>
                             <div class="setting-value"><span class="arrow">›</span></div>
                         </div>
                         <div class="setting-item" onclick="document.getElementById('importFileInput').click()">
-                            <div class="setting-icon" style="background:var(--success-light); color:var(--success);">📥</div>
+                            <div class="setting-icon" style="background:var(--success-light);"><img src="icon/icon-import.png" style="width:18px; height:18px; object-fit:contain;"></div>
                             <div class="setting-label">导入数据</div>
                             <div class="setting-value"><span class="arrow">›</span></div>
                         </div>
                         <input type="file" id="importFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleImport(event)">
                         <div class="setting-item" onclick="clearAllData()">
-                            <div class="setting-icon" style="background:var(--danger-light); color:var(--danger);">🗑️</div>
+                            <div class="setting-icon" style="background:var(--danger-light);"><img src="icon/icon-delete.png" style="width:18px; height:18px; object-fit:contain;"></div>
                             <div class="setting-label">清空所有数据</div>
                             <div class="setting-value"><span class="arrow">›</span></div>
                         </div>
@@ -1033,6 +1104,22 @@
 
                 <div style="text-align:center; padding:16px; color:var(--text-light); font-size:12px;">
                     个人健康工作台 v4.0 · 数据本地存储
+                </div>
+            </div>
+
+            <!-- ============ 更多体重表情页 (二级页面) ============ -->
+            <div class="page" id="page-emoji-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="header-title">更多体重表情</div>
+                    </div>
+                </div>
+                <div style="padding:16px;">
+                    <div style="font-size:13px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5;">
+                        选择体重变化时显示的表情主题，点击卡片即可切换
+                    </div>
+                    <div class="emoji-theme-grid" id="emojiThemeGrid"></div>
                 </div>
             </div>
         </div>
@@ -1162,7 +1249,8 @@
             weights: [],
             profile: { name: '', gender: '', birthday: '', height: '' },
             targetWeight: null,
-            avatarImage: null
+            avatarImage: null,
+            emojiTheme: 'faces'
         };
         let trendChart = null;
         let currentPeriod = 7;
@@ -1469,6 +1557,77 @@
             if (isNaN(target) || target < 20 || target > 300) { showToast('请输入有效的目标体重', 'error'); return; }
             appData.targetWeight = target; saveData(); closeTargetSheet(); renderAll(); showToast('目标已设置');
         }
+        // 返回我的页
+        function backToProfile() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-profile').classList.add('active');
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            document.querySelector('.page-container').scrollTop = 0;
+        }
+        // 体重表情主题
+        const emojiThemes = [
+            { id: 'weather', name: '晴雨', down: '☀️', up: '🌧️', flat: '⛅' },
+            { id: 'faces', name: '小圆脸', down: '😊', up: '🤢', flat: '😐' },
+            { id: 'arrows', name: '箭头', down: '⬇️', up: '⬆️', flat: '➡️' },
+            { id: 'pets', name: '萌宠', down: '🐶', up: '🐱', flat: '🦆' },
+            { id: 'dog', name: '焦糖狗', down: '🐕', up: '🦴', flat: '🐩' },
+            { id: 'cat', name: '毛线猫', down: '😺', up: '😼', flat: '💤' },
+            { id: 'flowers', name: '花朵', down: '🌸', up: '🌺', flat: '🌻' },
+            { id: 'fruits', name: '水果', down: '🍎', up: '🍇', flat: '🥭' },
+            { id: 'pixels', name: '像素', down: '❤️', up: '🌵', flat: 'icon/emoji-frog.png' },
+            { id: 'vegetables', name: '蔬菜', down: 'icon/emoji-tomato.png', up: 'icon/emoji-macadamia.png', flat: 'icon/emoji-avocado.png' },
+            { id: 'trendy', name: '潮流表情', down: 'icon/emoji-smile.png', up: 'icon/emoji-flame.png', flat: 'icon/emoji-confused.png' },
+            { id: 'icecream', name: '雪糕', down: 'icon/emoji-icecream-red.png', up: 'icon/emoji-icecream-black.png', flat: 'icon/emoji-icecream-green.png' },
+            { id: 'animals', name: '动物', down: 'icon/emoji-whale.png', up: 'icon/emoji-crab.png', flat: 'icon/emoji-lion.png' },
+            { id: 'childhood', name: '童年', down: 'icon/emoji-pikachu.png', up: 'icon/emoji-blackcat.png', flat: 'icon/emoji-snoopy.png' }
+        ];
+        function renderEmojiIcon(val) {
+            if (val && val.endsWith('.png')) {
+                return `<img src="${val}" style="width:32px; height:32px; object-fit:contain;" alt="${val}">`;
+            }
+            return val;
+        }
+        function openEmojiEdit() {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-emoji-edit').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+            renderEmojiThemes();
+        }
+        function renderEmojiThemes() {
+            const current = appData.emojiTheme || 'faces';
+            const grid = document.getElementById('emojiThemeGrid');
+            grid.innerHTML = emojiThemes.map(t => `
+                <div class="emoji-theme-card ${t.id === current ? 'active' : ''}" onclick="selectEmojiTheme('${t.id}')">
+                    <div class="badge-in-use">✓ 在用</div>
+                    <div class="theme-name">${t.name}</div>
+                    <div class="theme-icons">
+                        <div class="theme-icon-item">
+                            <div class="theme-icon-emoji">${renderEmojiIcon(t.down)}</div>
+                            <div class="theme-icon-label">下降</div>
+                        </div>
+                        <div class="theme-icon-item">
+                            <div class="theme-icon-emoji">${renderEmojiIcon(t.up)}</div>
+                            <div class="theme-icon-label">上涨</div>
+                        </div>
+                        <div class="theme-icon-item">
+                            <div class="theme-icon-emoji">${renderEmojiIcon(t.flat)}</div>
+                            <div class="theme-icon-label">不变</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        function selectEmojiTheme(themeId) {
+            appData.emojiTheme = themeId;
+            saveData();
+            const theme = emojiThemes.find(t => t.id === themeId);
+            document.getElementById('showEmojiName').textContent = theme ? theme.name : '小圆脸';
+            renderEmojiThemes();
+            renderRecordPage();
+            showToast('表情主题已切换');
+        }
         document.getElementById('targetSheet').addEventListener('click', function(e) { if (e.target === this) closeTargetSheet(); });
 
         // 快捷查看
@@ -1707,7 +1866,7 @@
         }
         function clearAllData() {
             showConfirm('清空数据', '将删除所有体重记录和个人信息，此操作不可撤销！', () => {
-                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null };
+                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces' };
                 saveData(); renderAll(); showToast('所有数据已清空');
             });
         }
@@ -1756,18 +1915,20 @@
             const emptyEl = document.getElementById('emptyState');
             if (sorted.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
             emptyEl.style.display = 'none';
+            const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
             listEl.innerHTML = sorted.map((item, index) => {
                 const prev = sorted[index + 1];
                 let changeHtml = '<span class="change flat">— 首条</span>';
+                let emojiType = 'flat';
                 if (prev) {
                     const diff = item.weight - prev.weight;
-                    if (diff > 0) changeHtml = `<span class="change up">▲ +${diff.toFixed(1)}</span>`;
-                    else if (diff < 0) changeHtml = `<span class="change down">▼ ${diff.toFixed(1)}</span>`;
+                    if (diff > 0) { changeHtml = `<span class="change up">▲ +${diff.toFixed(1)}</span>`; emojiType = 'up'; }
+                    else if (diff < 0) { changeHtml = `<span class="change down">▼ ${diff.toFixed(1)}</span>`; emojiType = 'down'; }
                     else changeHtml = '<span class="change flat">— 持平</span>';
                 }
                 const noteText = item.note ? ` · ${item.note}` : '';
                 return `<div class="record-card">
-                    <div class="record-icon">⚖️</div>
+                    <div class="record-icon">${renderEmojiIcon(currentTheme[emojiType])}</div>
                     <div class="record-info"><div class="date">${item.date}${noteText}</div><div class="time">${formatTime(item.createdAt)}</div></div>
                     <div class="record-weight"><div class="value">${item.weight}<span class="unit"> kg</span></div>${changeHtml}</div>
                     <div class="record-actions">
@@ -2023,6 +2184,8 @@
             document.getElementById('showAge').textContent = age != null ? `${age} 岁` : '--';
             document.getElementById('showHeight').textContent = p.height ? `${p.height} cm` : '未设置';
             document.getElementById('showTarget').textContent = appData.targetWeight ? `${appData.targetWeight} kg` : '未设置';
+            const emojiTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces'));
+            document.getElementById('showEmojiName').textContent = emojiTheme ? emojiTheme.name : '小圆脸';
 
             const sorted = [...appData.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latest = sorted[0];
