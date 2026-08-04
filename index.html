@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>个人健康工作台</title>
+    <title>月半日记</title>
 
     <!-- PWA 核心 -->
     <link rel="manifest" href="manifest.json">
@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="健康记录">
+    <meta name="apple-mobile-web-app-title" content="月半日记">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -25,7 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; }
 
         :root {
             --primary: #2AB5B0;
@@ -50,11 +50,17 @@
             --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
         }
 
+        html, body {
+            overscroll-behavior: none;
+            touch-action: manipulation;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "HarmonyOS Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             overflow-x: hidden;
@@ -64,6 +70,7 @@
             width: 100%;
             max-width: 430px;
             min-height: 100vh;
+            min-height: 100dvh;
             background: var(--bg);
             position: relative;
             display: flex;
@@ -73,7 +80,14 @@
 
         @media (min-width: 431px) {
             body { background: #E0E0E0; padding: 20px 0; overflow: hidden; }
-            .app-frame { border-radius: 32px; height: calc(100vh - 40px); max-height: 900px; overflow: hidden; }
+            .app-frame { border-radius: 32px; height: calc(100vh - 40px); height: calc(100dvh - 40px); max-height: 900px; overflow: hidden; }
+        }
+
+        /* 平板适配：宽度放大 */
+        @media (min-width: 768px) {
+            .app-frame { max-width: 500px; }
+            .bottom-nav { max-width: 500px; }
+            .bottom-sheet { max-width: 500px; }
         }
 
         .page-container {
@@ -168,14 +182,23 @@
         }
         .section-title .count { font-size: 12px; color: var(--text-secondary); font-weight: 400; }
 
-        .record-list { padding: 0 16px; }
+        .record-list { padding: 0 16px; overflow: hidden; }
+
+        .record-card-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border-radius: 14px;
+        }
 
         .record-card {
             background: var(--card-bg); border-radius: 14px;
-            padding: 14px 16px; margin-bottom: 10px;
+            padding: 14px 16px;
             box-shadow: var(--shadow);
             display: flex; align-items: center; gap: 12px;
-            transition: transform 0.15s;
+            position: relative; z-index: 1;
+            transition: transform 0.25s ease;
+            touch-action: pan-y;
         }
         .record-card:active { transform: scale(0.98); }
 
@@ -193,23 +216,311 @@
         .record-weight { text-align: right; flex-shrink: 0; }
         .record-weight .value { font-size: 18px; font-weight: 700; }
         .record-weight .unit { font-size: 11px; color: var(--text-secondary); }
-        .record-weight .change { font-size: 12px; margin-top: 2px; font-weight: 500; }
+
+        .record-change { flex-shrink: 0; text-align: left; min-width: 56px; }
+        .record-change .change { font-size: 13px; font-weight: 600; display: block; }
         .change.down { color: var(--success); }
         .change.up { color: var(--danger); }
         .change.flat { color: var(--text-secondary); }
 
-        .record-actions { display: flex; gap: 6px; margin-left: 4px; }
-        .record-actions .act-btn {
-            width: 30px; height: 30px; border: none; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; cursor: pointer; transition: all 0.15s;
+        .record-actions {
+            position: absolute; top: 0; right: 0; bottom: 0;
+            display: flex; gap: 1px; z-index: 0;
         }
-        .act-btn.edit { background: #EBF5FB; color: #2980B9; }
-        .act-btn.delete { background: var(--danger-light); color: var(--danger); }
+        .record-actions .act-btn {
+            width: 64px; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; cursor: pointer; transition: all 0.15s;
+        }
+        .act-btn.edit { background: #2980B9; color: white; }
+        .act-btn.delete { background: var(--danger); color: white; }
 
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
         .empty-state .emoji { font-size: 56px; margin-bottom: 16px; }
         .empty-state p { font-size: 14px; }
+
+        /* ========== 备忘录页 ========== */
+        .notes-search-wrap {
+            display: flex; align-items: center; gap: 8px;
+            background: var(--card-bg); border-radius: 12px;
+            padding: 10px 14px; box-shadow: var(--shadow);
+        }
+        .notes-search-icon { font-size: 16px; opacity: 0.5; }
+        .notes-search-input {
+            flex: 1; border: none; outline: none; font-size: 14px;
+            color: var(--text); font-family: inherit; background: transparent;
+        }
+        .notes-count-bar {
+            padding: 10px 2px 6px; font-size: 13px; color: var(--text-secondary);
+        }
+        .notes-category-bar {
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .notes-category-bar::-webkit-scrollbar { display: none; }
+        .note-cat-pill {
+            flex-shrink: 0; padding: 6px 14px; border-radius: 20px;
+            font-size: 13px; border: 1px solid var(--border);
+            background: var(--card-bg); color: var(--text-secondary);
+            cursor: pointer; transition: all 0.2s; white-space: nowrap;
+        }
+        .note-cat-pill.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+        }
+        .notes-list {
+            display: flex; flex-direction: column; gap: 10px;
+            padding-bottom: 20px;
+        }
+        .note-card-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px;
+        }
+        .note-card {
+            background: var(--card-bg); border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow: var(--shadow); cursor: pointer;
+            transition: transform 0.25s ease;
+            display: flex; flex-direction: column;
+            min-height: 80px;
+            position: relative; z-index: 1;
+            touch-action: pan-y;
+        }
+        .note-card:active { transform: scale(0.98); }
+        .note-card-actions {
+            position: absolute; top: 0; right: 0; bottom: 0;
+            display: flex; z-index: 0;
+        }
+        .note-card-actions .act-btn {
+            width: 72px; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; cursor: pointer; transition: all 0.15s;
+        }
+        .note-card-actions .act-btn.delete { background: var(--danger); color: white; }
+        .note-card-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .note-card-title {
+            font-size: 15px; font-weight: 600; color: var(--text);
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1;
+        }
+        .note-card-cat {
+            font-size: 11px; padding: 2px 8px; border-radius: 10px;
+            flex-shrink: 0; margin-left: 8px;
+        }
+        .note-card-content {
+            font-size: 13px; color: var(--text-secondary); line-height: 1.5;
+            overflow: hidden; display: -webkit-box;
+            -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            flex: 1;
+        }
+        .note-card-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-top: 8px;
+        }
+        .note-card-date { font-size: 11px; color: var(--text-light); }
+        .note-card-images { display: flex; gap: 4px; margin-top: 8px; }
+        .note-card-images img {
+            width: 60px; height: 60px; border-radius: 8px; object-fit: cover;
+        }
+        .notes-empty { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        .notes-empty .emoji { font-size: 56px; margin-bottom: 16px; }
+        .notes-empty p { font-size: 14px; }
+
+        /* 宫格视图 */
+        .notes-list.grid-view {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: stretch;
+        }
+        .notes-list.grid-view .note-card-wrapper {
+            overflow: hidden; border-radius: 14px;
+            display: flex; flex-direction: column;
+        }
+        .notes-list.grid-view .note-card {
+            min-height: 100px; height: 100%;
+        }
+        .notes-list.grid-view .note-card-content {
+            -webkit-line-clamp: 4;
+        }
+        .notes-list.grid-view .note-card-images img {
+            width: 48px; height: 48px; border-radius: 6px;
+        }
+
+        /* 批量删除模式 */
+        .notes-list.batch-mode .note-card-wrapper {
+            padding-right: 40px;
+        }
+        .note-checkbox {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            width: 22px; height: 22px; border-radius: 50%;
+            border: 2px solid var(--border); background: var(--card-bg);
+            display: none; align-items: center; justify-content: center;
+            z-index: 3; cursor: pointer; transition: all 0.2s;
+        }
+        .note-checkbox.checked {
+            background: var(--primary); border-color: var(--primary);
+        }
+        .note-checkbox.checked::after {
+            content: '✓'; color: white; font-size: 13px; font-weight: 700;
+        }
+        .notes-list.batch-mode .note-checkbox {
+            display: flex;
+        }
+        .notes-list.batch-mode .note-card {
+            pointer-events: none;
+        }
+        .notes-list.batch-mode .note-card-actions {
+            display: none;
+        }
+
+        /* 批量删除底部栏 */
+        .batch-delete-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: var(--card-bg); box-shadow: 0 -2px 12px rgba(0,0,0,0.1);
+            display: flex; align-items: center; gap: 12px;
+            padding: 14px 16px; padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+            z-index: 200;
+        }
+        .batch-delete-check-all {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 14px; color: var(--text); cursor: pointer;
+            flex-shrink: 0;
+        }
+        .batch-delete-btn {
+            flex: 1; padding: 12px; border: none; border-radius: 10px;
+            background: var(--danger); color: white;
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            font-family: inherit; transition: opacity 0.2s;
+        }
+        .batch-delete-btn:disabled { opacity: 0.4; }
+        .batch-delete-btn:active { opacity: 0.8; }
+        .batch-cancel-btn {
+            padding: 12px 18px; border: none; border-radius: 10px;
+            background: var(--bg); color: var(--text-secondary);
+            font-size: 15px; font-weight: 600; cursor: pointer;
+            font-family: inherit; flex-shrink: 0;
+        }
+
+        /* 分类管理 */
+        .note-cat-add {
+            flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+            border: 1px dashed var(--border); background: var(--card-bg);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px; color: var(--text-secondary); cursor: pointer;
+            transition: all 0.2s;
+        }
+        .note-cat-add:active { background: var(--bg); transform: scale(0.92); }
+        .note-cat-pill.custom {
+            position: relative;
+        }
+        .note-cat-pill.long-press-active {
+            transform: scale(0.92); opacity: 0.7;
+        }
+        .note-cat-pill .cat-delete-x {
+            position: absolute; top: -4px; right: -4px;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--danger); color: white; border: 1.5px solid var(--card-bg);
+            font-size: 10px; display: none;
+            align-items: center; justify-content: center; cursor: pointer;
+            z-index: 5;
+        }
+        .note-cat-pill.edit-mode .cat-delete-x { display: flex; }
+        .note-cat-pill.edit-mode { animation: jiggle 0.4s ease-in-out infinite; }
+        @keyframes jiggle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+        .cat-sheet-input {
+            width: 100%; padding: 12px 14px;
+            border: 2px solid var(--border); border-radius: 10px;
+            font-size: 16px; color: var(--text);
+            outline: none; font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        .cat-sheet-input:focus { border-color: var(--primary); }
+        .cat-color-grid {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px;
+        }
+        .cat-color-dot {
+            width: 32px; height: 32px; border-radius: 50%;
+            cursor: pointer; border: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .cat-color-dot.selected { border-color: var(--text); transform: scale(1.15); }
+
+        /* ========== 笔记编辑弹窗 ========== */
+        .note-sheet { max-height: 90vh; max-height: 90dvh; display: flex; flex-direction: column; overflow-y: auto; }
+        .note-title-input {
+            width: 100%; border: none; outline: none;
+            font-size: 20px; font-weight: 700; color: var(--text);
+            font-family: inherit; padding: 4px 0;
+        }
+        .note-meta-bar {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .note-category-select {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 13px; color: var(--primary); cursor: pointer;
+            padding: 4px 10px; border-radius: 12px; background: var(--primary-bg);
+        }
+        .note-timestamp { font-size: 12px; color: var(--text-light); }
+        .note-category-dropdown {
+            background: var(--card-bg); border-radius: 12px;
+            box-shadow: var(--shadow-md); padding: 6px 0; margin-bottom: 10px;
+            z-index: 10;
+        }
+        .note-cat-option {
+            padding: 10px 16px; font-size: 14px; cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .note-cat-option:active { background: var(--bg); }
+        .note-cat-option.active { color: var(--primary); font-weight: 600; }
+        .note-content-input {
+            width: 100%; border: 1px solid var(--border); border-radius: 10px;
+            padding: 12px 14px; font-size: 16px; color: var(--text);
+            font-family: inherit; outline: none; resize: none; min-height: 120px;
+            line-height: 1.6;
+        }
+        .note-image-preview {
+            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
+        }
+        .note-image-preview .img-wrap {
+            position: relative; width: 72px; height: 72px;
+        }
+        .note-image-preview img {
+            width: 72px; height: 72px; border-radius: 8px; object-fit: cover;
+        }
+        .note-image-preview .img-remove {
+            position: absolute; top: -6px; right: -6px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--danger); color: white; border: none;
+            font-size: 12px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+        }
+        .note-toolbar {
+            display: flex; gap: 8px; padding: 8px 0;
+        }
+        .note-tool-btn {
+            width: 36px; height: 36px; border-radius: 10px; border: none;
+            background: var(--bg); font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .note-tool-btn:active { background: var(--border); }
+        .note-checklist { margin-bottom: 10px; }
+        .checklist-item {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 0; border-bottom: 1px solid var(--border);
+        }
+        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+        .checklist-item input[type="text"] {
+            flex: 1; border: none; outline: none; font-size: 14px;
+            color: var(--text); font-family: inherit; background: transparent;
+        }
+        .checklist-item.done input[type="text"] { text-decoration: line-through; color: var(--text-light); }
+        .checklist-item .del-item {
+            color: var(--danger); font-size: 18px; cursor: pointer; flex-shrink: 0;
+        }
 
         /* FAB */
         .fab {
@@ -555,9 +866,9 @@
         .bottom-sheet {
             background: var(--card-bg); border-radius: 24px 24px 0 0;
             width: 100%; max-width: 430px;
-            padding: 20px; padding-bottom: 40px;
+            padding: 20px; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
             animation: slideUp 0.3s ease;
-            max-height: 85vh; overflow-y: auto;
+            max-height: 85vh; max-height: 85dvh; overflow-y: auto;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
@@ -572,7 +883,7 @@
         .sheet-form-group input, .sheet-form-group select {
             width: 100%; padding: 12px 14px;
             border: 2px solid var(--border); border-radius: 10px;
-            font-size: 15px; color: var(--text);
+            font-size: 16px; color: var(--text);
             outline: none; font-family: inherit;
             transition: border-color 0.2s;
         }
@@ -586,6 +897,12 @@
         .sheet-btn.primary { background: var(--primary); color: white; }
         .sheet-btn.primary:active { background: var(--primary-dark); }
         .sheet-btn.secondary { background: var(--bg); color: var(--text-secondary); }
+        .sheet-btn-row {
+            display: flex; gap: 10px; margin-top: 8px;
+        }
+        .sheet-btn-row .sheet-btn {
+            flex: 1; margin-top: 0;
+        }
 
         /* 备注显示框 */
         .note-display {
@@ -802,9 +1119,9 @@
             <div class="page active" id="page-record">
                 <div class="sticky-nav-bar">
                     <div class="header-top">
-                        <div class="header-title">体重记录</div>
+                        <div class="header-title">体重</div>
                         <div class="header-icons" style="position:relative;">
-                            <div class="icon-btn" onclick="openDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
+                            <div class="icon-btn" onclick="openWeightDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenu')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenu">
                                 <div class="dropdown-item" onclick="openQuickView('health')">
@@ -853,6 +1170,56 @@
                     <div class="emoji">📋</div>
                     <p>暂无记录，点击右下角 + 添加</p>
                 </div>
+            </div>
+
+            <!-- ============ 备忘录 ============ -->
+            <div class="page" id="page-notes">
+                <div class="sticky-nav-bar">
+                    <div class="header-top">
+                        <div class="header-title">全部笔记</div>
+                        <div class="header-icons" style="position:relative;">
+                            <div class="icon-btn" onclick="openNotesDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
+                            <div class="icon-btn" onclick="toggleDropdown('dropdownMenuNotes')">⋯</div>
+                            <div class="dropdown-menu" id="dropdownMenuNotes">
+                                <div class="dropdown-item" onclick="toggleNotesView()">
+                                    <span class="icon">▦</span> <span id="notesViewLabel">宫格视图</span>
+                                </div>
+                                <div class="dropdown-item" onclick="enterBatchDeleteMode()">
+                                    <span class="icon">🗑️</span> 批量删除
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 12px 16px;">
+                    <!-- 搜索框 -->
+                    <div class="notes-search-wrap">
+                        <span class="notes-search-icon">🔍</span>
+                        <input type="text" id="notesSearchInput" class="notes-search-input" placeholder="搜索笔记标题或内容" oninput="renderNotesList()">
+                    </div>
+                    <!-- 笔记统计 -->
+                    <div class="notes-count-bar">
+                        <span id="notesTotalCount">0 条笔记</span>
+                    </div>
+                    <!-- 分类筛选 -->
+                    <div class="notes-category-bar" id="notesCategoryBar"></div>
+                    <!-- 笔记列表 -->
+                    <div id="notesList" class="notes-list"></div>
+                    <!-- 空状态 -->
+                    <div id="notesEmpty" class="notes-empty" style="display:none;">
+                        <div class="emoji">🗒️</div>
+                        <p>暂无笔记，点击右下角 + 创建</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 批量删除底部操作栏 -->
+            <div class="batch-delete-bar" id="batchDeleteBar" style="display:none;">
+                <div class="batch-delete-check-all" onclick="toggleSelectAllNotes()">
+                    <span id="batchSelectAllIcon">○</span> 全选
+                </div>
+                <button class="batch-delete-btn" id="batchDeleteBtn" onclick="confirmBatchDelete()" disabled>删除</button>
+                <button class="batch-cancel-btn" onclick="exitBatchDeleteMode()">取消</button>
             </div>
 
             <!-- ============ 趋势 ============ -->
@@ -1018,7 +1385,7 @@
                 </div>
 
                 <div style="text-align:center; padding:16px; color:var(--text-light); font-size:12px;">
-                    个人健康工作台 v4.0 · 数据本地存储
+                    月半日记 v4.0 · 数据本地存储
                 </div>
             </div>
 
@@ -1105,25 +1472,25 @@
                     </div>
                 </div>
                 <div style="padding:16px;">
-                    <!-- 下载数据 -->
+                    <!-- 数据备份 -->
                     <div class="setting-group" style="margin-bottom:16px;">
                         <div class="setting-item" onclick="openDownloadSheet()" style="border-top:none;">
                             <div class="setting-icon" style="background:#EBF5FB;"><img src="icon/icon-export.png" style="width:18px; height:18px; object-fit:contain;"></div>
-                            <div class="setting-label">下载数据</div>
+                            <div class="setting-label">数据备份</div>
                             <div class="setting-value"><span class="arrow">›</span></div>
                         </div>
-                        <div style="padding:0 16px 12px; font-size:12px; color:var(--text-secondary); line-height:1.5;">将上传过的数据下载到本地。建议先下载再上传，保持数据一致</div>
+                        <div style="padding:0 16px 12px; font-size:12px; color:var(--text-secondary); line-height:1.5;">导出数据到本地。JSON格式含完整数据(含备忘录图片)，Excel格式仅含文字内容</div>
                     </div>
 
-                    <!-- 上传数据 -->
+                    <!-- 数据导入 -->
                     <div class="setting-group" style="margin-bottom:16px;">
                         <div class="setting-item" onclick="document.getElementById('importFileInput').click()" style="border-top:none;">
                             <div class="setting-icon" style="background:var(--success-light);"><img src="icon/icon-import.png" style="width:18px; height:18px; object-fit:contain;"></div>
-                            <div class="setting-label">上传数据</div>
+                            <div class="setting-label">数据导入</div>
                             <div class="setting-value"><span class="arrow">›</span></div>
                         </div>
-                        <div style="padding:0 16px 12px; font-size:12px; color:var(--text-secondary); line-height:1.5;">将数据上传到该应用，保证数据不丢失。建议先下载再上传，保持数据一致</div>
-                        <input type="file" id="importFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleImport(event)">
+                        <div style="padding:0 16px 12px; font-size:12px; color:var(--text-secondary); line-height:1.5;">支持 Excel(.xlsx) 和备份文件(.json) 导入，可选择覆盖或合并</div>
+                        <input type="file" id="importFileInput" accept=".xlsx,.xls,.json" style="display:none;" onchange="handleImport(event)">
                     </div>
 
                     <!-- 清空所有数据 -->
@@ -1155,11 +1522,71 @@
             </div>
         </div>
 
-        <button class="fab" id="fabBtn" onclick="openAddSheet()">+</button>
+        <button class="fab" id="fabBtn" onclick="onFabClick()">+</button>
+
+        <!-- ============ 笔记编辑弹窗 ============ -->
+        <div class="sheet-overlay" id="noteSheet">
+            <div class="bottom-sheet note-sheet">
+                <div class="sheet-handle"></div>
+                <input type="hidden" id="editNoteId">
+                <div class="sheet-form-group">
+                    <input type="text" id="noteTitle" class="note-title-input" placeholder="标题" maxlength="50">
+                </div>
+                <div class="note-meta-bar">
+                    <div class="note-category-select" id="noteCategorySelect" onclick="toggleNoteCategoryMenu()">
+                        <span id="noteCategoryLabel">未分类</span><span class="arrow">▾</span>
+                    </div>
+                    <span class="note-timestamp" id="noteTimestamp"></span>
+                </div>
+                <div class="note-category-dropdown" id="noteCategoryDropdown" style="display:none;"></div>
+                <div class="sheet-form-group" style="flex:1; display:flex; flex-direction:column;">
+                    <textarea id="noteContent" class="note-content-input" placeholder="开始记录..." rows="8"></textarea>
+                </div>
+                <!-- 图片预览区 -->
+                <div id="noteImagePreview" class="note-image-preview" style="display:none;"></div>
+                <!-- 工具栏 -->
+                <div class="note-toolbar">
+                    <button class="note-tool-btn" onclick="document.getElementById('noteImageInput').click()" title="插入图片">🖼️</button>
+                    <button class="note-tool-btn" onclick="addChecklistItem()" title="清单">☑️</button>
+                    <input type="file" id="noteImageInput" accept="image/*" multiple style="display:none;" onchange="handleNoteImageUpload(event)">
+                </div>
+                <!-- 清单区 -->
+                <div id="noteChecklist" class="note-checklist" style="display:none;"></div>
+                <div class="sheet-btn-row">
+                    <button class="sheet-btn secondary" onclick="closeNoteSheet()">取消</button>
+                    <button class="sheet-btn primary" onclick="saveNote()">保存</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ 新建/编辑笔记分类弹窗 ============ -->
+        <div class="sheet-overlay" id="catSheet">
+            <div class="bottom-sheet">
+                <div class="sheet-handle"></div>
+                <div class="sheet-title" id="catSheetTitle">新建分类</div>
+                <input type="hidden" id="editCatId">
+                <div class="sheet-form-group">
+                    <label>分类名称</label>
+                    <input type="text" id="catNameInput" class="cat-sheet-input" placeholder="输入分类名称" maxlength="10">
+                </div>
+                <div class="sheet-form-group">
+                    <label>选择颜色</label>
+                    <div class="cat-color-grid" id="catColorGrid"></div>
+                </div>
+                <div class="sheet-btn-row">
+                    <button class="sheet-btn secondary" onclick="closeCatSheet()">取消</button>
+                    <button class="sheet-btn primary" onclick="saveCategory()">确定</button>
+                </div>
+                <button id="catDeleteBtn" class="sheet-btn" style="color:var(--danger); display:none; margin-top:8px;" onclick="deleteCategory()">删除此分类</button>
+            </div>
+        </div>
 
         <nav class="bottom-nav">
             <button class="nav-item active" data-page="record">
-                <span class="nav-icon">📝</span><span class="nav-label">体重记录</span>
+                <span class="nav-icon">📝</span><span class="nav-label">体重</span>
+            </button>
+            <button class="nav-item" data-page="notes">
+                <span class="nav-icon">🗒️</span><span class="nav-label">备忘录</span>
             </button>
             <button class="nav-item" data-page="trend">
                 <span class="nav-icon">📈</span><span class="nav-label">趋势</span>
@@ -1192,7 +1619,7 @@
             <div class="sheet-title" id="recordSheetTitle">添加体重记录</div>
             <input type="hidden" id="editRecordId">
             <div class="sheet-form-group"><label>日期</label><input type="date" id="recordDate"></div>
-            <div class="sheet-form-group"><label>体重 (kg)</label><input type="number" id="recordWeight" step="0.1" min="20" max="300" placeholder="例如：65.5"></div>
+            <div class="sheet-form-group"><label>体重 (kg)</label><input type="number" id="recordWeight" step="0.01" min="20" max="300" placeholder="例如：65.50"></div>
             <div class="sheet-form-group">
                 <label>备注</label>
                 <input type="hidden" id="recordNote">
@@ -1201,8 +1628,10 @@
                     <span class="note-arrow">›</span>
                 </div>
             </div>
-            <button class="sheet-btn primary" id="saveRecordBtn">保存</button>
-            <button class="sheet-btn secondary" onclick="closeRecordSheet()">取消</button>
+            <div class="sheet-btn-row">
+                <button class="sheet-btn secondary" onclick="closeRecordSheet()">取消</button>
+                <button class="sheet-btn primary" id="saveRecordBtn">保存</button>
+            </div>
         </div>
     </div>
 
@@ -1245,9 +1674,19 @@
     <div class="sheet-overlay" id="downloadSheet">
         <div class="bottom-sheet">
             <div class="sheet-handle"></div>
-            <div class="sheet-title">下载数据</div>
+            <div class="sheet-title">数据备份</div>
             <div style="padding:4px 0 16px; font-size:13px; color:var(--text-secondary); line-height:1.5;">
-                默认导出全部记录，可选择日期范围和数据分类进行筛选
+                选择格式和范围进行导出
+            </div>
+            <div class="sheet-form-group">
+                <label>文件格式</label>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;" id="downloadFormatBtns">
+                    <button class="date-quick-btn active" onclick="selectDownloadFormat('json', this)">JSON备份</button>
+                    <button class="date-quick-btn" onclick="selectDownloadFormat('excel', this)">Excel表格</button>
+                </div>
+                <div style="font-size:12px; color:var(--text-secondary); line-height:1.5;" id="formatDesc">
+                    JSON格式包含完整数据(含备忘录图片)，可用于恢复；Excel格式仅含文字内容，便于查看
+                </div>
             </div>
             <div class="sheet-form-group">
                 <label>日期范围</label>
@@ -1268,12 +1707,37 @@
                 <div style="display:flex; gap:8px; flex-wrap:wrap;" id="downloadCatBtns">
                     <button class="date-quick-btn active" onclick="toggleDownloadCat('all', this)">全部</button>
                     <button class="date-quick-btn active" onclick="toggleDownloadCat('weight', this)">体重</button>
-                    <button class="date-quick-btn" disabled style="opacity:0.5; cursor:not-allowed;">经期</button>
-                    <button class="date-quick-btn" disabled style="opacity:0.5; cursor:not-allowed;">日记</button>
+                    <button class="date-quick-btn" onclick="toggleDownloadCat('period', this)">生理期</button>
+                    <button class="date-quick-btn" onclick="toggleDownloadCat('profile', this)">个人信息</button>
+                    <button class="date-quick-btn" onclick="toggleDownloadCat('notes', this)">备忘录</button>
                 </div>
             </div>
-            <button class="sheet-btn primary" onclick="exportData()">下载</button>
-            <button class="sheet-btn secondary" onclick="closeDownloadSheet()">取消</button>
+            <div class="sheet-btn-row">
+                <button class="sheet-btn secondary" onclick="closeDownloadSheet()">取消</button>
+                <button class="sheet-btn primary" onclick="exportData()">下载</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入模式选择弹窗 -->
+    <div class="sheet-overlay" id="importModeSheet">
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">选择导入方式</div>
+            <div style="padding:4px 0 16px; font-size:13px; color:var(--text-secondary); line-height:1.5;" id="importModeDesc">
+                检测到备份文件，请选择导入方式
+            </div>
+            <div class="sheet-btn-row" style="flex-direction:column; gap:10px;">
+                <button class="sheet-btn primary" onclick="executeImportJSON('overwrite')" style="width:100%;">
+                    <div style="font-size:15px; font-weight:600;">覆盖导入</div>
+                    <div style="font-size:12px; opacity:0.8; margin-top:2px;">替换当前所有数据</div>
+                </button>
+                <button class="sheet-btn secondary" onclick="executeImportJSON('merge')" style="width:100%;">
+                    <div style="font-size:15px; font-weight:600;">合并导入</div>
+                    <div style="font-size:12px; opacity:0.8; margin-top:2px;">保留当前数据，追加新记录</div>
+                </button>
+                <button class="sheet-btn secondary" onclick="closeImportModeSheet()" style="width:100%; border:none; color:var(--text-secondary);">取消</button>
+            </div>
         </div>
     </div>
 
@@ -1284,7 +1748,10 @@
             profile: { name: '', gender: '', birthday: '', height: '' },
             targetWeight: null,
             avatarImage: null,
-            emojiTheme: 'faces'
+            emojiTheme: 'faces',
+            periods: [],
+            notes: [],
+            customNoteCategories: []
         };
         let trendChart = null;
         let currentPeriod = 7;
@@ -1299,6 +1766,9 @@
                     appData = Object.assign(appData, parsed);
                     appData.profile = Object.assign({name:'',gender:'',birthday:'',height:''}, parsed.profile || {});
                     if (parsed.avatarImage) appData.avatarImage = parsed.avatarImage;
+                    if (!Array.isArray(appData.notes)) appData.notes = [];
+                    if (!Array.isArray(appData.customNoteCategories)) appData.customNoteCategories = [];
+                    if (!Array.isArray(appData.periods)) appData.periods = [];
                 } catch(e) {}
             }
         }
@@ -1330,15 +1800,28 @@
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 const page = item.dataset.page;
+                // 离开备忘录页时退出批量删除模式
+                if (batchDeleteMode && page !== 'notes') exitBatchDeleteMode();
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById('page-' + page).classList.add('active');
-                document.getElementById('fabBtn').style.display = page === 'record' ? 'flex' : 'none';
+                document.getElementById('fabBtn').style.display = (page === 'record' || page === 'notes') ? 'flex' : 'none';
                 if (page === 'trend') setTimeout(renderTrendChart, 100);
+                if (page === 'notes') renderNotesPage();
                 document.querySelector('.page-container').scrollTop = 0;
             });
         });
+
+        // FAB 按钮：根据当前页面打开不同功能
+        function onFabClick() {
+            const activePage = document.querySelector('.page.active');
+            if (activePage && activePage.id === 'page-notes') {
+                openNoteSheet();
+            } else {
+                openAddSheet();
+            }
+        }
 
         // 下拉菜单
         function toggleDropdown(id) {
@@ -1351,6 +1834,10 @@
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.header-icons') && !e.target.closest('#dateDropdown') && !e.target.closest('#dateRangeBtn')) {
                 document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('show'));
+            }
+            if (!e.target.closest('.note-category-select') && !e.target.closest('.note-category-dropdown')) {
+                const dd = document.getElementById('noteCategoryDropdown');
+                if (dd) dd.style.display = 'none';
             }
         });
 
@@ -1520,7 +2007,7 @@
         document.getElementById('saveRecordBtn').addEventListener('click', () => {
             const id = document.getElementById('editRecordId').value;
             const date = document.getElementById('recordDate').value;
-            const weight = parseFloat(document.getElementById('recordWeight').value);
+            const weight = parseFloat(parseFloat(document.getElementById('recordWeight').value).toFixed(2));
             const note = document.getElementById('recordNote').value.trim();
             if (!date || isNaN(weight) || weight < 20 || weight > 300) { showToast('请输入有效的日期和体重', 'error'); return; }
             if (id) {
@@ -1534,6 +2021,8 @@
             saveData(); closeRecordSheet(); renderAll();
         });
         document.getElementById('recordSheet').addEventListener('click', function(e) { if (e.target === this) closeRecordSheet(); });
+        document.getElementById('noteSheet').addEventListener('click', function(e) { if (e.target === this) closeNoteSheet(); });
+        document.getElementById('catSheet').addEventListener('click', function(e) { if (e.target === this) closeCatSheet(); });
 
         function deleteRecord(id) {
             showConfirm('删除记录', '确定要删除这条体重记录吗？', () => {
@@ -1786,11 +2275,43 @@
         function openDownloadSheet() {
             // 重置为默认值
             setDownloadRange('all');
-            // 重置分类按钮：全部和体重默认激活
+            // 重置格式为JSON默认
+            selectDownloadFormat('json');
+            // 重置分类按钮：全部默认激活
             const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
             catBtns.forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent.trim() === '全部' || btn.textContent.trim() === '体重') {
+                if (btn.textContent.trim() === '全部') {
+                    btn.classList.add('active');
+                }
+            });
+            document.getElementById('downloadSheet').classList.add('show');
+        }
+        function openWeightDownloadSheet() {
+            // 重置为默认值
+            setDownloadRange('all');
+            // 重置格式为JSON默认
+            selectDownloadFormat('json');
+            // 默认选中体重
+            const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
+            catBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.trim() === '体重') {
+                    btn.classList.add('active');
+                }
+            });
+            document.getElementById('downloadSheet').classList.add('show');
+        }
+        function openNotesDownloadSheet() {
+            // 重置为默认值
+            setDownloadRange('all');
+            // 重置格式为JSON默认
+            selectDownloadFormat('json');
+            // 默认选中备忘录
+            const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
+            catBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.trim() === '备忘录') {
                     btn.classList.add('active');
                 }
             });
@@ -1824,17 +2345,49 @@
             });
         }
         function toggleDownloadCat(cat, btn) {
-            btn.classList.toggle('active');
-            // "全部"激活时体重默认激活
-            if (cat === 'all' && btn.classList.contains('active')) {
-                const weightBtn = Array.from(document.querySelectorAll('#downloadCatBtns .date-quick-btn'))
-                    .find(b => b.textContent.trim() === '体重');
-                if (weightBtn) weightBtn.classList.add('active');
+            const allBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
+            if (cat === 'all') {
+                // 点击"全部"：激活时全选，取消时全不选
+                const willActivate = !btn.classList.contains('active');
+                allBtns.forEach(b => {
+                    if (willActivate) b.classList.add('active');
+                    else b.classList.remove('active');
+                });
+            } else {
+                btn.classList.toggle('active');
+                // 检查是否所有具体分类都选中，更新"全部"按钮状态
+                const specificBtns = Array.from(allBtns).filter(b => b.textContent.trim() !== '全部');
+                const allActive = specificBtns.every(b => b.classList.contains('active'));
+                const allBtn = Array.from(allBtns).find(b => b.textContent.trim() === '全部');
+                if (allBtn) {
+                    if (allActive) allBtn.classList.add('active');
+                    else allBtn.classList.remove('active');
+                }
+            }
+        }
+
+        // 格式选择
+        function selectDownloadFormat(format, btn) {
+            document.querySelectorAll('#downloadFormatBtns .date-quick-btn').forEach(b => b.classList.remove('active'));
+            if (btn) {
+                btn.classList.add('active');
+            } else {
+                // 无btn参数时按format匹配
+                document.querySelectorAll('#downloadFormatBtns .date-quick-btn').forEach(b => {
+                    if ((format === 'json' && b.textContent.trim() === 'JSON备份') ||
+                        (format === 'excel' && b.textContent.trim() === 'Excel表格')) {
+                        b.classList.add('active');
+                    }
+                });
             }
         }
 
         // 导出/清空
         function exportData() {
+            // 获取文件格式
+            const isJSON = Array.from(document.querySelectorAll('#downloadFormatBtns .date-quick-btn'))
+                .find(b => b.textContent.trim() === 'JSON备份')?.classList.contains('active') ?? false;
+
             // 获取日期范围
             const startDate = document.getElementById('downloadStartDate')?.value || '';
             const endDate = document.getElementById('downloadEndDate')?.value || '';
@@ -1850,14 +2403,73 @@
 
             // 获取选中的分类（从按钮激活状态读取）
             const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
-            const catAll = Array.from(catBtns).find(b => b.textContent.trim() === '全部')?.classList.contains('active') ?? true;
-            const catWeight = Array.from(catBtns).find(b => b.textContent.trim() === '体重')?.classList.contains('active') ?? true;
+            const catAll = Array.from(catBtns).find(b => b.textContent.trim() === '全部')?.classList.contains('active') ?? false;
+            const catWeight = Array.from(catBtns).find(b => b.textContent.trim() === '体重')?.classList.contains('active') ?? false;
+            const catPeriod = Array.from(catBtns).find(b => b.textContent.trim() === '生理期')?.classList.contains('active') ?? false;
+            const catProfile = Array.from(catBtns).find(b => b.textContent.trim() === '个人信息')?.classList.contains('active') ?? false;
+            const catNotes = Array.from(catBtns).find(b => b.textContent.trim() === '备忘录')?.classList.contains('active') ?? false;
 
-            if (filteredWeights.length === 0 && !appData.profile.name) { showToast('暂无数据可下载', 'error'); return; }
+            // 按日期范围筛选笔记
+            let filteredNotes = [...(appData.notes || [])];
+            if (startDate) {
+                filteredNotes = filteredNotes.filter(n => (n.updatedAt || n.createdAt || '').split('T')[0] >= startDate);
+            }
+            if (endDate) {
+                filteredNotes = filteredNotes.filter(n => (n.updatedAt || n.createdAt || '').split('T')[0] <= endDate);
+            }
 
+            const hasWeightData = (catWeight || catAll) && filteredWeights.length > 0;
+            const hasNotesData = (catNotes || catAll) && filteredNotes.length > 0;
+            const hasProfileData = (catProfile || catAll) && (!!appData.profile.name || !!appData.profile.height || !!appData.profile.birthday);
+            const hasPeriodData = (catPeriod || catAll) && Array.isArray(appData.periods) && appData.periods.length > 0;
+
+            if (!hasWeightData && !hasNotesData && !hasProfileData && !hasPeriodData) {
+                showToast('暂无数据可下载', 'error'); return;
+            }
+
+            // 计算选中分类数和文件名后缀
+            const selectedCats = [catWeight, catPeriod, catProfile, catNotes].filter(Boolean).length;
+            const catLabel = catAll || selectedCats > 1 ? '全部数据'
+                : catWeight ? '体重数据'
+                : catPeriod ? '生理期数据'
+                : catProfile ? '个人信息'
+                : catNotes ? '备忘录数据'
+                : '全部数据';
+
+            // JSON格式导出
+            if (isJSON) {
+                const backup = {
+                    _type: 'health_workbench_backup',
+                    _version: 1,
+                    _exportDate: new Date().toISOString(),
+                    weights: (catWeight || catAll) ? filteredWeights : [],
+                    profile: (catProfile || catAll) ? appData.profile : { name: '', gender: '', birthday: '', height: '' },
+                    targetWeight: (catProfile || catAll) ? appData.targetWeight : null,
+                    avatarImage: (catProfile || catAll) ? appData.avatarImage : null,
+                    emojiTheme: (catProfile || catAll) ? appData.emojiTheme : 'faces',
+                    periods: (catPeriod || catAll) ? (appData.periods || []) : [],
+                    notes: (catNotes || catAll) ? filteredNotes : [],
+                    customNoteCategories: (catNotes || catAll) ? (appData.customNoteCategories || []) : []
+                };
+                const json = JSON.stringify(backup, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `月半日记_${catLabel}_${todayStr()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                closeDownloadSheet();
+                showToast('完整备份已下载');
+                return;
+            }
+
+            // Excel格式导出
             const wb = XLSX.utils.book_new();
 
-            // Sheet 1: 体重记录 (仅当勾选体重或全部时)
+            // Sheet: 体重记录 (仅当勾选体重或全部时)
             if (catWeight || catAll) {
                 const recordsData = filteredWeights.map(w => ({
                     '日期': w.date,
@@ -1870,52 +2482,207 @@
                 XLSX.utils.book_append_sheet(wb, ws1, '体重记录');
             }
 
-            // Sheet 2: 个人信息
-            const p = appData.profile;
-            const age = calcAge(p.birthday);
-            const profileData = [
-                { '项目': '姓名', '内容': p.name || '未设置' },
-                { '项目': '性别', '内容': p.gender === 'male' ? '男' : (p.gender === 'female' ? '女' : '未设置') },
-                { '项目': '生日', '内容': p.birthday || '未设置' },
-                { '项目': '年龄', '内容': age != null ? age + ' 岁' : '未设置' },
-                { '项目': '身高(cm)', '内容': p.height || '未设置' },
-                { '项目': '目标体重(kg)', '内容': appData.targetWeight || '未设置' }
-            ];
-            const ws2 = XLSX.utils.json_to_sheet(profileData);
-            ws2['!cols'] = [{ wch: 15 }, { wch: 25 }];
-            XLSX.utils.book_append_sheet(wb, ws2, '个人信息');
+            // Sheet: 个人信息 (仅当勾选个人信息或全部时)
+            if (catProfile || catAll) {
+                const p = appData.profile;
+                const age = calcAge(p.birthday);
+                const profileData = [
+                    { '项目': '姓名', '内容': p.name || '未设置' },
+                    { '项目': '性别', '内容': p.gender === 'male' ? '男' : (p.gender === 'female' ? '女' : '未设置') },
+                    { '项目': '生日', '内容': p.birthday || '未设置' },
+                    { '项目': '年龄', '内容': age != null ? age + ' 岁' : '未设置' },
+                    { '项目': '身高(cm)', '内容': p.height || '未设置' },
+                    { '项目': '目标体重(kg)', '内容': appData.targetWeight || '未设置' }
+                ];
+                const ws2 = XLSX.utils.json_to_sheet(profileData);
+                ws2['!cols'] = [{ wch: 15 }, { wch: 25 }];
+                XLSX.utils.book_append_sheet(wb, ws2, '个人信息');
+            }
 
-            // Sheet 3: 健康指标
-            const sorted = [...filteredWeights].sort((a, b) => new Date(b.date) - new Date(a.date));
-            const latest = sorted[0];
-            const bmi = calcBMI(latest?.weight, p.height);
-            const fat = calcBodyFat(bmi, age, p.gender);
-            const ideal = getIdealWeight(p.height);
-            const bmiStatus = getBMIStatus(bmi);
-            const healthData = [
-                { '指标': '最新体重', '数值': latest ? latest.weight + ' kg' : '无记录' },
-                { '指标': 'BMI', '数值': bmi ? bmi.toFixed(1) : '--' },
-                { '指标': 'BMI状态', '数值': bmiStatus.text },
-                { '指标': '体脂率', '数值': fat != null ? fat.toFixed(1) + '%' : '--' },
-                { '指标': '体脂状态', '数值': getFatStatus(fat, p.gender) },
-                { '指标': '理想体重', '数值': ideal ? ideal + ' kg' : '--' },
-                { '指标': '目标体重', '数值': appData.targetWeight ? appData.targetWeight + ' kg' : '未设置' },
-                { '指标': '距目标', '数值': (latest && appData.targetWeight) ? (latest.weight - appData.targetWeight).toFixed(1) + ' kg' : '--' },
-                { '指标': '记录总数', '数值': filteredWeights.length + ' 条' }
-            ];
-            const ws3 = XLSX.utils.json_to_sheet(healthData);
-            ws3['!cols'] = [{ wch: 15 }, { wch: 20 }];
-            XLSX.utils.book_append_sheet(wb, ws3, '健康指标');
+            // Sheet: 生理期 (仅当勾选生理期或全部时)
+            if (catPeriod || catAll) {
+                const periodData = (appData.periods || []).map(p => ({
+                    '开始日期': p.startDate || '',
+                    '结束日期': p.endDate || '',
+                    '天数': p.days || '',
+                    '备注': p.note || ''
+                }));
+                const ws5 = XLSX.utils.json_to_sheet(periodData.length > 0 ? periodData : [{ '开始日期': '', '结束日期': '', '天数': '', '备注': '' }]);
+                ws5['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 20 }];
+                XLSX.utils.book_append_sheet(wb, ws5, '生理期');
+            }
 
-            XLSX.writeFile(wb, `健康数据_${todayStr()}.xlsx`);
+            // Sheet: 备忘录 (仅当勾选备忘录或全部时)
+            if (catNotes || catAll) {
+                const notesData = filteredNotes.map(n => {
+                    const cat = getNoteCat(n.category || 'uncategorized');
+                    const checklistText = (n.checklist || []).map(c => (c.done ? '☑' : '☐') + ' ' + c.text).join('\n');
+                    return {
+                        '标题': n.title || '',
+                        '分类': cat.name,
+                        '内容': n.content || '',
+                        '清单': checklistText,
+                        '图片数': (n.images || []).length,
+                        '创建时间': n.createdAt ? new Date(n.createdAt).toLocaleString('zh-CN') : '',
+                        '更新时间': n.updatedAt ? new Date(n.updatedAt).toLocaleString('zh-CN') : ''
+                    };
+                });
+                const ws4 = XLSX.utils.json_to_sheet(notesData.length > 0 ? notesData : [{ '标题': '', '分类': '', '内容': '', '清单': '', '图片数': '', '创建时间': '', '更新时间': '' }]);
+                ws4['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 40 }, { wch: 30 }, { wch: 8 }, { wch: 20 }, { wch: 20 }];
+                XLSX.utils.book_append_sheet(wb, ws4, '备忘录');
+            }
+
+            XLSX.writeFile(wb, `月半日记_${catLabel}_${todayStr()}.xlsx`);
             closeDownloadSheet();
             showToast('数据已下载');
         }
 
         // 导入数据
+        // ====== 导入：自动识别 Excel / JSON ======
+        let pendingJSONData = null; // 暂存待导入的JSON数据
+
         function handleImport(event) {
             const file = event.target.files[0];
             if (!file) return;
+            const fileName = file.name.toLowerCase();
+            if (fileName.endsWith('.json')) {
+                handleImportJSON(event, file);
+            } else {
+                handleImportExcel(event, file);
+            }
+        }
+
+        function handleImportJSON(event, file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (!parsed || typeof parsed !== 'object') throw new Error('invalid');
+                    // 校验基本结构
+                    if (!Array.isArray(parsed.weights) && !Array.isArray(parsed.notes) && !parsed.profile && !Array.isArray(parsed.periods)) {
+                        showToast('文件格式不正确，请使用应用导出的JSON备份', 'error');
+                        event.target.value = '';
+                        return;
+                    }
+                    pendingJSONData = parsed;
+                    const wCount = (parsed.weights || []).length;
+                    const nCount = (parsed.notes || []).length;
+                    const pCount = (parsed.periods || []).length;
+                    const hasProfile = !!parsed.profile;
+                    const hasAvatar = !!parsed.avatarImage;
+                    let desc = `备份内容：${wCount}条体重记录`;
+                    if (pCount > 0) desc += `、${pCount}条生理期`;
+                    if (nCount > 0) desc += `、${nCount}条备忘录`;
+                    if (hasProfile) desc += '、个人信息';
+                    if (hasAvatar) desc += '、头像';
+                    document.getElementById('importModeDesc').textContent = desc;
+                    document.getElementById('importModeSheet').classList.add('show');
+                } catch(err) {
+                    showToast('JSON文件解析失败，请检查文件', 'error');
+                }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        }
+
+        function closeImportModeSheet() {
+            document.getElementById('importModeSheet').classList.remove('show');
+            pendingJSONData = null;
+        }
+        document.getElementById('importModeSheet').addEventListener('click', function(e) { if (e.target === this) closeImportModeSheet(); });
+
+        function executeImportJSON(mode) {
+            if (!pendingJSONData) return;
+            const data = pendingJSONData;
+            const wCount = (data.weights || []).length;
+            const nCount = (data.notes || []).length;
+            const pCount = (data.periods || []).length;
+
+            if (mode === 'overwrite') {
+                let desc = `将用备份文件替换当前所有数据（${wCount}条体重记录`;
+                if (pCount > 0) desc += `、${pCount}条生理期`;
+                desc += `、${nCount}条备忘录），当前数据将被清除，是否继续？`;
+                showConfirm('覆盖导入', desc, () => {
+                    if (Array.isArray(data.weights)) appData.weights = data.weights.map(w => ({ id: w.id || genId(), date: w.date, weight: w.weight, note: w.note || '', createdAt: w.createdAt || new Date().toISOString() }));
+                    if (data.profile) appData.profile = Object.assign({name:'',gender:'',birthday:'',height:''}, data.profile);
+                    if (data.targetWeight !== undefined) appData.targetWeight = data.targetWeight;
+                    if (data.avatarImage) appData.avatarImage = data.avatarImage;
+                    if (data.emojiTheme) appData.emojiTheme = data.emojiTheme;
+                    if (Array.isArray(data.periods)) appData.periods = data.periods;
+                    if (Array.isArray(data.notes)) appData.notes = data.notes.map(n => ({ id: n.id || genId(), title: n.title || '', category: n.category || 'uncategorized', content: n.content || '', checklist: n.checklist || [], images: n.images || [], createdAt: n.createdAt || new Date().toISOString(), updatedAt: n.updatedAt || new Date().toISOString() }));
+                    if (Array.isArray(data.customNoteCategories)) appData.customNoteCategories = data.customNoteCategories;
+                    saveData(); renderAll();
+                    closeImportModeSheet();
+                    showToast(`覆盖导入完成：${wCount}条记录、${nCount}条备忘录`);
+                });
+            } else {
+                // 合并模式
+                let desc = `将合并导入 ${wCount} 条体重记录`;
+                if (pCount > 0) desc += `、${pCount} 条生理期`;
+                if (nCount > 0) desc += `、${nCount} 条备忘录`;
+                desc += '，保留当前数据并追加新记录，是否继续？';
+                showConfirm('合并导入', desc, () => {
+                    let addedW = 0, addedN = 0, updatedN = 0, addedP = 0;
+                    // 合并体重记录：按 date+createdAt 去重
+                    const existingKeys = new Set(appData.weights.map(w => w.date + '|' + w.createdAt));
+                    (data.weights || []).forEach(w => {
+                        const key = (w.date || '') + '|' + (w.createdAt || '');
+                        if (!existingKeys.has(key)) {
+                            appData.weights.push({ id: w.id || genId(), date: w.date, weight: w.weight, note: w.note || '', createdAt: w.createdAt || new Date().toISOString() });
+                            existingKeys.add(key);
+                            addedW++;
+                        }
+                    });
+                    // 合并生理期：按 startDate 去重
+                    if (Array.isArray(data.periods)) {
+                        const existingPeriods = new Set(appData.periods.map(p => p.startDate));
+                        data.periods.forEach(p => {
+                            if (p.startDate && !existingPeriods.has(p.startDate)) {
+                                appData.periods.push(p);
+                                existingPeriods.add(p.startDate);
+                                addedP++;
+                            }
+                        });
+                    }
+                    // 合并备忘录：按 id 去重，存在则更新，不存在则追加
+                    const noteIdMap = new Map(appData.notes.map(n => [n.id, n]));
+                    (data.notes || []).forEach(n => {
+                        if (n.id && noteIdMap.has(n.id)) {
+                            Object.assign(noteIdMap.get(n.id), n);
+                            updatedN++;
+                        } else {
+                            appData.notes.push({ id: n.id || genId(), title: n.title || '', category: n.category || 'uncategorized', content: n.content || '', checklist: n.checklist || [], images: n.images || [], createdAt: n.createdAt || new Date().toISOString(), updatedAt: n.updatedAt || new Date().toISOString() });
+                            addedN++;
+                        }
+                    });
+                    // 合并个人信息：仅在当前为空时填充
+                    if (data.profile) {
+                        if (!appData.profile.name && data.profile.name) appData.profile.name = data.profile.name;
+                        if (!appData.profile.gender && data.profile.gender) appData.profile.gender = data.profile.gender;
+                        if (!appData.profile.birthday && data.profile.birthday) appData.profile.birthday = data.profile.birthday;
+                        if (!appData.profile.height && data.profile.height) appData.profile.height = data.profile.height;
+                    }
+                    if (data.targetWeight !== undefined && appData.targetWeight === null) appData.targetWeight = data.targetWeight;
+                    if (data.avatarImage && !appData.avatarImage) appData.avatarImage = data.avatarImage;
+                    if (data.emojiTheme && !appData.emojiTheme) appData.emojiTheme = data.emojiTheme;
+                    // 合并自定义分类
+                    if (Array.isArray(data.customNoteCategories)) {
+                        data.customNoteCategories.forEach(c => {
+                            if (!appData.customNoteCategories.includes(c)) appData.customNoteCategories.push(c);
+                        });
+                    }
+                    saveData(); renderAll();
+                    closeImportModeSheet();
+                    let msg = `合并导入完成：新增${addedW}条体重记录`;
+                    if (addedP > 0) msg += `、${addedP}条生理期`;
+                    if (addedN > 0) msg += `、${addedN}条备忘录`;
+                    if (updatedN > 0) msg += `，更新${updatedN}条备忘录`;
+                    showToast(msg);
+                });
+            }
+        }
+
+        function handleImportExcel(event, file) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -1924,6 +2691,7 @@
                     const importedWeights = [];
                     let importedProfile = null;
                     let importedTarget = null;
+                    const importedNotes = [];
 
                     // 解析体重记录
                     const wsRecords = wb.Sheets['体重记录'];
@@ -1965,19 +2733,77 @@
                         if (!isNaN(targetNum)) importedTarget = targetNum;
                     }
 
-                    if (importedWeights.length === 0 && !importedProfile) {
+                    // 解析生理期
+                    const importedPeriods = [];
+                    const wsPeriods = wb.Sheets['生理期'];
+                    if (wsPeriods) {
+                        const rows = XLSX.utils.sheet_to_json(wsPeriods);
+                        rows.forEach(row => {
+                            const startDate = row['开始日期'] ? String(row['开始日期']).trim() : '';
+                            const endDate = row['结束日期'] ? String(row['结束日期']).trim() : '';
+                            const days = row['天数'] ? parseInt(row['天数']) : '';
+                            const note = row['备注'] ? String(row['备注']).trim() : '';
+                            if (startDate) importedPeriods.push({ id: genId(), startDate, endDate, days, note });
+                        });
+                    }
+
+                    // 解析备忘录
+                    const wsNotes = wb.Sheets['备忘录'];
+                    if (wsNotes) {
+                        const rows = XLSX.utils.sheet_to_json(wsNotes);
+                        rows.forEach(row => {
+                            const title = row['标题'] ? String(row['标题']).trim() : '';
+                            const catName = row['分类'] ? String(row['分类']).trim() : '';
+                            const content = row['内容'] ? String(row['内容']).trim() : '';
+                            const checklistText = row['清单'] ? String(row['清单']).trim() : '';
+                            const createdStr = row['创建时间'] ? String(row['创建时间']).trim() : '';
+                            const updatedStr = row['更新时间'] ? String(row['更新时间']).trim() : '';
+                            // 将清单文本转回数组
+                            const checklist = checklistText ? checklistText.split('\n').map(line => {
+                                const done = line.startsWith('☑');
+                                return { done, text: line.replace(/^[☑☐]\s*/, '') };
+                            }).filter(c => c.text) : [];
+                            // 分类名转ID
+                            let categoryId = 'uncategorized';
+                            const allCats = [{ id: 'uncategorized', name: '未分类' }, { id: 'diary', name: '日记' }, { id: 'travel', name: '旅游' }, { id: 'excerpt', name: '摘抄' }, { id: 'essay', name: '随笔' }];
+                            const matchedCat = allCats.find(c => c.name === catName);
+                            if (matchedCat) categoryId = matchedCat.id;
+                            else if (catName && appData.customNoteCategories.includes(catName)) categoryId = catName;
+                            let createdAt = new Date().toISOString();
+                            if (createdStr) { const p = new Date(createdStr); if (!isNaN(p)) createdAt = p.toISOString(); }
+                            let updatedAt = createdAt;
+                            if (updatedStr) { const p = new Date(updatedStr); if (!isNaN(p)) updatedAt = p.toISOString(); }
+                            importedNotes.push({ id: genId(), title, category: categoryId, content, checklist, images: [], createdAt, updatedAt });
+                        });
+                    }
+
+                    if (importedWeights.length === 0 && !importedProfile && importedNotes.length === 0 && importedPeriods.length === 0) {
                         showToast('未找到有效数据，请使用导出的Excel模板', 'error');
                         event.target.value = '';
                         return;
                     }
 
-                    showConfirm('导入数据', `将导入 ${importedWeights.length} 条体重记录${importedProfile ? '及个人信息' : ''}，是否覆盖当前数据？`, () => {
-                        if (importedWeights.length > 0) appData.weights = importedWeights;
-                        if (importedProfile) appData.profile = importedProfile;
-                        if (importedTarget !== null) appData.targetWeight = importedTarget;
-                        saveData(); renderAll();
-                        showToast(`成功导入 ${importedWeights.length} 条记录`);
-                    });
+                    // 转为统一数据结构，复用导入模式选择弹窗
+                    pendingJSONData = {
+                        _type: 'excel_import',
+                        weights: importedWeights,
+                        profile: importedProfile || { name: '', gender: '', birthday: '', height: '' },
+                        targetWeight: importedTarget,
+                        periods: importedPeriods,
+                        notes: importedNotes,
+                        customNoteCategories: []
+                    };
+                    const wCount = importedWeights.length;
+                    const nCount = importedNotes.length;
+                    const pCount = importedPeriods.length;
+                    const hasProfile = !!importedProfile && importedProfile.name;
+                    let desc = `Excel文件内容：${wCount}条体重记录`;
+                    if (pCount > 0) desc += `、${pCount}条生理期`;
+                    if (nCount > 0) desc += `、${nCount}条备忘录`;
+                    if (hasProfile) desc += '、个人信息';
+                    desc += '（备忘录图片不可恢复）';
+                    document.getElementById('importModeDesc').textContent = desc;
+                    document.getElementById('importModeSheet').classList.add('show');
                 } catch(err) {
                     showToast('文件解析失败，请检查格式', 'error');
                 }
@@ -1985,9 +2811,10 @@
             };
             reader.readAsArrayBuffer(file);
         }
+
         function clearAllData() {
             showConfirm('清空数据', '将删除所有体重记录和个人信息，此操作不可撤销！', () => {
-                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces' };
+                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces', periods: [], notes: [], customNoteCategories: [] };
                 saveData(); renderAll(); showToast('所有数据已清空');
             });
         }
@@ -2026,8 +2853,8 @@
                 const change = sorted[0].weight - sorted[1].weight;
                 const changeEl = document.getElementById('metricChange');
                 const changeStatus = document.getElementById('metricChangeStatus');
-                if (change > 0) { changeEl.innerHTML = `+${change.toFixed(1)}<span class="small">kg</span>`; changeEl.style.color = '#FFCDD2'; changeStatus.textContent = '上升'; }
-                else if (change < 0) { changeEl.innerHTML = `${change.toFixed(1)}<span class="small">kg</span>`; changeEl.style.color = '#A5D6A7'; changeStatus.textContent = '下降'; }
+                if (change > 0) { changeEl.innerHTML = `+${change.toFixed(2)}<span class="small">kg</span>`; changeEl.style.color = '#FFCDD2'; changeStatus.textContent = '上升'; }
+                else if (change < 0) { changeEl.innerHTML = `${change.toFixed(2)}<span class="small">kg</span>`; changeEl.style.color = '#A5D6A7'; changeStatus.textContent = '下降'; }
                 else { changeEl.innerHTML = `0<span class="small">kg</span>`; changeEl.style.color = ''; changeStatus.textContent = '持平'; }
             } else { document.getElementById('metricChange').textContent = '--'; document.getElementById('metricChangeStatus').textContent = '--'; document.getElementById('metricChange').style.color = ''; }
 
@@ -2043,21 +2870,71 @@
                 let emojiType = 'flat';
                 if (prev) {
                     const diff = item.weight - prev.weight;
-                    if (diff > 0) { changeHtml = `<span class="change up">▲ +${diff.toFixed(1)}</span>`; emojiType = 'up'; }
-                    else if (diff < 0) { changeHtml = `<span class="change down">▼ ${diff.toFixed(1)}</span>`; emojiType = 'down'; }
+                    if (diff > 0) { changeHtml = `<span class="change up">▲ +${diff.toFixed(2)}</span>`; emojiType = 'up'; }
+                    else if (diff < 0) { changeHtml = `<span class="change down">▼ ${diff.toFixed(2)}</span>`; emojiType = 'down'; }
                     else changeHtml = '<span class="change flat">— 持平</span>';
                 }
                 const noteText = item.note ? ` · ${item.note}` : '';
-                return `<div class="record-card">
-                    <div class="record-icon">${renderEmojiIcon(currentTheme[emojiType])}</div>
-                    <div class="record-info"><div class="date">${item.date}${noteText}</div><div class="time">${formatTime(item.createdAt)}</div></div>
-                    <div class="record-weight"><div class="value">${item.weight}<span class="unit"> kg</span></div>${changeHtml}</div>
+                return `<div class="record-card-wrapper">
                     <div class="record-actions">
                         <button class="act-btn edit" onclick="openEditSheet('${item.id}')">✏️</button>
                         <button class="act-btn delete" onclick="deleteRecord('${item.id}')">🗑️</button>
                     </div>
+                    <div class="record-card" data-id="${item.id}">
+                        <div class="record-icon">${renderEmojiIcon(currentTheme[emojiType])}</div>
+                        <div class="record-info"><div class="date">${item.date}${noteText}</div><div class="time">${formatTime(item.createdAt)}</div></div>
+                        <div class="record-weight"><div class="value">${item.weight}<span class="unit"> kg</span></div></div>
+                        <div class="record-change">${changeHtml}</div>
+                    </div>
                 </div>`;
             }).join('');
+            // 绑定左滑手势
+            bindRecordSwipe();
+        }
+
+        // ========== 记录卡片左滑手势 ==========
+        function bindRecordSwipe() {
+            const actionsWidth = 128; // 两个按钮各64px
+            let startX = 0, startY = 0, currentX = 0, isDragging = false, activeCard = null;
+
+            document.querySelectorAll('.record-card').forEach(card => {
+                card.addEventListener('touchstart', function(e) {
+                    // 先关闭其他已打开的卡片
+                    document.querySelectorAll('.record-card').forEach(c => {
+                        if (c !== card) c.style.transform = '';
+                    });
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    currentX = 0;
+                    isDragging = true;
+                    activeCard = card;
+                    card.style.transition = 'none';
+                }, { passive: true });
+
+                card.addEventListener('touchmove', function(e) {
+                    if (!isDragging || !activeCard) return;
+                    const dx = e.touches[0].clientX - startX;
+                    const dy = e.touches[0].clientY - startY;
+                    // 水平滑动优先
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                        currentX = Math.max(-actionsWidth, Math.min(0, dx));
+                        activeCard.style.transform = `translateX(${currentX}px)`;
+                    }
+                }, { passive: true });
+
+                card.addEventListener('touchend', function() {
+                    if (!isDragging || !activeCard) return;
+                    isDragging = false;
+                    activeCard.style.transition = 'transform 0.25s ease';
+                    // 滑动超过一半则展开，否则收回
+                    if (currentX < -actionsWidth / 2) {
+                        activeCard.style.transform = `translateX(${-actionsWidth}px)`;
+                    } else {
+                        activeCard.style.transform = '';
+                    }
+                    activeCard = null;
+                }, { passive: true });
+            });
         }
 
         // 渲染：趋势页
@@ -2409,10 +3286,657 @@
             }
         }
 
+        // ========== 备忘录功能 ==========
+        const DEFAULT_NOTE_CATEGORIES = [
+            { id: 'all', name: '全部', color: '#2AB5B0', bg: '#E0F5F4', system: true },
+            { id: 'diary', name: '日记', color: '#E67E22', bg: '#FDF2E6', system: true },
+            { id: 'travel', name: '旅游', color: '#3498DB', bg: '#E8F4FD', system: true },
+            { id: 'excerpt', name: '摘抄', color: '#9B59B6', bg: '#F4ECF7', system: true },
+            { id: 'essay', name: '随笔', color: '#E74C3C', bg: '#FDEDEC', system: true },
+            { id: 'uncategorized', name: '未分类', color: '#95A5A6', bg: '#F2F4F4', system: true }
+        ];
+        const CAT_COLOR_PALETTE = [
+            { color: '#E67E22', bg: '#FDF2E6' },
+            { color: '#3498DB', bg: '#E8F4FD' },
+            { color: '#9B59B6', bg: '#F4ECF7' },
+            { color: '#E74C3C', bg: '#FDEDEC' },
+            { color: '#1ABC9C', bg: '#E8F8F5' },
+            { color: '#F39C12', bg: '#FEF5E7' },
+            { color: '#34495E', bg: '#EBEDEF' },
+            { color: '#E91E63', bg: '#FCE4EC' },
+            { color: '#00BCD4', bg: '#E0F7FA' },
+            { color: '#8BC34A', bg: '#F1F8E9' }
+        ];
+        let NOTE_CATEGORIES = [...DEFAULT_NOTE_CATEGORIES];
+        let currentNoteCategory = 'all';
+        let selectedNoteCategory = 'uncategorized';
+        let tempNoteImages = [];
+        let tempChecklist = [];
+        let selectedCatColorIdx = 0;
+        let categoryEditMode = false;
+        let notesViewMode = 'list'; // 'list' or 'grid'
+        let batchDeleteMode = false;
+        let selectedNoteIds = new Set();
+
+        function refreshNoteCategories() {
+            NOTE_CATEGORIES = [...DEFAULT_NOTE_CATEGORIES];
+            if (Array.isArray(appData.customNoteCategories)) {
+                appData.customNoteCategories.forEach(c => NOTE_CATEGORIES.push(c));
+            }
+        }
+
+        function getNoteCat(catId) {
+            return NOTE_CATEGORIES.find(c => c.id === catId) || NOTE_CATEGORIES.find(c => c.id === 'uncategorized');
+        }
+
+        function renderNotesPage() {
+            refreshNoteCategories();
+            renderNotesCategoryBar();
+            renderNotesList();
+        }
+
+        function renderNotesCategoryBar() {
+            const bar = document.getElementById('notesCategoryBar');
+            const pills = NOTE_CATEGORIES.map(c => {
+                const isCustom = !c.system;
+                const deleteX = isCustom ? `<span class="cat-delete-x" onclick="event.stopPropagation(); quickDeleteCategory('${c.id}')">×</span>` : '';
+                const editClass = isCustom && categoryEditMode ? 'edit-mode' : '';
+                const clickHandler = (isCustom && categoryEditMode) 
+                    ? `onclick="openEditCategorySheet('${c.id}')"`
+                    : `onclick="selectNoteCategory('${c.id}')"`;
+                return `<div class="note-cat-pill ${currentNoteCategory === c.id ? 'active' : ''} ${isCustom ? 'custom' : ''} ${editClass}"
+                    ${clickHandler}
+                    data-cat-id="${c.id}">
+                    ${c.name}${deleteX}
+                </div>`;
+            });
+            if (categoryEditMode) {
+                pills.push(`<div class="note-cat-pill" style="background:var(--primary);color:white;border-color:var(--primary);" onclick="exitCategoryEditMode()">完成</div>`);
+            } else {
+                pills.push(`<div class="note-cat-add" onclick="openNewCategorySheet()">+</div>`);
+            }
+            bar.innerHTML = pills.join('');
+            bindCategoryLongPress();
+        }
+
+        function exitCategoryEditMode() {
+            categoryEditMode = false;
+            renderNotesCategoryBar();
+        }
+
+        function bindCategoryLongPress() {
+            const customPills = document.querySelectorAll('.note-cat-pill.custom');
+            customPills.forEach(pill => {
+                let pressTimer = null;
+                pill.addEventListener('touchstart', function(e) {
+                    pressTimer = setTimeout(() => {
+                        categoryEditMode = true;
+                        renderNotesCategoryBar();
+                    }, 600);
+                }, { passive: true });
+                pill.addEventListener('touchend', function() {
+                    clearTimeout(pressTimer);
+                }, { passive: true });
+                pill.addEventListener('touchmove', function() {
+                    clearTimeout(pressTimer);
+                }, { passive: true });
+                // 鼠标长按（桌面端）
+                pill.addEventListener('mousedown', function() {
+                    pressTimer = setTimeout(() => {
+                        categoryEditMode = true;
+                        renderNotesCategoryBar();
+                    }, 600);
+                });
+                pill.addEventListener('mouseup', function() { clearTimeout(pressTimer); });
+                pill.addEventListener('mouseleave', function() { clearTimeout(pressTimer); });
+            });
+        }
+
+        function selectNoteCategory(catId) {
+            currentNoteCategory = catId;
+            const headerTitle = document.querySelector('#page-notes .header-title');
+            headerTitle.textContent = getNoteCat(catId).name === '全部' ? '全部笔记' : getNoteCat(catId).name;
+            renderNotesCategoryBar();
+            renderNotesList();
+        }
+
+        function renderNotesList() {
+            const searchVal = (document.getElementById('notesSearchInput').value || '').trim().toLowerCase();
+            let notes = [...(appData.notes || [])];
+            // 分类筛选
+            if (currentNoteCategory !== 'all') {
+                notes = notes.filter(n => (n.category || 'uncategorized') === currentNoteCategory);
+            }
+            // 搜索筛选
+            if (searchVal) {
+                notes = notes.filter(n => 
+                    (n.title || '').toLowerCase().includes(searchVal) ||
+                    (n.content || '').toLowerCase().includes(searchVal)
+                );
+            }
+            // 按日期倒序
+            notes.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+
+            // 统计
+            document.getElementById('notesTotalCount').textContent = `${notes.length} 条笔记`;
+
+            const listEl = document.getElementById('notesList');
+            const emptyEl = document.getElementById('notesEmpty');
+            if (notes.length === 0) {
+                listEl.innerHTML = '';
+                listEl.className = 'notes-list' + (notesViewMode === 'grid' ? ' grid-view' : '') + (batchDeleteMode ? ' batch-mode' : '');
+                emptyEl.style.display = 'block';
+                return;
+            }
+            emptyEl.style.display = 'none';
+
+            listEl.className = 'notes-list' + (notesViewMode === 'grid' ? ' grid-view' : '') + (batchDeleteMode ? ' batch-mode' : '');
+
+            listEl.innerHTML = notes.map(n => {
+                const cat = getNoteCat(n.category || 'uncategorized');
+                const dateStr = formatDate(n.updatedAt || n.createdAt);
+                const contentPreview = (n.content || '').substring(0, 100);
+                const imagesHtml = (n.images && n.images.length > 0) 
+                    ? `<div class="note-card-images">${n.images.slice(0, 3).map(img => `<img src="${img}" alt="图片">`).join('')}${n.images.length > 3 ? `<div style="width:60px;height:60px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-secondary);">+${n.images.length - 3}</div>` : ''}</div>` 
+                    : '';
+                const checklistCount = (n.checklist || []).length;
+                const checklistHtml = checklistCount > 0 ? `<span style="font-size:11px;color:var(--text-light);">☑️ ${n.checklist.filter(c => c.done).length}/${checklistCount}</span>` : '';
+                const titleHtml = n.title ? `<div class="note-card-title">${escapeHtml(n.title)}</div>` : '';
+                const isChecked = selectedNoteIds.has(n.id);
+                const checkboxHtml = batchDeleteMode ? `<div class="note-checkbox ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleNoteSelection('${n.id}')"></div>` : '';
+                const cardClick = batchDeleteMode ? `onclick="toggleNoteSelection('${n.id}')"` : `onclick="openNoteSheet('${n.id}')"`;
+                const actionsHtml = batchDeleteMode ? '' : `<div class="note-card-actions"><div class="act-btn delete" onclick="deleteNote('${n.id}')">删除</div></div>`;
+                return `<div class="note-card-wrapper">
+                    ${checkboxHtml}
+                    ${actionsHtml}
+                    <div class="note-card" data-note-id="${n.id}" ${cardClick}>
+                        <div class="note-card-header">
+                            ${titleHtml}
+                            <div class="note-card-cat" style="color:${cat.color};background:${cat.bg};${!n.title ? 'margin-left:auto;' : ''}">${cat.name}</div>
+                        </div>
+                        ${contentPreview ? `<div class="note-card-content">${escapeHtml(contentPreview)}</div>` : ''}
+                        ${imagesHtml}
+                        <div class="note-card-footer">
+                            <span class="note-card-date">${dateStr}</span>
+                            ${checklistHtml}
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            if (!batchDeleteMode) bindNoteSwipe();
+            updateBatchDeleteUI();
+        }
+
+        // 笔记卡片左滑手势
+        function bindNoteSwipe() {
+            const actionsWidth = 72;
+            let startX = 0, startY = 0, currentX = 0, isDragging = false, activeCard = null;
+
+            document.querySelectorAll('.note-card').forEach(card => {
+                card.addEventListener('touchstart', function(e) {
+                    // 先关闭其他已打开的卡片
+                    document.querySelectorAll('.note-card').forEach(c => {
+                        if (c !== card) c.style.transform = '';
+                    });
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                    currentX = 0;
+                    isDragging = true;
+                    activeCard = card;
+                    card.style.transition = 'none';
+                }, { passive: true });
+
+                card.addEventListener('touchmove', function(e) {
+                    if (!isDragging || !activeCard) return;
+                    const dx = e.touches[0].clientX - startX;
+                    const dy = e.touches[0].clientY - startY;
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                        currentX = Math.max(-actionsWidth, Math.min(0, dx));
+                        activeCard.style.transform = `translateX(${currentX}px)`;
+                    }
+                }, { passive: true });
+
+                card.addEventListener('touchend', function() {
+                    if (!isDragging || !activeCard) return;
+                    isDragging = false;
+                    activeCard.style.transition = 'transform 0.25s ease';
+                    if (currentX < -actionsWidth / 2) {
+                        activeCard.style.transform = `translateX(${-actionsWidth}px)`;
+                    } else {
+                        activeCard.style.transform = '';
+                    }
+                    activeCard = null;
+                }, { passive: true });
+            });
+        }
+
+        // ========== 视图切换 ==========
+        function toggleNotesView() {
+            notesViewMode = notesViewMode === 'list' ? 'grid' : 'list';
+            document.getElementById('notesViewLabel').textContent = notesViewMode === 'grid' ? '列表视图' : '宫格视图';
+            document.getElementById('dropdownMenuNotes').classList.remove('show');
+            renderNotesList();
+        }
+
+        // ========== 批量删除 ==========
+        function enterBatchDeleteMode() {
+            document.getElementById('dropdownMenuNotes').classList.remove('show');
+            batchDeleteMode = true;
+            selectedNoteIds.clear();
+            document.getElementById('batchDeleteBar').style.display = 'flex';
+            document.getElementById('fabBtn').style.display = 'none';
+            renderNotesList();
+        }
+
+        function exitBatchDeleteMode() {
+            batchDeleteMode = false;
+            selectedNoteIds.clear();
+            document.getElementById('batchDeleteBar').style.display = 'none';
+            // 恢复FAB按钮
+            const activePage = document.querySelector('.page.active');
+            document.getElementById('fabBtn').style.display = activePage && activePage.id === 'page-notes' ? 'flex' : 'none';
+            renderNotesList();
+        }
+
+        function toggleNoteSelection(noteId) {
+            if (selectedNoteIds.has(noteId)) {
+                selectedNoteIds.delete(noteId);
+            } else {
+                selectedNoteIds.add(noteId);
+            }
+            renderNotesList();
+        }
+
+        function toggleSelectAllNotes() {
+            const searchVal = (document.getElementById('notesSearchInput').value || '').trim().toLowerCase();
+            let notes = [...(appData.notes || [])];
+            if (currentNoteCategory !== 'all') {
+                notes = notes.filter(n => (n.category || 'uncategorized') === currentNoteCategory);
+            }
+            if (searchVal) {
+                notes = notes.filter(n => 
+                    (n.title || '').toLowerCase().includes(searchVal) ||
+                    (n.content || '').toLowerCase().includes(searchVal)
+                );
+            }
+            const allSelected = notes.every(n => selectedNoteIds.has(n.id));
+            if (allSelected) {
+                notes.forEach(n => selectedNoteIds.delete(n.id));
+            } else {
+                notes.forEach(n => selectedNoteIds.add(n.id));
+            }
+            renderNotesList();
+        }
+
+        function updateBatchDeleteUI() {
+            const deleteBtn = document.getElementById('batchDeleteBtn');
+            const selectAllIcon = document.getElementById('batchSelectAllIcon');
+            const selectAllText = document.querySelector('.batch-delete-check-all');
+            const count = selectedNoteIds.size;
+            deleteBtn.disabled = count === 0;
+            deleteBtn.textContent = count > 0 ? `删除(${count})` : '删除';
+
+            const searchVal = (document.getElementById('notesSearchInput').value || '').trim().toLowerCase();
+            let notes = [...(appData.notes || [])];
+            if (currentNoteCategory !== 'all') {
+                notes = notes.filter(n => (n.category || 'uncategorized') === currentNoteCategory);
+            }
+            if (searchVal) {
+                notes = notes.filter(n => 
+                    (n.title || '').toLowerCase().includes(searchVal) ||
+                    (n.content || '').toLowerCase().includes(searchVal)
+                );
+            }
+            const allSelected = notes.length > 0 && notes.every(n => selectedNoteIds.has(n.id));
+            selectAllIcon.textContent = allSelected ? '●' : '○';
+            selectAllText.lastChild.textContent = allSelected ? ' 取消全选' : ' 全选';
+        }
+
+        function confirmBatchDelete() {
+            const count = selectedNoteIds.size;
+            if (count === 0) return;
+            showConfirm('批量删除', `确定要删除选中的 ${count} 条笔记吗？此操作不可撤销。`, () => {
+                appData.notes = (appData.notes || []).filter(n => !selectedNoteIds.has(n.id));
+                saveData();
+                exitBatchDeleteMode();
+                showToast(`已删除 ${count} 条笔记`);
+            });
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function formatDate(isoStr) {
+            const d = new Date(isoStr);
+            const now = new Date();
+            const diff = now - d;
+            if (diff < 60000) return '刚刚';
+            if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+            if (diff < 172800000) return '昨天';
+            const m = d.getMonth() + 1, day = d.getDate();
+            const hh = String(d.getHours()).padStart(2, '0');
+            const mm = String(d.getMinutes()).padStart(2, '0');
+            if (d.getFullYear() === now.getFullYear()) return `${m}月${day}日 ${hh}:${mm}`;
+            return `${d.getFullYear()}/${m}/${day}`;
+        }
+
+        function openNoteSheet(noteId) {
+            refreshNoteCategories();
+            document.getElementById('noteSheet').classList.add('show');
+            tempNoteImages = [];
+            tempChecklist = [];
+            if (noteId) {
+                const note = (appData.notes || []).find(n => n.id === noteId);
+                if (note) {
+                    document.getElementById('editNoteId').value = note.id;
+                    document.getElementById('noteTitle').value = note.title || '';
+                    document.getElementById('noteContent').value = note.content || '';
+                    selectedNoteCategory = note.category || 'uncategorized';
+                    tempNoteImages = [...(note.images || [])];
+                    tempChecklist = (note.checklist || []).map(c => ({...c}));
+                    document.getElementById('noteTimestamp').textContent = '编辑于 ' + formatDate(note.updatedAt || note.createdAt);
+                }
+            } else {
+                document.getElementById('editNoteId').value = '';
+                document.getElementById('noteTitle').value = '';
+                document.getElementById('noteContent').value = '';
+                selectedNoteCategory = 'uncategorized';
+                document.getElementById('noteTimestamp').textContent = '新建笔记';
+            }
+            updateNoteCategoryLabel();
+            renderNoteImagePreview();
+            renderNoteChecklist();
+            setTimeout(() => document.getElementById('noteTitle').focus(), 300);
+        }
+
+        function closeNoteSheet() {
+            document.getElementById('noteSheet').classList.remove('show');
+        }
+
+        function toggleNoteCategoryMenu() {
+            const dropdown = document.getElementById('noteCategoryDropdown');
+            if (dropdown.style.display === 'none') {
+                dropdown.innerHTML = NOTE_CATEGORIES.filter(c => c.id !== 'all').map(c =>
+                    `<div class="note-cat-option ${selectedNoteCategory === c.id ? 'active' : ''}" onclick="selectNoteCategoryForNote('${c.id}')">
+                        <span style="width:8px;height:8px;border-radius:50%;background:${c.color};display:inline-block;"></span>
+                        ${c.name}
+                        ${selectedNoteCategory === c.id ? '<span style="margin-left:auto;">✓</span>' : ''}
+                    </div>`
+                ).join('');
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function selectNoteCategoryForNote(catId) {
+            selectedNoteCategory = catId;
+            updateNoteCategoryLabel();
+            document.getElementById('noteCategoryDropdown').style.display = 'none';
+        }
+
+        function updateNoteCategoryLabel() {
+            const cat = getNoteCat(selectedNoteCategory);
+            document.getElementById('noteCategoryLabel').textContent = cat.name;
+        }
+
+        function renderNoteImagePreview() {
+            const previewEl = document.getElementById('noteImagePreview');
+            if (tempNoteImages.length === 0) {
+                previewEl.style.display = 'none';
+                previewEl.innerHTML = '';
+                return;
+            }
+            previewEl.style.display = 'flex';
+            previewEl.innerHTML = tempNoteImages.map((img, idx) =>
+                `<div class="img-wrap">
+                    <img src="${img}" alt="图片${idx+1}">
+                    <button class="img-remove" onclick="removeNoteImage(${idx})">×</button>
+                </div>`
+            ).join('');
+        }
+
+        function removeNoteImage(idx) {
+            tempNoteImages.splice(idx, 1);
+            renderNoteImagePreview();
+        }
+
+        function handleNoteImageUpload(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+            let loaded = 0;
+            files.forEach(file => {
+                if (file.size > 3 * 1024 * 1024) { showToast('图片不能超过3MB', 'error'); return; }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempNoteImages.push(e.target.result);
+                    loaded++;
+                    if (loaded === files.length) renderNoteImagePreview();
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        }
+
+        function renderNoteChecklist() {
+            const clEl = document.getElementById('noteChecklist');
+            if (tempChecklist.length === 0) {
+                clEl.style.display = 'none';
+                clEl.innerHTML = '';
+                return;
+            }
+            clEl.style.display = 'block';
+            clEl.innerHTML = tempChecklist.map((item, idx) =>
+                `<div class="checklist-item ${item.done ? 'done' : ''}">
+                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleChecklistItem(${idx})">
+                    <input type="text" value="${escapeHtml(item.text)}" oninput="updateChecklistText(${idx}, this.value)" placeholder="清单项">
+                    <span class="del-item" onclick="removeChecklistItem(${idx})">×</span>
+                </div>`
+            ).join('');
+        }
+
+        function addChecklistItem() {
+            tempChecklist.push({ text: '', done: false });
+            renderNoteChecklist();
+            // 聚焦最后一项输入框
+            setTimeout(() => {
+                const inputs = document.querySelectorAll('#noteChecklist input[type="text"]');
+                if (inputs.length > 0) inputs[inputs.length - 1].focus();
+            }, 100);
+        }
+
+        function toggleChecklistItem(idx) {
+            tempChecklist[idx].done = !tempChecklist[idx].done;
+            renderNoteChecklist();
+        }
+
+        function updateChecklistText(idx, val) {
+            tempChecklist[idx].text = val;
+        }
+
+        function removeChecklistItem(idx) {
+            tempChecklist.splice(idx, 1);
+            renderNoteChecklist();
+        }
+
+        function saveNote() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContent').value.trim();
+            if (!title && !content && tempNoteImages.length === 0 && tempChecklist.length === 0) {
+                showToast('请输入笔记内容', 'error');
+                return;
+            }
+            const editId = document.getElementById('editNoteId').value;
+            const now = new Date().toISOString();
+            if (editId) {
+                const idx = (appData.notes || []).findIndex(n => n.id === editId);
+                if (idx !== -1) {
+                    appData.notes[idx].title = title;
+                    appData.notes[idx].content = content;
+                    appData.notes[idx].category = selectedNoteCategory;
+                    appData.notes[idx].images = [...tempNoteImages];
+                    appData.notes[idx].checklist = tempChecklist.filter(c => c.text.trim());
+                    appData.notes[idx].updatedAt = now;
+                }
+            } else {
+                appData.notes.push({
+                    id: genId(),
+                    title: title,
+                    content: content,
+                    category: selectedNoteCategory,
+                    images: [...tempNoteImages],
+                    checklist: tempChecklist.filter(c => c.text.trim()),
+                    createdAt: now,
+                    updatedAt: now
+                });
+            }
+            saveData();
+            renderNotesList();
+            closeNoteSheet();
+            showToast('笔记已保存');
+        }
+
+        function deleteNote(id) {
+            showConfirm('删除笔记', '确定要删除这条笔记吗？此操作不可撤销。', () => {
+                appData.notes = (appData.notes || []).filter(n => n.id !== id);
+                saveData();
+                renderNotesList();
+                showToast('笔记已删除');
+            });
+        }
+
+        // ========== 笔记分类管理 ==========
+        function renderCatColorGrid() {
+            const grid = document.getElementById('catColorGrid');
+            grid.innerHTML = CAT_COLOR_PALETTE.map((c, idx) =>
+                `<div class="cat-color-dot ${selectedCatColorIdx === idx ? 'selected' : ''}"
+                    style="background:${c.color};"
+                    onclick="selectCatColor(${idx})"></div>`
+            ).join('');
+        }
+
+        function selectCatColor(idx) {
+            selectedCatColorIdx = idx;
+            renderCatColorGrid();
+        }
+
+        function openNewCategorySheet() {
+            document.getElementById('catSheetTitle').textContent = '新建分类';
+            document.getElementById('editCatId').value = '';
+            document.getElementById('catNameInput').value = '';
+            document.getElementById('catDeleteBtn').style.display = 'none';
+            selectedCatColorIdx = 0;
+            renderCatColorGrid();
+            document.getElementById('catSheet').classList.add('show');
+            setTimeout(() => document.getElementById('catNameInput').focus(), 300);
+        }
+
+        function openEditCategorySheet(catId) {
+            const cat = (appData.customNoteCategories || []).find(c => c.id === catId);
+            if (!cat) return;
+            document.getElementById('catSheetTitle').textContent = '编辑分类';
+            document.getElementById('editCatId').value = catId;
+            document.getElementById('catNameInput').value = cat.name;
+            document.getElementById('catDeleteBtn').style.display = 'block';
+            // 找到颜色索引
+            const colorIdx = CAT_COLOR_PALETTE.findIndex(p => p.color === cat.color);
+            selectedCatColorIdx = colorIdx >= 0 ? colorIdx : 0;
+            renderCatColorGrid();
+            document.getElementById('catSheet').classList.add('show');
+        }
+
+        function closeCatSheet() {
+            document.getElementById('catSheet').classList.remove('show');
+        }
+
+        function saveCategory() {
+            const name = document.getElementById('catNameInput').value.trim();
+            if (!name) { showToast('请输入分类名称', 'error'); return; }
+            // 检查重名
+            const exists = NOTE_CATEGORIES.some(c => c.name === name && c.id !== document.getElementById('editCatId').value);
+            if (exists) { showToast('分类名称已存在', 'error'); return; }
+            const palette = CAT_COLOR_PALETTE[selectedCatColorIdx];
+            const editId = document.getElementById('editCatId').value;
+            if (editId) {
+                // 编辑现有分类
+                const idx = (appData.customNoteCategories || []).findIndex(c => c.id === editId);
+                if (idx !== -1) {
+                    appData.customNoteCategories[idx].name = name;
+                    appData.customNoteCategories[idx].color = palette.color;
+                    appData.customNoteCategories[idx].bg = palette.bg;
+                }
+            } else {
+                // 新建分类
+                if (!appData.customNoteCategories) appData.customNoteCategories = [];
+                appData.customNoteCategories.push({
+                    id: 'cat_' + genId(),
+                    name: name,
+                    color: palette.color,
+                    bg: palette.bg
+                });
+            }
+            saveData();
+            refreshNoteCategories();
+            renderNotesCategoryBar();
+            renderNotesList();
+            closeCatSheet();
+            showToast(editId ? '分类已更新' : '分类已创建');
+        }
+
+        function deleteCategory() {
+            const editId = document.getElementById('editCatId').value;
+            if (!editId) return;
+            const cat = getNoteCat(editId);
+            const noteCount = (appData.notes || []).filter(n => (n.category || 'uncategorized') === editId).length;
+            const msg = noteCount > 0
+                ? `分类"${cat.name}"下有 ${noteCount} 条笔记，删除后笔记将归入"未分类"。确定删除吗？`
+                : `确定要删除分类"${cat.name}"吗？`;
+            showConfirm('删除分类', msg, () => {
+                // 将该分类下的笔记归入未分类
+                (appData.notes || []).forEach(n => {
+                    if (n.category === editId) n.category = 'uncategorized';
+                });
+                appData.customNoteCategories = (appData.customNoteCategories || []).filter(c => c.id !== editId);
+                if (currentNoteCategory === editId) currentNoteCategory = 'all';
+                saveData();
+                refreshNoteCategories();
+                renderNotesCategoryBar();
+                renderNotesList();
+                closeCatSheet();
+                showToast('分类已删除');
+            });
+        }
+
+        function quickDeleteCategory(catId) {
+            const cat = getNoteCat(catId);
+            if (!cat || cat.system) return;
+            const noteCount = (appData.notes || []).filter(n => (n.category || 'uncategorized') === catId).length;
+            const msg = noteCount > 0
+                ? `分类"${cat.name}"下有 ${noteCount} 条笔记，删除后笔记将归入"未分类"。确定删除吗？`
+                : `确定要删除分类"${cat.name}"吗？`;
+            showConfirm('删除分类', msg, () => {
+                (appData.notes || []).forEach(n => {
+                    if (n.category === catId) n.category = 'uncategorized';
+                });
+                appData.customNoteCategories = (appData.customNoteCategories || []).filter(c => c.id !== catId);
+                if (currentNoteCategory === catId) currentNoteCategory = 'all';
+                saveData();
+                refreshNoteCategories();
+                renderNotesCategoryBar();
+                renderNotesList();
+                showToast('分类已删除');
+            });
+        }
+
         function renderAll() {
             renderRecordPage();
             renderTrendStats();
             renderProfilePage();
+            renderNotesPage();
             if (document.getElementById('page-trend').classList.contains('active')) renderTrendChart();
         }
 
