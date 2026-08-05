@@ -152,7 +152,13 @@
             backdrop-filter: blur(10px);
             padding: 6px 14px; border-radius: 20px;
             font-size: 13px; margin-top: 8px;
+            border: none;
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.2s;
         }
+        .target-card:active { opacity: 0.75; transform: scale(0.98); }
         .target-card.achieved { background: rgba(39, 174, 96, 0.4); }
 
         .metrics-row {
@@ -209,21 +215,89 @@
             font-size: 18px; flex-shrink: 0;
         }
 
-        .record-info { flex: 1; min-width: 0; }
-        .record-info .date { font-size: 14px; font-weight: 600; }
+        .record-info {
+            flex: 0 0 116px;
+            min-width: 116px;
+        }
+        .record-info .date {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            line-height: 1.35;
+        }
         .record-info .time { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
-        .record-mid { flex: 1; min-width: 0; text-align: left; }
-        .record-mid .status { font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; min-height: 14px; }
+        .record-mid,
+        .record-change {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .record-mid { flex: 1 1 68px; min-width: 0; text-align: left; }
+        .record-mid .status,
+        .record-change .status-placeholder {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+            min-height: 22px;
+            display: flex;
+            align-items: center;
+        }
         .record-mid .weight { font-size: 18px; font-weight: 700; }
         .record-mid .weight .unit { font-size: 11px; color: var(--text-secondary); font-weight: 400; }
 
-        .record-change { flex: 1; min-width: 0; text-align: left; }
-        .record-change .change { font-size: 18px; font-weight: 700; display: block; line-height: 1.2; }
+        .record-change { flex: 0 1 68px; min-width: 52px; text-align: left; }
+        .record-change .change { font-size: 16px; font-weight: 700; display: block; line-height: 1.2; }
         .record-change .change .small { font-size: 11px; font-weight: 400; }
         .change.down { color: var(--success); }
         .change.up { color: var(--danger); }
         .change.flat { color: var(--text-secondary); font-size: 13px; font-weight: 500; }
+
+        .record-status-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            width: 76px;
+            height: 26px;
+            padding: 0 10px;
+            border-radius: 999px;
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1;
+            white-space: nowrap;
+        }
+        .record-status-tag .status-icon {
+            font-size: 12px;
+            line-height: 1;
+        }
+        .record-status-tag .status-text {
+            line-height: 1;
+        }
+        .record-status-tag.status-empty {
+            color: white;
+        }
+        .record-mid .record-status-tag {
+            width: 58px;
+            height: 20px;
+            padding: 0 6px;
+            gap: 3px;
+            font-size: 11px;
+        }
+        .record-mid .record-status-tag .status-icon {
+            font-size: 10px;
+        }
+
+        @media (max-width: 360px) {
+            .record-card { gap: 6px; padding: 14px 12px; }
+            .record-info { flex-basis: 108px; min-width: 108px; }
+            .record-info .date { font-size: 13px; }
+            .record-mid .weight { font-size: 17px; }
+            .record-change .change { font-size: 15px; }
+        }
 
         .record-remark {
             font-size: 11px; color: var(--text-secondary);
@@ -821,6 +895,95 @@
             margin-top: 6px; font-size: 10px; color: var(--text-secondary);
         }
 
+        .record-health-summary {
+            margin: 16px 16px 0;
+            background: var(--teal-gradient);
+            color: white;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: var(--shadow-md);
+        }
+        .record-health-summary .top-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 22px;
+            margin-bottom: 8px;
+        }
+        .record-health-summary .time {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .record-health-summary .record-status-tag {
+            width: auto;
+            min-width: 58px;
+            height: 20px;
+            padding: 0 8px;
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.22);
+            color: white;
+        }
+        .record-health-summary .record-status-tag .status-icon {
+            font-size: 10px;
+        }
+        .record-health-summary .weight {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .record-health-summary .weight .unit {
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.85;
+        }
+        .record-health-summary .meta {
+            font-size: 13px;
+            opacity: 0.82;
+            margin-top: 8px;
+        }
+        .record-health-page .bmi-card {
+            margin-top: 16px;
+        }
+        .record-health-scale {
+            padding-top: 22px;
+        }
+        .record-health-thresholds {
+            position: relative;
+            height: 18px;
+            margin-bottom: 4px;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        .record-health-thresholds span {
+            position: absolute;
+            transform: translateX(-50%);
+            white-space: nowrap;
+        }
+        .record-health-scale-bar {
+            display: flex;
+            overflow: visible;
+            background: none;
+        }
+        .record-health-scale-bar .scale-segment {
+            flex: 1;
+            height: 8px;
+        }
+        .record-health-scale-bar .scale-segment.thin { background: #F39C12; border-radius: 4px 0 0 4px; }
+        .record-health-scale-bar .scale-segment.normal { background: #27AE60; }
+        .record-health-scale-bar .scale-segment.over { background: #F39C12; }
+        .record-health-scale-bar .scale-segment.obese { background: #E74C3C; border-radius: 0 4px 4px 0; }
+        .record-health-scale-labels {
+            display: flex;
+            margin-top: 8px;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        .record-health-scale-labels span {
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+        }
+
         /* 可折叠分组 */
         .collapsible-group {
             margin: 0 16px 12px;
@@ -1076,23 +1239,32 @@
 
         /* 日期+状态同一行 */
         .date-status-row {
-            display: flex; gap: 10px; align-items: stretch;
+            display: flex; gap: 10px; align-items: center; justify-content: space-between;
         }
         .date-btn {
-            flex: 1; display: flex; justify-content: space-between; align-items: center;
+            flex: 0 1 auto; display: inline-flex; justify-content: space-between; align-items: center; gap: 8px;
             padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
             cursor: pointer; font-size: 14px; color: var(--text); transition: all 0.2s;
             background: var(--bg);
+            min-width: 150px;
         }
         .date-btn:active { border-color: var(--primary); }
         .date-arrow { color: var(--text-secondary); font-size: 12px; }
         .status-btn {
-            flex-shrink: 0; display: flex; align-items: center; gap: 4px;
-            padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+            flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+            padding: 0; border: none; border-radius: 999px;
             cursor: pointer; font-size: 14px; transition: all 0.2s;
-            background: var(--bg);
+            background: transparent;
+            margin-left: auto;
+            width: 76px;
+            height: 26px;
         }
         .status-btn:active { border-color: var(--primary); }
+        .status-btn.selected {
+            padding: 0;
+            border-color: transparent;
+            background: transparent;
+        }
         .status-arrow { color: var(--text-secondary); font-size: 16px; }
 
         /* 备注输入框 */
@@ -1346,9 +1518,9 @@
                         <span class="unit">公斤</span>
                         <span class="date-label" id="latestDate"></span>
                     </div>
-                    <div class="target-card" id="targetCard">
+                    <button class="target-card" id="targetCard" onclick="openTargetEdit()">
                         <span id="targetText">未设置目标</span>
-                    </div>
+                    </button>
                     <div class="metrics-row">
                         <div class="metric-item">
                             <div class="label">BMI</div>
@@ -1521,35 +1693,44 @@
                 <div class="bmi-card">
                     <div class="bmi-header">
                         <h3>健康指标</h3>
-                        <span class="bmi-status-tag none" id="bmiStatusTag">--</span>
+                        <span class="bmi-status-tag none" id="profileHealthBmiStatusTag">--</span>
                     </div>
                     <div class="bmi-body">
                         <div class="bmi-gauge">
                             <svg width="90" height="90" viewBox="0 0 90 90">
                                 <circle cx="45" cy="45" r="38" fill="none" stroke="#ECF0F1" stroke-width="7"/>
-                                <circle id="bmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
+                                <circle id="profileHealthBmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
                             </svg>
                             <div class="gauge-value">
-                                <div class="num" id="bmiNum">--</div>
+                                <div class="num" id="profileHealthBmiNum">--</div>
                                 <div class="lbl">BMI</div>
                             </div>
                         </div>
                         <div class="bmi-details">
-                            <div class="bmi-detail-item"><span class="lbl">体脂率</span><span class="val" id="fatRate">-- %</span></div>
-                            <div class="bmi-detail-item"><span class="lbl">理想体重</span><span class="val" id="idealWeight">-- kg</span></div>
-                            <div class="bmi-detail-item"><span class="lbl">目标体重</span><span class="val" id="targetWeightDisplay">-- kg</span></div>
-                            <div class="bmi-detail-item"><span class="lbl">距目标</span><span class="val" id="diffTarget">-- kg</span></div>
+                            <div class="bmi-detail-item"><span class="lbl">体脂率</span><span class="val" id="profileHealthFatRate">-- %</span></div>
+                            <div class="bmi-detail-item"><span class="lbl">理想体重</span><span class="val" id="profileHealthIdealWeight">-- kg</span></div>
+                            <div class="bmi-detail-item"><span class="lbl">目标体重</span><span class="val" id="profileHealthTargetWeight">-- kg</span></div>
+                            <div class="bmi-detail-item"><span class="lbl">距目标</span><span class="val" id="profileHealthDiffTarget">-- kg</span></div>
                         </div>
                     </div>
-                    <div class="bmi-scale">
-                        <div class="bmi-scale-bar">
-                            <div class="bmi-scale-marker" id="bmiMarker" style="left:0%;"></div>
+                    <div class="bmi-scale record-health-scale">
+                        <div class="record-health-thresholds">
+                            <span id="profileHealthRangeThin" style="left:25%;">--</span>
+                            <span id="profileHealthRangeNormal" style="left:50%;">--</span>
+                            <span id="profileHealthRangeOver" style="left:75%;">--</span>
                         </div>
-                        <div class="bmi-range-labels" id="bmiRangeLabels">
-                            <span><span class="range-name">偏瘦</span><span class="range-val" id="rangeThin">--</span></span>
-                            <span><span class="range-name">正常</span><span class="range-val" id="rangeNormal">--</span></span>
-                            <span><span class="range-name">超重</span><span class="range-val" id="rangeOver">--</span></span>
-                            <span><span class="range-name">肥胖</span><span class="range-val" id="rangeObese">--</span></span>
+                        <div class="bmi-scale-bar record-health-scale-bar">
+                            <div class="scale-segment thin"></div>
+                            <div class="scale-segment normal"></div>
+                            <div class="scale-segment over"></div>
+                            <div class="scale-segment obese"></div>
+                            <div class="bmi-scale-marker" id="profileHealthBmiMarker" style="left:0%;"></div>
+                        </div>
+                        <div class="record-health-scale-labels">
+                            <span>偏瘦</span>
+                            <span>正常</span>
+                            <span>超重</span>
+                            <span>肥胖</span>
                         </div>
                     </div>
                 </div>
@@ -1601,6 +1782,68 @@
 
                 <div style="text-align:center; padding:16px; color:var(--text-light); font-size:12px;">
                     月半日记 v4.0 · 数据本地存储
+                </div>
+            </div>
+
+            <!-- ============ 健康指标页 (二级页面) ============ -->
+            <div class="page record-health-page" id="page-record-health">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="header-title">健康指标</div>
+                    </div>
+                </div>
+                <div class="record-health-summary">
+                    <div class="top-line">
+                        <span class="time" id="recordHealthTime">--</span>
+                        <span id="recordHealthStatus"></span>
+                    </div>
+                    <div class="weight"><span id="recordHealthWeight">--</span><span class="unit"> kg</span></div>
+                    <div class="meta" id="recordHealthMeta">--</div>
+                </div>
+                <div class="bmi-card">
+                    <div class="bmi-header">
+                        <h3>健康指标</h3>
+                        <span class="bmi-status-tag none" id="recordHealthBmiStatusTag">--</span>
+                    </div>
+                    <div class="bmi-body">
+                        <div class="bmi-gauge">
+                            <svg width="90" height="90" viewBox="0 0 90 90">
+                                <circle cx="45" cy="45" r="38" fill="none" stroke="#ECF0F1" stroke-width="7"/>
+                                <circle id="recordHealthBmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
+                            </svg>
+                            <div class="gauge-value">
+                                <div class="num" id="recordHealthBmiNum">--</div>
+                                <div class="lbl">BMI</div>
+                            </div>
+                        </div>
+                        <div class="bmi-details">
+                            <div class="bmi-detail-item"><span class="lbl">体脂率</span><span class="val" id="recordHealthFatRate">-- %</span></div>
+                            <div class="bmi-detail-item"><span class="lbl">理想体重</span><span class="val" id="recordHealthIdealWeight">-- kg</span></div>
+                            <div class="bmi-detail-item"><span class="lbl">目标体重</span><span class="val" id="recordHealthTargetWeight">-- kg</span></div>
+                            <div class="bmi-detail-item"><span class="lbl">距目标</span><span class="val" id="recordHealthDiffTarget">-- kg</span></div>
+                        </div>
+                    </div>
+                    <div class="bmi-scale record-health-scale">
+                        <div class="record-health-thresholds">
+                            <span id="recordHealthRangeThin" style="left:25%;">--</span>
+                            <span id="recordHealthRangeNormal" style="left:50%;">--</span>
+                            <span id="recordHealthRangeOver" style="left:75%;">--</span>
+                        </div>
+                        <div class="bmi-scale-bar record-health-scale-bar">
+                            <div class="scale-segment thin"></div>
+                            <div class="scale-segment normal"></div>
+                            <div class="scale-segment over"></div>
+                            <div class="scale-segment obese"></div>
+                            <div class="bmi-scale-marker" id="recordHealthBmiMarker" style="left:0%;"></div>
+                        </div>
+                        <div class="record-health-scale-labels">
+                            <span>偏瘦</span>
+                            <span>正常</span>
+                            <span>超重</span>
+                            <span>肥胖</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1922,7 +2165,7 @@
                         <span class="date-arrow">▾</span>
                     </div>
                     <div class="status-btn" id="statusDisplay" onclick="openRemarkSheet()">
-                        <span id="noteDisplayText" style="color:var(--primary);font-weight:500;">添加状态</span>
+                        <span id="noteDisplayText">添加状态</span>
                         <span class="status-arrow">›</span>
                     </div>
                 </div>
@@ -1977,7 +2220,7 @@
                 <div class="remark-option" onclick="openCustomRemark()">➕ 自定义</div>
             </div>
             <div class="custom-remark-area" id="customRemarkArea" style="display:none;">
-                <input type="text" id="customRemarkInput" placeholder="输入自定义状态" maxlength="20" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:10px; font-size:14px; margin-bottom:10px;">
+                <input type="text" id="customRemarkInput" placeholder="输入自定义状态（最多4个字）" maxlength="4" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:10px; font-size:14px; margin-bottom:10px;">
                 <button class="sheet-btn primary" onclick="confirmCustomRemark()" style="margin:0;">确认自定义</button>
             </div>
             <button class="sheet-btn secondary" onclick="closeRemarkSheet()" style="margin-top:16px;">关闭</button>
@@ -2083,6 +2326,7 @@
         let currentPeriod = 7;
         let customDateRange = null;
         let selectedGender = '';
+        let currentRecordHealthId = null;
 
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -2143,7 +2387,7 @@
         function onFabClick() {
             const activePage = document.querySelector('.page.active');
             if (activePage && activePage.id === 'page-notes') {
-                openNoteEditPage();
+                openNoteEditPage(null, currentNoteCategory !== 'all' ? currentNoteCategory : 'uncategorized');
             } else {
                 openAddSheet();
             }
@@ -2227,7 +2471,7 @@
             if (!dateStr) return '--';
             const d = new Date(dateStr + 'T00:00:00');
             const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
-            return `${d.getMonth() + 1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
+            return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()} ${weekdays[d.getDay()]}`;
         }
         function nowTimeStr() {
             const d = new Date();
@@ -2270,6 +2514,166 @@
         }
         function getIdealWeight(height) { return height ? height - 105 : null; }
 
+        function renderHealthMetricsByWeight(prefix, weight, metaText) {
+            const p = appData.profile;
+            const age = calcAge(p.birthday);
+            const bmi = calcBMI(weight, p.height);
+            const fat = calcBodyFat(bmi, age, p.gender);
+            const ideal = getIdealWeight(p.height);
+            const bmiStatus = getBMIStatus(bmi);
+
+            const weightEl = document.getElementById(prefix + 'Weight');
+            const metaEl = document.getElementById(prefix + 'Meta');
+            if (weightEl) weightEl.textContent = weight != null ? weight : '--';
+            if (metaEl) metaEl.textContent = metaText || '--';
+
+            const bmiNum = document.getElementById(prefix + 'BmiNum');
+            const bmiTag = document.getElementById(prefix + 'BmiStatusTag');
+            const bmiArc = document.getElementById(prefix + 'BmiArc');
+            const bmiMarker = document.getElementById(prefix + 'BmiMarker');
+            const getEqualBmiPercent = (value) => {
+                if (!value) return 0;
+                if (value < 18.5) return Math.max(2, Math.min(24, (value / 18.5) * 25));
+                if (value < 24) return 25 + ((value - 18.5) / (24 - 18.5)) * 25;
+                if (value < 28) return 50 + ((value - 24) / (28 - 24)) * 25;
+                return Math.min(98, 75 + ((value - 28) / (35 - 28)) * 25);
+            };
+
+            if (bmi) {
+                bmiNum.textContent = bmi.toFixed(1);
+                bmiTag.textContent = bmiStatus.text;
+                bmiTag.className = 'bmi-status-tag ' + bmiStatus.class;
+                const arcPercent = Math.min(1, bmi / 35);
+                const circ = 239;
+                bmiArc.style.strokeDashoffset = circ * (1 - arcPercent);
+                bmiArc.style.stroke = bmiStatus.class === 'normal'
+                    ? getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()
+                    : bmiStatus.class === 'thin' || bmiStatus.class === 'over' ? '#F39C12' : '#E74C3C';
+                bmiMarker.style.left = getEqualBmiPercent(bmi) + '%';
+            } else {
+                bmiNum.textContent = '--';
+                bmiTag.textContent = '请先完善信息';
+                bmiTag.className = 'bmi-status-tag none';
+                bmiArc.style.strokeDashoffset = 239;
+                bmiMarker.style.left = '0%';
+            }
+
+            if (p.height) {
+                const h = p.height / 100;
+                const thinMax = (18.5 * h * h).toFixed(1);
+                const normalMax = (24 * h * h).toFixed(1);
+                const overMax = (28 * h * h).toFixed(1);
+                document.getElementById(prefix + 'RangeThin').textContent = `${thinMax}kg`;
+                document.getElementById(prefix + 'RangeNormal').textContent = `${normalMax}kg`;
+                document.getElementById(prefix + 'RangeOver').textContent = `${overMax}kg`;
+            } else {
+                document.getElementById(prefix + 'RangeThin').textContent = 'BMI 18.5';
+                document.getElementById(prefix + 'RangeNormal').textContent = 'BMI 24';
+                document.getElementById(prefix + 'RangeOver').textContent = 'BMI 28';
+            }
+
+            document.getElementById(prefix + 'FatRate').textContent = fat != null ? `${fat.toFixed(1)} %` : '-- %';
+            document.getElementById(prefix + 'IdealWeight').textContent = ideal ? `${ideal} kg` : '-- kg';
+            document.getElementById(prefix + 'TargetWeight').textContent = appData.targetWeight ? `${appData.targetWeight} kg` : '未设置';
+            const diffEl = document.getElementById(prefix + 'DiffTarget');
+            if (appData.targetWeight && weight != null) {
+                const diff = weight - appData.targetWeight;
+                diffEl.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+                diffEl.style.color = diff > 0 ? 'var(--danger)' : (diff < 0 ? 'var(--success)' : 'var(--text)');
+            } else {
+                diffEl.textContent = '-- kg';
+                diffEl.style.color = '';
+            }
+        }
+
+        function getSortedWeightRecordsDesc() {
+            return [...appData.weights].sort((a, b) => {
+                if (b.date !== a.date) return new Date(b.date) - new Date(a.date);
+                const at = a.time || formatTime(a.createdAt);
+                const bt = b.time || formatTime(b.createdAt);
+                return bt.localeCompare(at);
+            });
+        }
+
+        function getPreviousWeightRecord(record) {
+            const sorted = getSortedWeightRecordsDesc();
+            const idx = sorted.findIndex(w => w.id === record.id);
+            return idx >= 0 ? sorted[idx + 1] || null : null;
+        }
+
+        function formatSignedValue(value, decimals) {
+            if (value == null || isNaN(value)) return '--';
+            const n = Number(value.toFixed(decimals));
+            return `${n > 0 ? '+' : ''}${n}`;
+        }
+
+        function getRecordHealthCompareText(record) {
+            const prev = getPreviousWeightRecord(record);
+            if (!prev) return '暂无上次记录对比';
+            const weightDiff = record.weight - prev.weight;
+            const p = appData.profile;
+            const age = calcAge(p.birthday);
+            const currentFat = calcBodyFat(calcBMI(record.weight, p.height), age, p.gender);
+            const prevFat = calcBodyFat(calcBMI(prev.weight, p.height), age, p.gender);
+            const fatDiff = currentFat != null && prevFat != null ? currentFat - prevFat : null;
+            return `比上次体重${formatSignedValue(weightDiff, 2)}kg，体脂${formatSignedValue(fatDiff, 1)}%`;
+        }
+
+        function renderRecordHealthPage(recordId) {
+            const record = appData.weights.find(w => w.id === recordId);
+            if (!record) { showToast('未找到该体重记录', 'error'); return; }
+            document.getElementById('recordHealthTime').textContent = `${formatDateDisplay(record.date)} ${getRecordTime(record)}`;
+            document.getElementById('recordHealthStatus').innerHTML = record.note ? renderRecordStatusTag(record.note) : '';
+            const metaText = getRecordHealthCompareText(record);
+            renderHealthMetricsByWeight('recordHealth', record.weight, metaText);
+        }
+
+        function openRecordHealthPage(recordId) {
+            currentRecordHealthId = recordId;
+            if (!appData.weights.some(w => w.id === recordId)) { showToast('未找到该体重记录', 'error'); return; }
+            pushPageHistory();
+            renderRecordHealthPage(recordId);
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-record-health').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+        }
+
+        const STATUS_META = {
+            '进餐前': { icon: '🍴' },
+            '进餐后': { icon: '🍴' },
+            '运动前': { icon: '🏃' },
+            '运动后': { icon: '🏃' },
+            '睡觉前': { icon: '🌙' },
+            '起床后': { icon: '☀️' },
+            '如厕前': { icon: '🚽' },
+            '如厕后': { icon: '🚽' }
+        };
+
+        function getStatusMeta(status) {
+            return STATUS_META[status] || { icon: '🏷️' };
+        }
+
+        function renderRecordStatusTag(status, emptyText = '') {
+            if (!status && !emptyText) return '';
+            const meta = getStatusMeta(status);
+            const text = status || emptyText;
+            const emptyClass = status ? '' : ' status-empty';
+            return `<span class="record-status-tag${emptyClass}"><span class="status-icon">${meta.icon}</span><span class="status-text">${text}</span></span>`;
+        }
+
+        function setRecordStatusDisplay(status) {
+            const btn = document.getElementById('statusDisplay');
+            if (status) {
+                btn.classList.add('selected');
+                btn.innerHTML = renderRecordStatusTag(status);
+            } else {
+                btn.classList.remove('selected');
+                btn.innerHTML = renderRecordStatusTag('', '添加状态');
+            }
+        }
+
         // 添加/编辑记录
         function openAddSheet() {
             document.getElementById('recordSheetTitle').textContent = '添加体重记录';
@@ -2281,9 +2685,7 @@
             document.getElementById('dateDisplayText').textContent = formatDateDisplay(today);
             document.getElementById('recordWeight').value = '';
             document.getElementById('recordNote').value = '';
-            document.getElementById('noteDisplayText').textContent = '添加状态';
-            document.getElementById('noteDisplayText').style.color = 'var(--primary)';
-            document.getElementById('noteDisplayText').style.fontWeight = '500';
+            setRecordStatusDisplay('');
             document.getElementById('recordRemark').value = '';
             document.getElementById('recordSheet').classList.add('show');
             setTimeout(() => document.getElementById('recordWeight').focus(), 300);
@@ -2299,16 +2701,7 @@
             document.getElementById('recordWeight').value = r.weight;
             const status = r.note || '';
             document.getElementById('recordNote').value = status;
-            const statusEl = document.getElementById('noteDisplayText');
-            if (status) {
-                statusEl.textContent = status;
-                statusEl.style.color = 'var(--text)';
-                statusEl.style.fontWeight = '400';
-            } else {
-                statusEl.textContent = '添加状态';
-                statusEl.style.color = 'var(--primary)';
-                statusEl.style.fontWeight = '500';
-            }
+            setRecordStatusDisplay(status);
             document.getElementById('recordRemark').value = r.remark || '';
             document.getElementById('recordSheet').classList.add('show');
         }
@@ -2577,16 +2970,7 @@
             document.querySelectorAll('.remark-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
             document.getElementById('recordNote').value = remark;
-            const statusEl = document.getElementById('noteDisplayText');
-            if (remark) {
-                statusEl.textContent = remark;
-                statusEl.style.color = 'var(--text)';
-                statusEl.style.fontWeight = '400';
-            } else {
-                statusEl.textContent = '添加状态';
-                statusEl.style.color = 'var(--primary)';
-                statusEl.style.fontWeight = '500';
-            }
+            setRecordStatusDisplay(remark);
             document.getElementById('customRemarkArea').style.display = 'none';
             closeRemarkSheet();
         }
@@ -2600,11 +2984,9 @@
         function confirmCustomRemark() {
             const val = document.getElementById('customRemarkInput').value.trim();
             if (!val) { showToast('请输入自定义状态', 'error'); return; }
+            if ([...val].length > 4) { showToast('自定义状态不超过四个字', 'error'); return; }
             document.getElementById('recordNote').value = val;
-            const statusEl = document.getElementById('noteDisplayText');
-            statusEl.textContent = val;
-            statusEl.style.color = 'var(--text)';
-            statusEl.style.fontWeight = '400';
+            setRecordStatusDisplay(val);
             closeRemarkSheet();
         }
         document.getElementById('remarkSheet').addEventListener('click', function(e) { if (e.target === this) closeRemarkSheet(); });
@@ -2617,6 +2999,7 @@
             const note = document.getElementById('recordNote').value.trim();
             const remark = document.getElementById('recordRemark').value.trim();
             if (!date || isNaN(weight) || weight < 20 || weight > 300) { showToast('请输入有效的日期和体重', 'error'); return; }
+            if (note && !STATUS_META[note] && [...note].length > 4) { showToast('自定义状态不超过四个字', 'error'); return; }
             if (id) {
                 const idx = appData.weights.findIndex(w => w.id === id);
                 if (idx !== -1) { appData.weights[idx].date = date; appData.weights[idx].time = time; appData.weights[idx].weight = weight; appData.weights[idx].note = note; appData.weights[idx].remark = remark; appData.weights[idx].updatedAt = new Date().toISOString(); }
@@ -2645,6 +3028,7 @@
         function pushPageHistory() {
             const activePage = document.querySelector('.page.active');
             if (activePage && activePage.id !== 'page-profile-edit' &&
+                activePage.id !== 'page-record-health' &&
                 activePage.id !== 'page-target-edit' &&
                 activePage.id !== 'page-data-edit' &&
                 activePage.id !== 'page-emoji-edit' &&
@@ -3589,14 +3973,13 @@
 
         // 渲染：每日记录
         function renderRecordPage() {
-            const sorted = [...appData.weights].sort((a, b) => {
-                if (b.date !== a.date) return new Date(b.date) - new Date(a.date);
-                const at = a.time || formatTime(a.createdAt);
-                const bt = b.time || formatTime(b.createdAt);
-                return bt.localeCompare(at);
-            });
+            const sorted = getSortedWeightRecordsDesc();
             const latest = sorted[0];
-            if (latest) { document.getElementById('latestWeight').textContent = latest.weight; document.getElementById('latestDate').textContent = latest.date; }
+            if (latest) {
+                const latestDate = new Date(latest.date + 'T00:00:00');
+                document.getElementById('latestWeight').textContent = latest.weight;
+                document.getElementById('latestDate').textContent = `${latestDate.getFullYear()}/${latestDate.getMonth() + 1}/${latestDate.getDate()}`;
+            }
             else { document.getElementById('latestWeight').textContent = '--'; document.getElementById('latestDate').textContent = ''; }
 
             const targetCard = document.getElementById('targetCard');
@@ -3634,23 +4017,20 @@
             if (sorted.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
             emptyEl.style.display = 'none';
             const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
-            const currentYear = new Date().getFullYear();
             listEl.innerHTML = sorted.map((item, index) => {
                 const prev = sorted[index + 1];
                 let changeHtml = '<span class="change flat">— 首条</span>';
                 let emojiType = 'flat';
                 if (prev) {
                     const diff = item.weight - prev.weight;
-                    if (diff > 0) { changeHtml = `<span class="change up">▲ +${diff.toFixed(2)}</span>`; emojiType = 'up'; }
-                    else if (diff < 0) { changeHtml = `<span class="change down">▼ ${diff.toFixed(2)}</span>`; emojiType = 'down'; }
+                    if (diff > 0) { changeHtml = `<span class="change up">↑ +${diff.toFixed(2)}</span>`; emojiType = 'up'; }
+                    else if (diff < 0) { changeHtml = `<span class="change down">↓ ${diff.toFixed(2)}</span>`; emojiType = 'down'; }
                     else changeHtml = '<span class="change flat">— 持平</span>';
                 }
                 const d = new Date(item.date + 'T00:00:00');
-                const dateStr = d.getFullYear() === currentYear
-                    ? `${d.getMonth() + 1}月${d.getDate()}日`
-                    : `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+                const dateStr = `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
                 const timeStr = getRecordTime(item);
-                const statusText = item.note || '';
+                const statusHtml = item.note ? renderRecordStatusTag(item.note) : '';
                 const remarkHtml = item.remark ? `<div class="record-remark">${item.remark}</div>` : '';
                 return `<div class="record-card-wrapper">
                     <div class="record-actions">
@@ -3661,11 +4041,11 @@
                             <img src="icon/icon-delete.png">
                         </div>
                     </div>
-                    <div class="record-card" data-id="${item.id}" data-swipe-width="104">
+                    <div class="record-card" data-id="${item.id}" data-swipe-width="104" onclick="openRecordHealthPage('${item.id}')">
                         <div class="record-icon">${renderEmojiIcon(currentTheme[emojiType])}</div>
                         <div class="record-info"><div class="date">${dateStr}</div><div class="time">${timeStr}</div></div>
-                        <div class="record-mid"><div class="status">${statusText}</div><div class="weight">${item.weight}<span class="unit"> kg</span></div></div>
-                        <div class="record-change">${changeHtml}</div>
+                        <div class="record-mid"><div class="status">${statusHtml}</div><div class="weight">${item.weight}<span class="unit"> kg</span></div></div>
+                        <div class="record-change"><div class="status-placeholder"></div>${changeHtml}</div>
                     </div>
                     ${remarkHtml}
                 </div>`;
@@ -3925,56 +4305,10 @@
 
             const sorted = [...appData.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latest = sorted[0];
-            const bmi = calcBMI(latest?.weight, p.height);
-            const fat = calcBodyFat(bmi, age, p.gender);
-            const ideal = getIdealWeight(p.height);
-            const bmiStatus = getBMIStatus(bmi);
-
-            const bmiNum = document.getElementById('bmiNum');
-            const bmiTag = document.getElementById('bmiStatusTag');
-            const bmiArc = document.getElementById('bmiArc');
-            const bmiMarker = document.getElementById('bmiMarker');
-
-            if (bmi) {
-                bmiNum.textContent = bmi.toFixed(1);
-                bmiTag.textContent = bmiStatus.text;
-                bmiTag.className = 'bmi-status-tag ' + bmiStatus.class;
-                const arcPercent = Math.min(1, bmi / 35);
-                const circ = 239;
-                bmiArc.style.strokeDashoffset = circ * (1 - arcPercent);
-                bmiArc.style.stroke = bmiStatus.class === 'normal' ? getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() : bmiStatus.class === 'thin' ? '#F39C12' : bmiStatus.class === 'over' ? '#F39C12' : '#E74C3C';
-                bmiMarker.style.left = Math.min(98, Math.max(2, bmiStatus.percent)) + '%';
-            } else {
-                bmiNum.textContent = '--';
-                bmiTag.textContent = '请先完善信息';
-                bmiTag.className = 'bmi-status-tag none';
-                bmiArc.style.strokeDashoffset = 239;
-                bmiMarker.style.left = '0%';
-            }
-
-            // BMI 体重范围标签
-            if (p.height) {
-                const h = p.height / 100;
-                const thinMax = (18.5 * h * h).toFixed(1);
-                const normalMax = (24 * h * h).toFixed(1);
-                const overMax = (28 * h * h).toFixed(1);
-                document.getElementById('rangeThin').textContent = `<${thinMax}kg`;
-                document.getElementById('rangeNormal').textContent = `${thinMax}-${normalMax}kg`;
-                document.getElementById('rangeOver').textContent = `${normalMax}-${overMax}kg`;
-                document.getElementById('rangeObese').textContent = `≥${overMax}kg`;
-            } else {
-                document.getElementById('rangeThin').textContent = 'BMI<18.5';
-                document.getElementById('rangeNormal').textContent = '18.5-24';
-                document.getElementById('rangeOver').textContent = '24-28';
-                document.getElementById('rangeObese').textContent = 'BMI≥28';
-            }
-
-            document.getElementById('fatRate').textContent = fat != null ? `${fat.toFixed(1)} %` : '-- %';
-            document.getElementById('idealWeight').textContent = ideal ? `${ideal} kg` : '-- kg';
-            document.getElementById('targetWeightDisplay').textContent = appData.targetWeight ? `${appData.targetWeight} kg` : '未设置';
+            renderHealthMetricsByWeight('profileHealth', latest?.weight, '');
 
             // 目标管理 - 进度可视化
-            const diffEl = document.getElementById('diffTarget');
+            const diffEl = document.getElementById('profileHealthDiffTarget');
             const goalDiffNum = document.getElementById('goalDiffNum');
             const goalProgressNum = document.getElementById('goalProgressNum');
             const goalBarFill = document.getElementById('goalBarFill');
@@ -4286,6 +4620,7 @@
 
         function selectNoteCategory(catId) {
             currentNoteCategory = catId;
+            selectedNoteCategory = catId !== 'all' ? catId : 'uncategorized';
             const headerTitle = document.querySelector('#page-notes .header-title');
             headerTitle.textContent = getNoteCat(catId).name === '全部' ? '全部笔记' : getNoteCat(catId).name;
             renderNotesCategoryBar();
@@ -4389,6 +4724,15 @@
                 if (c !== card) c.style.transform = '';
             });
         }
+        function swipeOpenedCards() {
+            return Array.from(document.querySelectorAll('.note-card, .record-card')).filter(c => c.style.transform && c.style.transform !== 'none');
+        }
+        function swipeCloseAll() {
+            swipeOpenedCards().forEach(c => {
+                c.style.transition = 'transform 0.25s ease';
+                c.style.transform = '';
+            });
+        }
         function swipeStart(clientX, clientY, card) {
             swipeCloseOthers(card);
             swipeState.actionsWidth = parseInt(card.dataset.swipeWidth) || 156;
@@ -4445,6 +4789,14 @@
                 document.addEventListener('mouseup', swipeEnd);
                 document.addEventListener('mouseleave', swipeEnd);
                 document.addEventListener('click', function(e) {
+                    const opened = swipeOpenedCards();
+                    if (opened.length && !e.target.closest('.record-actions .act-btn, .note-card-actions .act-btn')) {
+                        swipeCloseAll();
+                        e.stopPropagation();
+                        e.preventDefault();
+                        suppressCardClick = false;
+                        return;
+                    }
                     if (suppressCardClick) {
                         suppressCardClick = false;
                         e.stopPropagation();
@@ -4576,7 +4928,7 @@
         let noteDraftTimer = null;
         let noteIsNew = false;
 
-        function openNoteEditPage(noteId) {
+        function openNoteEditPage(noteId, defaultCategory) {
             pushPageHistory();
             refreshNoteCategories();
             const editor = document.getElementById('noteContentEditor');
@@ -4608,7 +4960,7 @@
                 document.getElementById('editNoteId').value = '';
                 document.getElementById('noteTitle').value = '';
                 editor.innerHTML = '';
-                selectedNoteCategory = currentNoteCategory !== 'all' ? currentNoteCategory : 'uncategorized';
+                selectedNoteCategory = defaultCategory || (currentNoteCategory !== 'all' ? currentNoteCategory : 'uncategorized');
                 document.getElementById('noteTimestamp').textContent = '新建笔记';
                 document.getElementById('noteEditTitle').textContent = '新建笔记';
                 // 进入编辑模式
@@ -5013,11 +5365,14 @@
             renderProfilePage();
             renderNotesPage();
             if (document.getElementById('page-trend').classList.contains('active')) renderTrendChart();
+            if (document.getElementById('page-record-health').classList.contains('active') && currentRecordHealthId) {
+                renderRecordHealthPage(currentRecordHealthId);
+            }
         }
 
         // ========== 左滑返回手势 ==========
         (function() {
-            const subPages = ['page-profile-edit', 'page-target-edit', 'page-data-edit', 'page-emoji-edit', 'page-note-edit', 'page-theme-edit'];
+            const subPages = ['page-profile-edit', 'page-record-health', 'page-target-edit', 'page-data-edit', 'page-emoji-edit', 'page-note-edit', 'page-theme-edit'];
             let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
             const container = document.querySelector('.page-container');
             if (!container) return;
@@ -5234,4 +5589,3 @@
     </script>
 </body>
 </html>
-
