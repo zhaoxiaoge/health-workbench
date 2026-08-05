@@ -195,7 +195,7 @@
             background: var(--card-bg); border-radius: 14px;
             padding: 14px 16px;
             box-shadow: var(--shadow);
-            display: flex; align-items: center; gap: 12px;
+            display: flex; align-items: center; gap: 8px;
             position: relative; z-index: 1;
             transition: transform 0.25s ease;
             touch-action: pan-y;
@@ -203,37 +203,51 @@
         .record-card:active { transform: scale(0.98); }
 
         .record-icon {
-            width: 40px; height: 40px; border-radius: 12px;
+            width: 36px; height: 36px; border-radius: 10px;
             background: var(--primary-bg);
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px; flex-shrink: 0;
+            font-size: 18px; flex-shrink: 0;
         }
 
         .record-info { flex: 1; min-width: 0; }
         .record-info .date { font-size: 14px; font-weight: 600; }
         .record-info .time { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
 
-        .record-weight { text-align: right; flex-shrink: 0; }
-        .record-weight .value { font-size: 18px; font-weight: 700; }
-        .record-weight .unit { font-size: 11px; color: var(--text-secondary); }
+        .record-mid { flex: 1; min-width: 0; text-align: left; }
+        .record-mid .status { font-size: 11px; color: var(--text-secondary); margin-bottom: 2px; min-height: 14px; }
+        .record-mid .weight { font-size: 18px; font-weight: 700; }
+        .record-mid .weight .unit { font-size: 11px; color: var(--text-secondary); font-weight: 400; }
 
-        .record-change { flex-shrink: 0; text-align: left; min-width: 56px; }
-        .record-change .change { font-size: 13px; font-weight: 600; display: block; }
+        .record-change { flex: 1; min-width: 0; text-align: left; }
+        .record-change .change { font-size: 18px; font-weight: 700; display: block; line-height: 1.2; }
+        .record-change .change .small { font-size: 11px; font-weight: 400; }
         .change.down { color: var(--success); }
         .change.up { color: var(--danger); }
-        .change.flat { color: var(--text-secondary); }
+        .change.flat { color: var(--text-secondary); font-size: 13px; font-weight: 500; }
+
+        .record-remark {
+            font-size: 11px; color: var(--text-secondary);
+            padding: 4px 16px 0; line-height: 1.4;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
 
         .record-actions {
             position: absolute; top: 0; right: 0; bottom: 0;
-            display: flex; gap: 1px; z-index: 0;
+            display: flex; align-items: center; gap: 8px;
+            padding: 0 10px; z-index: 0;
         }
         .record-actions .act-btn {
-            width: 64px; border: none;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; cursor: pointer; transition: all 0.15s;
+            width: 40px; height: 40px; border-radius: 50%;
+            border: none; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.15s; flex-shrink: 0;
         }
-        .act-btn.edit { background: #2980B9; color: white; }
-        .act-btn.delete { background: var(--danger); color: white; }
+        .record-actions .act-btn:active { transform: scale(0.88); }
+        .record-actions .act-btn img {
+            width: 20px; height: 20px; object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        .record-actions .act-btn.edit { background: #2E86C1; }
+        .record-actions .act-btn.delete { background: #E74C3C; }
 
         .empty-state { text-align: center; padding: 60px 20px; color: var(--text-light); }
         .empty-state .emoji { font-size: 56px; margin-bottom: 16px; }
@@ -289,14 +303,28 @@
         .note-card:active { transform: scale(0.98); }
         .note-card-actions {
             position: absolute; top: 0; right: 0; bottom: 0;
-            display: flex; z-index: 0;
+            display: flex; align-items: center; gap: 8px;
+            padding: 0 10px; z-index: 0;
         }
         .note-card-actions .act-btn {
-            width: 72px; border: none;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; cursor: pointer; transition: all 0.15s;
+            width: 40px; height: 40px; border-radius: 50%;
+            border: none; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.15s; flex-shrink: 0;
         }
-        .note-card-actions .act-btn.delete { background: var(--danger); color: white; }
+        .note-card-actions .act-btn:active { transform: scale(0.88); }
+        .note-card-actions .act-btn img {
+            width: 20px; height: 20px; object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        .note-card-actions .act-btn.pin,
+        .note-card-actions .act-btn.unpin { background: #27AE60; }
+        .note-card-actions .act-btn.edit { background: #2E86C1; }
+        .note-card-actions .act-btn.delete { background: #E74C3C; }
+        .pin-badge {
+            margin-left: 6px; font-size: 10px; padding: 1px 6px;
+            border-radius: 8px; background: #27AE60; color: white;
+            font-weight: 500; display: inline-flex; align-items: center; gap: 2px;
+        }
         .note-card-header {
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 4px;
@@ -413,6 +441,17 @@
         .note-cat-pill.custom {
             position: relative;
         }
+        .note-cat-pill.editable {
+            position: relative;
+        }
+        .note-cat-pill.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+        .note-cat-pill.drag-over {
+            border-style: dashed;
+            border-color: var(--primary);
+        }
         .note-cat-pill.long-press-active {
             transform: scale(0.92); opacity: 0.7;
         }
@@ -425,7 +464,8 @@
             z-index: 5;
         }
         .note-cat-pill.edit-mode .cat-delete-x { display: flex; }
-        .note-cat-pill.edit-mode { animation: jiggle 0.4s ease-in-out infinite; }
+        .note-cat-pill.edit-mode { animation: jiggle 0.4s ease-in-out infinite; cursor: grab; }
+        .note-cat-pill.edit-mode:active { cursor: grabbing; }
         @keyframes jiggle {
             0%, 100% { transform: rotate(-2deg); }
             50% { transform: rotate(2deg); }
@@ -448,12 +488,12 @@
         }
         .cat-color-dot.selected { border-color: var(--text); transform: scale(1.15); }
 
-        /* ========== 笔记编辑弹窗 ========== */
-        .note-sheet { max-height: 90vh; max-height: 90dvh; display: flex; flex-direction: column; overflow-y: auto; }
+        /* ========== 笔记编辑二级页面 ========== */
+        .note-edit-body { padding: 16px 20px; padding-bottom: 60px; }
         .note-title-input {
             width: 100%; border: none; outline: none;
             font-size: 20px; font-weight: 700; color: var(--text);
-            font-family: inherit; padding: 4px 0;
+            font-family: inherit; padding: 4px 0; margin-bottom: 8px;
         }
         .note-meta-bar {
             display: flex; align-items: center; justify-content: space-between;
@@ -476,51 +516,89 @@
         }
         .note-cat-option:active { background: var(--bg); }
         .note-cat-option.active { color: var(--primary); font-weight: 600; }
-        .note-content-input {
-            width: 100%; border: 1px solid var(--border); border-radius: 10px;
-            padding: 12px 14px; font-size: 16px; color: var(--text);
-            font-family: inherit; outline: none; resize: none; min-height: 120px;
-            line-height: 1.6;
+
+        /* 富文本工具栏 */
+        .rich-toolbar {
+            display: flex; align-items: center; gap: 4px;
+            padding: 8px 0; overflow-x: auto; overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 12px;
+            position: sticky; top: 0; background: var(--bg); z-index: 5;
         }
-        .note-image-preview {
-            display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px;
-        }
-        .note-image-preview .img-wrap {
-            position: relative; width: 72px; height: 72px;
-        }
-        .note-image-preview img {
-            width: 72px; height: 72px; border-radius: 8px; object-fit: cover;
-        }
-        .note-image-preview .img-remove {
-            position: absolute; top: -6px; right: -6px;
-            width: 20px; height: 20px; border-radius: 50%;
-            background: var(--danger); color: white; border: none;
-            font-size: 12px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-        }
-        .note-toolbar {
-            display: flex; gap: 8px; padding: 8px 0;
-        }
-        .note-tool-btn {
-            width: 36px; height: 36px; border-radius: 10px; border: none;
-            background: var(--bg); font-size: 18px; cursor: pointer;
+        .rich-toolbar::-webkit-scrollbar { display: none; }
+        .rt-btn {
+            flex-shrink: 0; min-width: 36px; height: 36px; min-height: 36px;
+            border-radius: 8px; border: 1px solid var(--border);
+            background: var(--card-bg); font-size: 15px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
+            padding: 0 8px; touch-action: manipulation;
         }
-        .note-tool-btn:active { background: var(--border); }
-        .note-checklist { margin-bottom: 10px; }
-        .checklist-item {
-            display: flex; align-items: center; gap: 8px;
-            padding: 8px 0; border-bottom: 1px solid var(--border);
+        .rt-btn:active { background: var(--border); }
+        .rt-select {
+            flex-shrink: 0; height: 36px; border-radius: 8px;
+            border: 1px solid var(--border); background: var(--card-bg);
+            font-size: 13px; color: var(--text); font-family: inherit;
+            padding: 0 4px; outline: none;
         }
-        .checklist-item input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
-        .checklist-item input[type="text"] {
-            flex: 1; border: none; outline: none; font-size: 14px;
-            color: var(--text); font-family: inherit; background: transparent;
+        .rt-color-wrap {
+            flex-shrink: 0; position: relative; width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            border: 1px solid var(--border); border-radius: 8px;
+            background: var(--card-bg); cursor: pointer; overflow: hidden;
         }
-        .checklist-item.done input[type="text"] { text-decoration: line-through; color: var(--text-light); }
-        .checklist-item .del-item {
-            color: var(--danger); font-size: 18px; cursor: pointer; flex-shrink: 0;
+        .rt-color-icon {
+            font-size: 15px; font-weight: 700; pointer-events: none;
+            line-height: 1;
         }
+        .rt-color-input {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; opacity: 0; cursor: pointer;
+            border: none;
+        }
+
+        /* 富文本编辑区 */
+        .rich-editor-wrap {
+            min-height: 300px;
+        }
+        .rich-editor {
+            min-height: 300px; padding: 12px 0;
+            font-size: 16px; line-height: 1.8; color: var(--text);
+            outline: none; word-wrap: break-word;
+            -webkit-user-select: text; user-select: text;
+        }
+        .rich-editor:empty::before {
+            content: attr(data-placeholder);
+            color: var(--text-light); pointer-events: none;
+        }
+        .rich-editor img {
+            max-width: 100%; border-radius: 8px; margin: 8px 0;
+            display: block;
+        }
+        .rich-editor ul, .rich-editor ol {
+            margin: 8px 0; padding-left: 24px;
+        }
+        .rich-editor .checklist-block {
+            margin: 4px 0;
+        }
+        .rich-editor .checklist-block input[type="checkbox"] {
+            width: 18px; height: 18px; margin-right: 6px; vertical-align: middle;
+        }
+
+        /* 查看模式隐藏工具栏 */
+        .note-edit-body.view-mode .rich-toolbar { display: none; }
+        .note-edit-body.view-mode .rich-editor { 
+            min-height: auto; padding-top: 0;
+            -webkit-user-select: text; user-select: text;
+        }
+        .note-edit-body.view-mode .note-title-input { pointer-events: none; }
+        .note-edit-body.view-mode .note-category-select { pointer-events: none; }
+
+        /* 笔记列表HTML内容预览 */
+        .note-card-content { line-height: 1.5; }
+        .note-card-content img { max-width: 100%; border-radius: 4px; }
+        .note-card-content b, .note-card-content strong { font-weight: 700; }
 
         /* FAB */
         .fab {
@@ -621,7 +699,7 @@
             font-family: inherit; transition: all 0.2s;
         }
         .date-quick-btn.active {
-            background: #2AB5B0; color: white; border-color: #2AB5B0;
+            background: var(--primary); color: white; border-color: var(--primary);
         }
 
         .trend-info-bar {
@@ -798,6 +876,82 @@
         }
         .setting-item .arrow { color: var(--text-light); font-size: 14px; }
 
+        /* 主题切换平滑过渡 */
+        body, .sticky-nav-bar, .setting-group, .record-card, .note-card, .bmi-card,
+        .bottom-sheet, .sheet-overlay, .rich-toolbar, .rt-btn, .rt-color-wrap,
+        .note-cat-pill, .trend-filter, .gender-option, .cat-color-dot,
+        .emoji-theme-card, .rich-editor, .note-edit-body {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* ========== 主题选择页面 ========== */
+        .theme-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+        }
+        .theme-card {
+            border-radius: 14px; overflow: hidden; cursor: pointer;
+            border: 2px solid var(--border); position: relative;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+        .theme-card:active { transform: scale(0.97); }
+        .theme-card.active { border-color: var(--primary); }
+        .theme-card .badge-in-use {
+            position: absolute; top: 8px; right: 8px;
+            background: var(--primary); color: white;
+            font-size: 10px; padding: 2px 8px; border-radius: 10px;
+            z-index: 2;
+        }
+        .theme-preview {
+            height: 70px; display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 600; color: white;
+        }
+        .theme-info {
+            padding: 8px 12px; font-size: 13px; font-weight: 600;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .theme-color-dots {
+            display: flex; gap: 4px;
+        }
+        .theme-color-dots .dot {
+            width: 12px; height: 12px; border-radius: 50%;
+        }
+        .theme-custom-card {
+            border-radius: 14px; overflow: hidden; cursor: pointer;
+            border: 2px dashed var(--border); position: relative;
+            transition: border-color 0.2s, transform 0.15s;
+            display: flex; align-items: center; justify-content: center;
+            min-height: 110px; flex-direction: column; gap: 6px;
+        }
+        .theme-custom-card:active { transform: scale(0.97); }
+        .theme-custom-card.active { border-color: var(--primary); border-style: solid; }
+        .theme-custom-card .custom-icon { font-size: 28px; }
+        .theme-custom-card .custom-label { font-size: 13px; font-weight: 600; color: var(--text); }
+        .theme-custom-colors {
+            display: flex; gap: 6px; margin-top: 4px;
+        }
+        .theme-custom-colors .dot {
+            width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border);
+        }
+
+        /* 自定义颜色选择器弹窗 */
+        .custom-color-sheet { max-height: 80vh; max-height: 80dvh; overflow-y: auto; }
+        .color-picker-row {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 0; border-bottom: 1px solid var(--border);
+        }
+        .color-picker-row label { font-size: 14px; flex: 1; color: var(--text); }
+        .color-picker-row input[type="color"] {
+            width: 44px; height: 44px; border: none; border-radius: 10px;
+            cursor: pointer; background: transparent;
+        }
+        .color-picker-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        .color-picker-row input[type="color"]::-webkit-color-swatch { border: 2px solid var(--border); border-radius: 10px; }
+        .color-preview-bar {
+            height: 40px; border-radius: 10px; margin: 12px 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 600; color: white;
+        }
+
         /* ========== 体重表情主题 ========== */
         .emoji-theme-grid {
             display: grid;
@@ -869,6 +1023,13 @@
             padding: 20px; padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
             animation: slideUp 0.3s ease;
             max-height: 85vh; max-height: 85dvh; overflow-y: auto;
+            transition: max-height 0.3s ease, transform 0.3s ease, border-radius 0.3s ease;
+            will-change: transform;
+        }
+        .bottom-sheet.fullscreen {
+            max-height: 100vh; max-height: 100dvh;
+            border-radius: 0;
+            height: 100vh; height: 100dvh;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
@@ -912,6 +1073,51 @@
         }
         .note-display:active { border-color: var(--primary); }
         .note-arrow { color: var(--text-secondary); font-size: 18px; }
+
+        /* 日期+状态同一行 */
+        .date-status-row {
+            display: flex; gap: 10px; align-items: stretch;
+        }
+        .date-btn {
+            flex: 1; display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+            cursor: pointer; font-size: 14px; color: var(--text); transition: all 0.2s;
+            background: var(--bg);
+        }
+        .date-btn:active { border-color: var(--primary); }
+        .date-arrow { color: var(--text-secondary); font-size: 12px; }
+        .status-btn {
+            flex-shrink: 0; display: flex; align-items: center; gap: 4px;
+            padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s;
+            background: var(--bg);
+        }
+        .status-btn:active { border-color: var(--primary); }
+        .status-arrow { color: var(--text-secondary); font-size: 16px; }
+
+        /* 备注输入框 */
+        .remark-input {
+            width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px;
+            font-size: 14px; font-family: inherit; background: var(--bg); color: var(--text);
+            transition: all 0.2s; box-sizing: border-box;
+        }
+        .remark-input:focus { border-color: var(--primary); outline: none; }
+
+        /* 时钟选择器 */
+        .clock-time-display {
+            text-align: center; font-size: 36px; font-weight: 700;
+            color: var(--primary); padding: 8px 0 4px; letter-spacing: 2px;
+        }
+        .clock-container {
+            display: flex; justify-content: center; align-items: center;
+            padding: 8px 0; touch-action: none;
+        }
+        #clockCanvas { cursor: pointer; }
+        .clock-mode-toggle {
+            display: flex; justify-content: center; align-items: center; gap: 6px;
+            padding: 4px 0 8px; font-size: 13px; color: var(--text-secondary);
+        }
+        .clock-mode-value { color: var(--primary); font-weight: 600; }
 
         /* 备注选择网格 */
         .remark-grid {
@@ -1124,10 +1330,10 @@
                             <div class="icon-btn" onclick="openWeightDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenu')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenu">
-                                <div class="dropdown-item" onclick="openQuickView('health')">
-                                    <span class="icon">💓</span> 健康指标
+                                <div class="dropdown-item" onclick="document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.remove('show')); openProfileEdit();">
+                                    <span class="icon">👤</span> 个人信息
                                 </div>
-                                <div class="dropdown-item" onclick="openQuickView('target')">
+                                <div class="dropdown-item" onclick="document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.remove('show')); openTargetEdit();">
                                     <span class="icon">🎯</span> 目标管理
                                 </div>
                             </div>
@@ -1182,10 +1388,10 @@
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenuNotes')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenuNotes">
                                 <div class="dropdown-item" onclick="toggleNotesView()">
-                                    <span class="icon">▦</span> <span id="notesViewLabel">宫格视图</span>
+                                    <img id="notesViewIcon" src="icon/icon-view-grid.png" style="width:18px;height:18px;object-fit:contain;"> <span id="notesViewLabel">宫格视图</span>
                                 </div>
                                 <div class="dropdown-item" onclick="enterBatchDeleteMode()">
-                                    <span class="icon">🗑️</span> 批量删除
+                                    <img src="icon/icon-delete.png" style="width:18px;height:18px;object-fit:contain;"> 批量删除
                                 </div>
                             </div>
                         </div>
@@ -1231,10 +1437,10 @@
                             <div class="icon-btn" onclick="openDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenuTrend')">⋯</div>
                             <div class="dropdown-menu" id="dropdownMenuTrend">
-                                <div class="dropdown-item" onclick="openQuickView('health')">
-                                    <span class="icon">💓</span> 健康指标
+                                <div class="dropdown-item" onclick="document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.remove('show')); openProfileEdit();">
+                                    <span class="icon">👤</span> 个人信息
                                 </div>
-                                <div class="dropdown-item" onclick="openQuickView('target')">
+                                <div class="dropdown-item" onclick="document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.remove('show')); openTargetEdit();">
                                     <span class="icon">🎯</span> 目标管理
                                 </div>
                             </div>
@@ -1268,10 +1474,10 @@
                             <div style="font-size:12px; color:var(--text); margin-bottom:8px; font-weight:600;">自定义范围</div>
                             <div style="display:flex; flex-direction:column; gap:8px;">
                                 <label style="font-size:12px; color:var(--text);">开始日期</label>
-                                <input type="date" id="customDateStart" style="padding:6px 8px; border:1px solid #ddd; border-radius:8px; font-size:13px; color:var(--text);">
+                                <input type="date" id="customDateStart" style="padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text); background:var(--bg);">
                                 <label style="font-size:12px; color:var(--text);">结束日期</label>
-                                <input type="date" id="customDateEnd" style="padding:6px 8px; border:1px solid #ddd; border-radius:8px; font-size:13px; color:var(--text);">
-                                <button onclick="applyCustomDateRange()" style="margin-top:4px; padding:8px; background:#2AB5B0; color:white; border:none; border-radius:8px; font-size:13px; cursor:pointer;">应用</button>
+                                <input type="date" id="customDateEnd" style="padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text); background:var(--bg);">
+                                <button onclick="applyCustomDateRange()" style="margin-top:4px; padding:8px; background:var(--primary); color:white; border:none; border-radius:8px; font-size:13px; cursor:pointer;">应用</button>
                             </div>
                         </div>
                     </div>
@@ -1321,7 +1527,7 @@
                         <div class="bmi-gauge">
                             <svg width="90" height="90" viewBox="0 0 90 90">
                                 <circle cx="45" cy="45" r="38" fill="none" stroke="#ECF0F1" stroke-width="7"/>
-                                <circle id="bmiArc" cx="45" cy="45" r="38" fill="none" stroke="#2AB5B0" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
+                                <circle id="bmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
                             </svg>
                             <div class="gauge-value">
                                 <div class="num" id="bmiNum">--</div>
@@ -1375,6 +1581,15 @@
                     </div>
                 </div>
 
+                <!-- 主题切换 -->
+                <div class="setting-group">
+                    <div class="setting-item" onclick="openThemeEdit()" style="border-top:none;">
+                        <div class="setting-icon" style="background:var(--primary-bg); color:var(--primary);">🎨</div>
+                        <div class="setting-label">主题切换</div>
+                        <div class="setting-value"><span id="showThemeName">海洋青</span><span class="arrow">›</span></div>
+                    </div>
+                </div>
+
                 <!-- 数据管理 -->
                 <div class="setting-group">
                     <div class="setting-item" onclick="openDataEdit()" style="border-top:none;">
@@ -1393,7 +1608,7 @@
             <div class="page" id="page-profile-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
                         <div class="header-title">个人信息</div>
                     </div>
                 </div>
@@ -1417,7 +1632,7 @@
             <div class="page" id="page-target-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
                         <div class="header-title">目标管理</div>
                     </div>
                 </div>
@@ -1467,7 +1682,7 @@
             <div class="page" id="page-data-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
                         <div class="header-title">数据管理</div>
                     </div>
                 </div>
@@ -1505,11 +1720,60 @@
                 </div>
             </div>
 
+            <!-- ============ 主题切换页 (二级页面) ============ -->
+            <div class="page" id="page-theme-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="header-title">主题切换</div>
+                    </div>
+                </div>
+                <div style="padding:16px;">
+                    <div style="font-size:13px; color:var(--text-secondary); margin-bottom:16px; line-height:1.5;">
+                        选择喜欢的主题色彩，点击卡片即可切换
+                    </div>
+                    <div class="theme-grid" id="themeGrid"></div>
+                </div>
+            </div>
+
+            <!-- ============ 自定义颜色弹窗 ============ -->
+            <div class="sheet-overlay" id="customColorSheet">
+                <div class="bottom-sheet custom-color-sheet">
+                    <div class="sheet-handle"></div>
+                    <div class="sheet-title">自定义颜色</div>
+                    <div style="padding:0 4px;">
+                        <div class="color-picker-row">
+                            <label>主色</label>
+                            <input type="color" id="customPrimary" value="#2AB5B0">
+                        </div>
+                        <div class="color-picker-row">
+                            <label>主色（深）</label>
+                            <input type="color" id="customPrimaryDark" value="#1A9D98">
+                        </div>
+                        <div class="color-picker-row">
+                            <label>主色（浅）</label>
+                            <input type="color" id="customPrimaryLight" value="#A3E4D7">
+                        </div>
+                        <div class="color-picker-row">
+                            <label>主色背景</label>
+                            <input type="color" id="customPrimaryBg" value="#E8F8F5">
+                        </div>
+                    </div>
+                    <div class="color-preview-bar" id="colorPreviewBar" style="background:var(--primary);">
+                        预览效果
+                    </div>
+                    <div class="sheet-btn-row">
+                        <button class="sheet-btn secondary" onclick="closeCustomColorSheet()">取消</button>
+                        <button class="sheet-btn primary" onclick="applyCustomTheme()">应用</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- ============ 更多体重表情页 (二级页面) ============ -->
             <div class="page" id="page-emoji-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="backToProfile()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
                         <div class="header-title">更多体重表情</div>
                     </div>
                 </div>
@@ -1520,44 +1784,74 @@
                     <div class="emoji-theme-grid" id="emojiThemeGrid"></div>
                 </div>
             </div>
+
+            <!-- ============ 笔记编辑/查看二级页面 ============ -->
+            <div class="page" id="page-note-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:space-between;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="icon-btn" onclick="backToNotes()" style="font-size:20px;">‹</div>
+                            <div class="header-title" id="noteEditTitle">新建笔记</div>
+                        </div>
+                        <div class="header-icons" id="noteEditActions">
+                            <!-- 动态填充按钮 -->
+                        </div>
+                    </div>
+                </div>
+                <div class="note-edit-body">
+                    <input type="hidden" id="editNoteId">
+                    <input type="text" id="noteTitle" class="note-title-input" placeholder="标题" maxlength="50">
+                    <div class="note-meta-bar">
+                        <div class="note-category-select" id="noteCategorySelect" onclick="toggleNoteCategoryMenu()">
+                            <span id="noteCategoryLabel">未分类</span><span class="arrow">▾</span>
+                        </div>
+                        <span class="note-timestamp" id="noteTimestamp"></span>
+                    </div>
+                    <div class="note-category-dropdown" id="noteCategoryDropdown" style="display:none;"></div>
+
+                    <!-- 富文本工具栏 -->
+                    <div class="rich-toolbar" id="richToolbar">
+                        <button class="rt-btn" onclick="execCmd('bold')" title="加粗"><b>B</b></button>
+                        <button class="rt-btn" onclick="execCmd('italic')" title="斜体"><i>I</i></button>
+                        <button class="rt-btn" onclick="execCmd('underline')" title="下划线"><u>U</u></button>
+                        <select class="rt-select" onchange="changeFontSize(this.value)" title="字号">
+                            <option value="">字号</option>
+                            <option value="2">12px</option>
+                            <option value="3">14px</option>
+                            <option value="4">16px</option>
+                            <option value="5">18px</option>
+                            <option value="6">20px</option>
+                            <option value="7">24px</option>
+                        </select>
+                        <label class="rt-color-wrap" title="文字颜色">
+                            <span class="rt-color-icon">A</span>
+                            <input type="color" class="rt-color-input" onchange="changeTextColor(this.value)" value="#333333">
+                        </label>
+                        <label class="rt-color-wrap" title="背景色">
+                            <span class="rt-color-icon" style="background:#fff5ba;">H</span>
+                            <input type="color" class="rt-color-input" onchange="changeBgColor(this.value)" value="#fff5ba">
+                        </label>
+                        <button class="rt-btn" onclick="toggleList('ul')" title="无序列表">•</button>
+                        <button class="rt-btn" onclick="toggleList('ol')" title="有序列表">1.</button>
+                        <button class="rt-btn" onclick="execCmd('justifyLeft')" title="左对齐">≡</button>
+                        <button class="rt-btn" onclick="execCmd('justifyCenter')" title="居中">=center</button>
+                        <button class="rt-btn" onclick="execCmd('justifyRight')" title="右对齐">≡</button>
+                        <button class="rt-btn" onclick="document.getElementById('noteImageInput').click()" title="插入图片">🖼️</button>
+                        <button class="rt-btn" onclick="insertChecklist()" title="清单">☑️</button>
+                        <button class="rt-btn" onclick="clearFormat()" title="清除格式">✖️</button>
+                        <input type="file" id="noteImageInput" accept="image/*" multiple style="display:none;" onchange="handleNoteImageUpload(event)">
+                    </div>
+
+                    <!-- 富文本编辑区 -->
+                    <div class="rich-editor-wrap">
+                        <div id="noteContentEditor" class="rich-editor" contenteditable="true" data-placeholder="今天想写点什么..."></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <button class="fab" id="fabBtn" onclick="onFabClick()">+</button>
-
-        <!-- ============ 笔记编辑弹窗 ============ -->
-        <div class="sheet-overlay" id="noteSheet">
-            <div class="bottom-sheet note-sheet">
-                <div class="sheet-handle"></div>
-                <input type="hidden" id="editNoteId">
-                <div class="sheet-form-group">
-                    <input type="text" id="noteTitle" class="note-title-input" placeholder="标题" maxlength="50">
-                </div>
-                <div class="note-meta-bar">
-                    <div class="note-category-select" id="noteCategorySelect" onclick="toggleNoteCategoryMenu()">
-                        <span id="noteCategoryLabel">未分类</span><span class="arrow">▾</span>
-                    </div>
-                    <span class="note-timestamp" id="noteTimestamp"></span>
-                </div>
-                <div class="note-category-dropdown" id="noteCategoryDropdown" style="display:none;"></div>
-                <div class="sheet-form-group" style="flex:1; display:flex; flex-direction:column;">
-                    <textarea id="noteContent" class="note-content-input" placeholder="开始记录..." rows="8"></textarea>
-                </div>
-                <!-- 图片预览区 -->
-                <div id="noteImagePreview" class="note-image-preview" style="display:none;"></div>
-                <!-- 工具栏 -->
-                <div class="note-toolbar">
-                    <button class="note-tool-btn" onclick="document.getElementById('noteImageInput').click()" title="插入图片">🖼️</button>
-                    <button class="note-tool-btn" onclick="addChecklistItem()" title="清单">☑️</button>
-                    <input type="file" id="noteImageInput" accept="image/*" multiple style="display:none;" onchange="handleNoteImageUpload(event)">
-                </div>
-                <!-- 清单区 -->
-                <div id="noteChecklist" class="note-checklist" style="display:none;"></div>
-                <div class="sheet-btn-row">
-                    <button class="sheet-btn secondary" onclick="closeNoteSheet()">取消</button>
-                    <button class="sheet-btn primary" onclick="saveNote()">保存</button>
-                </div>
-            </div>
-        </div>
 
         <!-- ============ 新建/编辑笔记分类弹窗 ============ -->
         <div class="sheet-overlay" id="catSheet">
@@ -1577,7 +1871,6 @@
                     <button class="sheet-btn secondary" onclick="closeCatSheet()">取消</button>
                     <button class="sheet-btn primary" onclick="saveCategory()">确定</button>
                 </div>
-                <button id="catDeleteBtn" class="sheet-btn" style="color:var(--danger); display:none; margin-top:8px;" onclick="deleteCategory()">删除此分类</button>
             </div>
         </div>
 
@@ -1618,15 +1911,26 @@
             <div class="sheet-handle"></div>
             <div class="sheet-title" id="recordSheetTitle">添加体重记录</div>
             <input type="hidden" id="editRecordId">
-            <div class="sheet-form-group"><label>日期</label><input type="date" id="recordDate"></div>
-            <div class="sheet-form-group"><label>体重 (kg)</label><input type="number" id="recordWeight" step="0.01" min="20" max="300" placeholder="例如：65.50"></div>
+            <input type="hidden" id="recordDate">
+            <input type="hidden" id="recordTime">
+            <input type="hidden" id="recordNote">
+            <input type="date" id="datePickerInput" style="position:absolute;opacity:0;pointer-events:none;width:0;height:0;">
+            <div class="sheet-form-group">
+                <div class="date-status-row">
+                    <div class="date-btn" id="dateDisplayBtn" onclick="openDatePicker()">
+                        <span id="dateDisplayText">--</span>
+                        <span class="date-arrow">▾</span>
+                    </div>
+                    <div class="status-btn" id="statusDisplay" onclick="openRemarkSheet()">
+                        <span id="noteDisplayText" style="color:var(--primary);font-weight:500;">添加状态</span>
+                        <span class="status-arrow">›</span>
+                    </div>
+                </div>
+            </div>
+            <div class="sheet-form-group"><label>体重 (kg)</label><input type="text" id="recordWeight" inputmode="decimal" placeholder="例如：65.50"></div>
             <div class="sheet-form-group">
                 <label>备注</label>
-                <input type="hidden" id="recordNote">
-                <div class="note-display" id="noteDisplay" onclick="openRemarkSheet()">
-                    <span id="noteDisplayText">无</span>
-                    <span class="note-arrow">›</span>
-                </div>
+                <input type="text" id="recordRemark" placeholder="输入备注（可选）" maxlength="50" class="remark-input">
             </div>
             <div class="sheet-btn-row">
                 <button class="sheet-btn secondary" onclick="closeRecordSheet()">取消</button>
@@ -1635,11 +1939,31 @@
         </div>
     </div>
 
-    <!-- 备注选择 -->
+    <!-- 时钟选择器 -->
+    <div class="sheet-overlay" id="clockSheet">
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title" id="clockSheetTitle">选择时间</div>
+            <div class="clock-time-display" id="clockTimeDisplay">--:--</div>
+            <div class="clock-container" id="clockContainer">
+                <canvas id="clockCanvas" width="280" height="280"></canvas>
+            </div>
+            <div class="clock-mode-toggle" id="clockModeToggle">
+                <span class="clock-mode-label">当前选择：</span>
+                <span class="clock-mode-value" id="clockModeValue">小时</span>
+            </div>
+            <div class="sheet-btn-row">
+                <button class="sheet-btn secondary" onclick="closeClockSheet()">取消</button>
+                <button class="sheet-btn primary" id="clockConfirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 状态选择 -->
     <div class="sheet-overlay" id="remarkSheet">
         <div class="bottom-sheet">
             <div class="sheet-handle"></div>
-            <div class="sheet-title">选择备注</div>
+            <div class="sheet-title">选择状态</div>
             <div class="remark-grid">
                 <div class="remark-option" onclick="selectRemark('进餐前', this)">🍴 进餐前</div>
                 <div class="remark-option" onclick="selectRemark('进餐后', this)">🍴 进餐后</div>
@@ -1653,7 +1977,7 @@
                 <div class="remark-option" onclick="openCustomRemark()">➕ 自定义</div>
             </div>
             <div class="custom-remark-area" id="customRemarkArea" style="display:none;">
-                <input type="text" id="customRemarkInput" placeholder="输入自定义备注" maxlength="20" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:10px; font-size:14px; margin-bottom:10px;">
+                <input type="text" id="customRemarkInput" placeholder="输入自定义状态" maxlength="20" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:10px; font-size:14px; margin-bottom:10px;">
                 <button class="sheet-btn primary" onclick="confirmCustomRemark()" style="margin:0;">确认自定义</button>
             </div>
             <button class="sheet-btn secondary" onclick="closeRemarkSheet()" style="margin-top:16px;">关闭</button>
@@ -1697,9 +2021,9 @@
                     <button class="date-quick-btn" onclick="setDownloadRange('90')">近90天</button>
                 </div>
                 <div style="display:flex; gap:8px; align-items:center;">
-                    <input type="date" id="downloadStartDate" style="flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:10px; font-size:14px; font-family:inherit;">
+                    <input type="date" id="downloadStartDate" style="flex:1; padding:8px 10px; border:1px solid var(--border); border-radius:10px; font-size:14px; font-family:inherit; background:var(--bg); color:var(--text);">
                     <span style="color:var(--text-light); font-size:13px;">至</span>
-                    <input type="date" id="downloadEndDate" style="flex:1; padding:8px 10px; border:1px solid #ddd; border-radius:10px; font-size:14px; font-family:inherit;">
+                    <input type="date" id="downloadEndDate" style="flex:1; padding:8px 10px; border:1px solid var(--border); border-radius:10px; font-size:14px; font-family:inherit; background:var(--bg); color:var(--text);">
                 </div>
             </div>
             <div class="sheet-form-group">
@@ -1749,6 +2073,8 @@
             targetWeight: null,
             avatarImage: null,
             emojiTheme: 'faces',
+            colorTheme: 'ocean',
+            customColors: null,
             periods: [],
             notes: [],
             customNoteCategories: []
@@ -1817,7 +2143,7 @@
         function onFabClick() {
             const activePage = document.querySelector('.page.active');
             if (activePage && activePage.id === 'page-notes') {
-                openNoteSheet();
+                openNoteEditPage();
             } else {
                 openAddSheet();
             }
@@ -1897,6 +2223,20 @@
             const d = new Date(iso);
             return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
         }
+        function formatDateDisplay(dateStr) {
+            if (!dateStr) return '--';
+            const d = new Date(dateStr + 'T00:00:00');
+            const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+            return `${d.getMonth() + 1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
+        }
+        function nowTimeStr() {
+            const d = new Date();
+            return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        }
+        function getRecordTime(item) {
+            if (item.time) return item.time;
+            return formatTime(item.createdAt);
+        }
         function calcAge(birthday) {
             if (!birthday) return null;
             const birth = new Date(birthday); const now = new Date();
@@ -1934,10 +2274,17 @@
         function openAddSheet() {
             document.getElementById('recordSheetTitle').textContent = '添加体重记录';
             document.getElementById('editRecordId').value = '';
-            document.getElementById('recordDate').value = todayStr();
+            const today = todayStr();
+            const nowTime = nowTimeStr();
+            document.getElementById('recordDate').value = today;
+            document.getElementById('recordTime').value = nowTime;
+            document.getElementById('dateDisplayText').textContent = formatDateDisplay(today);
             document.getElementById('recordWeight').value = '';
             document.getElementById('recordNote').value = '';
-            document.getElementById('noteDisplayText').textContent = '无';
+            document.getElementById('noteDisplayText').textContent = '添加状态';
+            document.getElementById('noteDisplayText').style.color = 'var(--primary)';
+            document.getElementById('noteDisplayText').style.fontWeight = '500';
+            document.getElementById('recordRemark').value = '';
             document.getElementById('recordSheet').classList.add('show');
             setTimeout(() => document.getElementById('recordWeight').focus(), 300);
         }
@@ -1947,12 +2294,258 @@
             document.getElementById('recordSheetTitle').textContent = '编辑记录';
             document.getElementById('editRecordId').value = id;
             document.getElementById('recordDate').value = r.date;
+            document.getElementById('recordTime').value = r.time || formatTime(r.createdAt);
+            document.getElementById('dateDisplayText').textContent = formatDateDisplay(r.date);
             document.getElementById('recordWeight').value = r.weight;
-            document.getElementById('recordNote').value = r.note || '';
-            document.getElementById('noteDisplayText').textContent = r.note || '无';
+            const status = r.note || '';
+            document.getElementById('recordNote').value = status;
+            const statusEl = document.getElementById('noteDisplayText');
+            if (status) {
+                statusEl.textContent = status;
+                statusEl.style.color = 'var(--text)';
+                statusEl.style.fontWeight = '400';
+            } else {
+                statusEl.textContent = '添加状态';
+                statusEl.style.color = 'var(--primary)';
+                statusEl.style.fontWeight = '500';
+            }
+            document.getElementById('recordRemark').value = r.remark || '';
             document.getElementById('recordSheet').classList.add('show');
         }
         function closeRecordSheet() { document.getElementById('recordSheet').classList.remove('show'); }
+
+        // 日期/时间选择
+        function openDatePicker() {
+            const input = document.getElementById('datePickerInput');
+            input.value = document.getElementById('recordDate').value || todayStr();
+            input.max = todayStr();
+            if (input.showPicker) { input.showPicker(); }
+            else { input.style.pointerEvents = 'auto'; input.focus(); input.click(); }
+        }
+        document.getElementById('datePickerInput').addEventListener('change', function() {
+            if (!this.value) return;
+            // 禁止未来日期
+            if (this.value > todayStr()) { showToast('不能选择未来日期', 'error'); this.value = todayStr(); }
+            document.getElementById('recordDate').value = this.value;
+            document.getElementById('dateDisplayText').textContent = formatDateDisplay(this.value);
+            this.style.pointerEvents = 'none';
+            // 日期设置完接着弹出时分设置
+            setTimeout(() => openClockPicker(), 300);
+        });
+
+        // 时钟选择器
+        let clockState = { mode: 'hour', hour: 12, minute: 0, tempHour: 12, tempMinute: 0 };
+        let clockCanvas, clockCtx;
+        function openClockPicker() {
+            const current = document.getElementById('recordTime').value || nowTimeStr();
+            const parts = current.split(':');
+            clockState.hour = parseInt(parts[0]) || 12;
+            clockState.minute = parseInt(parts[1]) || 0;
+            clockState.tempHour = clockState.hour;
+            clockState.tempMinute = clockState.minute;
+            clockState.mode = 'hour';
+            updateClockDisplay();
+            document.getElementById('clockSheet').classList.add('show');
+            setTimeout(() => drawClock(), 100);
+        }
+        function closeClockSheet() { document.getElementById('clockSheet').classList.remove('show'); }
+        function updateClockDisplay() {
+            const h = String(clockState.tempHour).padStart(2, '0');
+            const m = String(clockState.tempMinute).padStart(2, '0');
+            document.getElementById('clockTimeDisplay').textContent = `${h}:${m}`;
+            document.getElementById('clockModeValue').textContent = clockState.mode === 'hour' ? '小时' : '分钟';
+        }
+        function drawClock() {
+            clockCanvas = document.getElementById('clockCanvas');
+            if (!clockCanvas) return;
+            const dpr = window.devicePixelRatio || 1;
+            const size = 280;
+            clockCanvas.width = size * dpr;
+            clockCanvas.height = size * dpr;
+            clockCanvas.style.width = size + 'px';
+            clockCanvas.style.height = size + 'px';
+            clockCtx = clockCanvas.getContext('2d');
+            clockCtx.scale(dpr, dpr);
+            renderClock();
+        }
+        function renderClock() {
+            if (!clockCtx) return;
+            const ctx = clockCtx;
+            const cx = 140, cy = 140, radius = 120;
+            ctx.clearRect(0, 0, 280, 280);
+            // 外圈
+            const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#4CAF50';
+            const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#f5f5f5';
+            const borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#e0e0e0';
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#333';
+            const textSecColor = getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() || '#999';
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+            ctx.fillStyle = bgColor;
+            ctx.fill();
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            const isHour = clockState.mode === 'hour';
+            const count = isHour ? 12 : 60;
+            const value = isHour ? clockState.tempHour : clockState.tempMinute;
+            const displayMax = isHour ? 12 : 59;
+
+            // 绘制刻度和数字
+            for (let i = 0; i < count; i++) {
+                const angle = (i / count) * Math.PI * 2 - Math.PI / 2;
+                const num = isHour ? (i === 0 ? 12 : i) : i;
+                const isSelected = num === value;
+                const innerR = isSelected ? radius - 32 : radius - 22;
+                const x = cx + Math.cos(angle) * innerR;
+                const y = cy + Math.sin(angle) * innerR;
+
+                if (isSelected) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 18, 0, Math.PI * 2);
+                    ctx.fillStyle = primaryColor;
+                    ctx.fill();
+                    ctx.fillStyle = '#fff';
+                } else {
+                    ctx.fillStyle = textColor;
+                }
+                ctx.font = isHour ? 'bold 15px sans-serif' : (i % 5 === 0 ? 'bold 13px sans-serif' : '11px sans-serif');
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                if (isHour || i % 5 === 0) {
+                    ctx.fillText(num, x, y);
+                }
+            }
+
+            // 中心指针
+            const selAngle = (value / (isHour ? 12 : 60)) * Math.PI * 2 - Math.PI / 2;
+            if (isHour && value === 12) selAngle = -Math.PI / 2;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + Math.cos(selAngle) * (radius - 32), cy + Math.sin(selAngle) * (radius - 32));
+            ctx.strokeStyle = primaryColor;
+            ctx.lineWidth = 2.5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // 中心圆
+            ctx.beginPath();
+            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+            ctx.fillStyle = primaryColor;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+        }
+        function handleClockInteraction(clientX, clientY) {
+            if (!clockCanvas) return;
+            const rect = clockCanvas.getBoundingClientRect();
+            const x = clientX - rect.left - 140;
+            const y = clientY - rect.top - 140;
+            let angle = Math.atan2(y, x) + Math.PI / 2;
+            if (angle < 0) angle += Math.PI * 2;
+            const ratio = angle / (Math.PI * 2);
+            if (clockState.mode === 'hour') {
+                let h = Math.round(ratio * 12);
+                if (h === 0) h = 12;
+                clockState.tempHour = h;
+            } else {
+                let m = Math.round(ratio * 60);
+                if (m === 60) m = 0;
+                clockState.tempMinute = m;
+            }
+            updateClockDisplay();
+            renderClock();
+        }
+        // 时钟交互事件
+        (function() {
+            const canvas = document.getElementById('clockCanvas');
+            if (!canvas) return;
+            let isDragging = false;
+            canvas.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                isDragging = true;
+                const t = e.touches[0];
+                handleClockInteraction(t.clientX, t.clientY);
+            }, { passive: false });
+            canvas.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+                if (isDragging) {
+                    const t = e.touches[0];
+                    handleClockInteraction(t.clientX, t.clientY);
+                }
+            }, { passive: false });
+            canvas.addEventListener('touchend', function() {
+                if (isDragging && clockState.mode === 'hour') {
+                    clockState.mode = 'minute';
+                    updateClockDisplay();
+                    renderClock();
+                }
+                isDragging = false;
+            });
+            canvas.addEventListener('mousedown', function(e) {
+                isDragging = true;
+                handleClockInteraction(e.clientX, e.clientY);
+            });
+            canvas.addEventListener('mousemove', function(e) {
+                if (isDragging) handleClockInteraction(e.clientX, e.clientY);
+            });
+            canvas.addEventListener('mouseup', function() {
+                if (isDragging && clockState.mode === 'hour') {
+                    clockState.mode = 'minute';
+                    updateClockDisplay();
+                    renderClock();
+                }
+                isDragging = false;
+            });
+            canvas.addEventListener('click', function(e) {
+                if (!isDragging) handleClockInteraction(e.clientX, e.clientY);
+            });
+            // 时钟确认
+            document.getElementById('clockConfirmBtn').addEventListener('click', function() {
+                if (clockState.mode === 'hour') {
+                    clockState.mode = 'minute';
+                    updateClockDisplay();
+                    renderClock();
+                } else {
+                    clockState.hour = clockState.tempHour;
+                    clockState.minute = clockState.tempMinute;
+                    const h = String(clockState.hour).padStart(2, '0');
+                    const m = String(clockState.minute).padStart(2, '0');
+                    document.getElementById('recordTime').value = `${h}:${m}`;
+                    closeClockSheet();
+                }
+            });
+            document.getElementById('clockSheet').addEventListener('click', function(e) {
+                if (e.target === this) closeClockSheet();
+            });
+            // 点击时间显示切换模式
+            document.getElementById('clockTimeDisplay').addEventListener('click', function() {
+                clockState.mode = clockState.mode === 'hour' ? 'minute' : 'hour';
+                updateClockDisplay();
+                renderClock();
+            });
+        })();
+
+        // 体重输入限制最多两位小数
+        document.getElementById('recordWeight').addEventListener('input', function() {
+            let val = this.value;
+            // 只允许数字和小数点
+            val = val.replace(/[^\d.]/g, '');
+            // 只允许一个小数点
+            const dotIdx = val.indexOf('.');
+            if (dotIdx !== -1) {
+                const intPart = val.substring(0, dotIdx);
+                let decPart = val.substring(dotIdx + 1).replace(/\./g, '');
+                // 限制小数点后两位
+                if (decPart.length > 2) decPart = decPart.substring(0, 2);
+                val = intPart + '.' + decPart;
+            }
+            this.value = val;
+        });
 
         // 备注选择
         function openRemarkSheet() {
@@ -1984,7 +2577,16 @@
             document.querySelectorAll('.remark-option').forEach(o => o.classList.remove('active'));
             el.classList.add('active');
             document.getElementById('recordNote').value = remark;
-            document.getElementById('noteDisplayText').textContent = remark || '无';
+            const statusEl = document.getElementById('noteDisplayText');
+            if (remark) {
+                statusEl.textContent = remark;
+                statusEl.style.color = 'var(--text)';
+                statusEl.style.fontWeight = '400';
+            } else {
+                statusEl.textContent = '添加状态';
+                statusEl.style.color = 'var(--primary)';
+                statusEl.style.fontWeight = '500';
+            }
             document.getElementById('customRemarkArea').style.display = 'none';
             closeRemarkSheet();
         }
@@ -1997,9 +2599,12 @@
         }
         function confirmCustomRemark() {
             const val = document.getElementById('customRemarkInput').value.trim();
-            if (!val) { showToast('请输入自定义备注', 'error'); return; }
+            if (!val) { showToast('请输入自定义状态', 'error'); return; }
             document.getElementById('recordNote').value = val;
-            document.getElementById('noteDisplayText').textContent = val;
+            const statusEl = document.getElementById('noteDisplayText');
+            statusEl.textContent = val;
+            statusEl.style.color = 'var(--text)';
+            statusEl.style.fontWeight = '400';
             closeRemarkSheet();
         }
         document.getElementById('remarkSheet').addEventListener('click', function(e) { if (e.target === this) closeRemarkSheet(); });
@@ -2007,22 +2612,24 @@
         document.getElementById('saveRecordBtn').addEventListener('click', () => {
             const id = document.getElementById('editRecordId').value;
             const date = document.getElementById('recordDate').value;
+            const time = document.getElementById('recordTime').value;
             const weight = parseFloat(parseFloat(document.getElementById('recordWeight').value).toFixed(2));
             const note = document.getElementById('recordNote').value.trim();
+            const remark = document.getElementById('recordRemark').value.trim();
             if (!date || isNaN(weight) || weight < 20 || weight > 300) { showToast('请输入有效的日期和体重', 'error'); return; }
             if (id) {
                 const idx = appData.weights.findIndex(w => w.id === id);
-                if (idx !== -1) { appData.weights[idx].date = date; appData.weights[idx].weight = weight; appData.weights[idx].note = note; appData.weights[idx].updatedAt = new Date().toISOString(); }
+                if (idx !== -1) { appData.weights[idx].date = date; appData.weights[idx].time = time; appData.weights[idx].weight = weight; appData.weights[idx].note = note; appData.weights[idx].remark = remark; appData.weights[idx].updatedAt = new Date().toISOString(); }
                 showToast('记录已更新');
             } else {
-                appData.weights.push({ id: genId(), date, weight, note, createdAt: new Date().toISOString() });
+                appData.weights.push({ id: genId(), date, time, weight, note, remark, createdAt: new Date().toISOString() });
                 showToast('记录添加成功');
             }
             saveData(); closeRecordSheet(); renderAll();
         });
         document.getElementById('recordSheet').addEventListener('click', function(e) { if (e.target === this) closeRecordSheet(); });
-        document.getElementById('noteSheet').addEventListener('click', function(e) { if (e.target === this) closeNoteSheet(); });
         document.getElementById('catSheet').addEventListener('click', function(e) { if (e.target === this) closeCatSheet(); });
+        document.getElementById('customColorSheet').addEventListener('click', function(e) { if (e.target === this) closeCustomColorSheet(); });
 
         function deleteRecord(id) {
             showConfirm('删除记录', '确定要删除这条体重记录吗？', () => {
@@ -2032,7 +2639,35 @@
         }
 
         // 个人信息
+        // ========== 页面历史栈（二级页面返回上一级） ==========
+        let pageHistory = [];
+
+        function pushPageHistory() {
+            const activePage = document.querySelector('.page.active');
+            if (activePage && activePage.id !== 'page-profile-edit' &&
+                activePage.id !== 'page-target-edit' &&
+                activePage.id !== 'page-data-edit' &&
+                activePage.id !== 'page-emoji-edit' &&
+                activePage.id !== 'page-theme-edit' &&
+                activePage.id !== 'page-note-edit') {
+                pageHistory.push(activePage.id);
+            }
+        }
+
+        function goBack() {
+            const prevId = pageHistory.pop();
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const target = prevId ? document.getElementById(prevId) : document.getElementById('page-profile');
+            if (target) target.classList.add('active');
+            // 底部导航和FAB恢复
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            const fab = document.getElementById('fabBtn');
+            if (fab) fab.style.display = 'flex';
+            document.querySelector('.page-container').scrollTop = 0;
+        }
+
         function openProfileEdit() {
+            pushPageHistory();
             document.getElementById('inputName').value = appData.profile.name || '';
             document.getElementById('inputBirthday').value = appData.profile.birthday || '';
             const age = calcAge(appData.profile.birthday);
@@ -2045,12 +2680,6 @@
             document.getElementById('page-profile-edit').classList.add('active');
             document.getElementById('fabBtn').style.display = 'none';
             document.querySelector('.bottom-nav').style.display = 'none';
-            document.querySelector('.page-container').scrollTop = 0;
-        }
-        function backToProfile() {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-profile').classList.add('active');
-            document.querySelector('.bottom-nav').style.display = 'flex';
             document.querySelector('.page-container').scrollTop = 0;
         }
         function selectGender(g) {
@@ -2073,11 +2702,12 @@
             if (!height || height < 100 || height > 250) { showToast('请输入有效身高 (100-250cm)', 'error'); return; }
             appData.profile = { name, gender: selectedGender, birthday, height };
             saveData(); renderAll(); showToast('个人信息已保存');
-            backToProfile();
+            goBack();
         }
 
         // 目标
         function openTargetEdit() {
+            pushPageHistory();
             document.getElementById('inputTarget').value = appData.targetWeight || '';
             const ideal = getIdealWeight(appData.profile.height);
             const s = document.getElementById('targetSuggestion');
@@ -2094,7 +2724,136 @@
             const target = parseFloat(document.getElementById('inputTarget').value);
             if (isNaN(target) || target < 20 || target > 300) { showToast('请输入有效的目标体重', 'error'); return; }
             appData.targetWeight = target; saveData(); renderAll(); showToast('目标已设置');
-            backToProfile();
+            goBack();
+        }
+
+        // ========== 颜色主题 ==========
+        const colorThemes = [
+            { id: 'ocean', name: '海洋青', primary: '#2AB5B0', primaryDark: '#1A9D98', primaryLight: '#A3E4D7', primaryBg: '#E8F8F5' },
+            { id: 'forest', name: '森林绿', primary: '#27AE60', primaryDark: '#1E8449', primaryLight: '#ABEBC6', primaryBg: '#E9F7EF' },
+            { id: 'milktea', name: '奶茶暖', primary: '#D4A574', primaryDark: '#B8860B', primaryLight: '#F0D9B5', primaryBg: '#FDF6EC' },
+            { id: 'aurora', name: '极光紫', primary: '#9B59B6', primaryDark: '#7D3C98', primaryLight: '#D2B4DE', primaryBg: '#F5EEF8' },
+            { id: 'sunset', name: '日落橙', primary: '#E67E22', primaryDark: '#CA6F1E', primaryLight: '#F5CBA7', primaryBg: '#FDF2E9' },
+            { id: 'rose', name: '玫瑰红', primary: '#E74C3C', primaryDark: '#CB4335', primaryLight: '#F1948A', primaryBg: '#FDEDEC' },
+            { id: 'deepblue', name: '深海蓝', primary: '#2E86C1', primaryDark: '#21618C', primaryLight: '#A9CCE3', primaryBg: '#EBF5FB' },
+            { id: 'lavender', name: '薰衣草', primary: '#7D6BAA', primaryDark: '#5B4B82', primaryLight: '#C3B8E0', primaryBg: '#F0EDF7' }
+        ];
+
+        function applyColorTheme(themeId) {
+            const root = document.documentElement;
+            if (themeId === 'custom' && appData.customColors) {
+                const c = appData.customColors;
+                root.style.setProperty('--primary', c.primary);
+                root.style.setProperty('--primary-dark', c.primaryDark);
+                root.style.setProperty('--primary-light', c.primaryLight);
+                root.style.setProperty('--primary-bg', c.primaryBg);
+                root.style.setProperty('--teal-gradient', `linear-gradient(180deg, ${c.primary} 0%, ${c.primaryDark} 100%)`);
+            } else {
+                const theme = colorThemes.find(t => t.id === themeId) || colorThemes[0];
+                root.style.setProperty('--primary', theme.primary);
+                root.style.setProperty('--primary-dark', theme.primaryDark);
+                root.style.setProperty('--primary-light', theme.primaryLight);
+                root.style.setProperty('--primary-bg', theme.primaryBg);
+                root.style.setProperty('--teal-gradient', `linear-gradient(180deg, ${theme.primary} 0%, ${theme.primaryDark} 100%)`);
+            }
+        }
+
+        function openThemeEdit() {
+            pushPageHistory();
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-theme-edit').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+            renderColorThemes();
+        }
+
+        function renderColorThemes() {
+            const current = appData.colorTheme || 'ocean';
+            const grid = document.getElementById('themeGrid');
+            let html = colorThemes.map(t => `
+                <div class="theme-card ${t.id === current ? 'active' : ''}" onclick="selectColorTheme('${t.id}')">
+                    ${t.id === current ? '<div class="badge-in-use">✓ 在用</div>' : ''}
+                    <div class="theme-preview" style="background: linear-gradient(135deg, ${t.primary} 0%, ${t.primaryDark} 100%);">${t.name}</div>
+                    <div class="theme-info">
+                        <span>${t.name}</span>
+                        <div class="theme-color-dots">
+                            <div class="dot" style="background:${t.primary};"></div>
+                            <div class="dot" style="background:${t.primaryLight};"></div>
+                            <div class="dot" style="background:${t.primaryBg};"></div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            // 自定义颜色卡片
+            const isCustomActive = current === 'custom';
+            const cc = appData.customColors;
+            const dotsHtml = cc ? `
+                <div class="theme-custom-colors">
+                    <div class="dot" style="background:${cc.primary};"></div>
+                    <div class="dot" style="background:${cc.primaryLight};"></div>
+                    <div class="dot" style="background:${cc.primaryBg};"></div>
+                </div>` : '';
+            html += `
+                <div class="theme-custom-card ${isCustomActive ? 'active' : ''}" onclick="openCustomColorSheet()">
+                    ${isCustomActive ? '<div class="badge-in-use">✓ 在用</div>' : ''}
+                    <div class="custom-icon">🎨</div>
+                    <div class="custom-label">自定义颜色</div>
+                    ${dotsHtml}
+                </div>
+            `;
+            grid.innerHTML = html;
+        }
+
+        function selectColorTheme(themeId) {
+            appData.colorTheme = themeId;
+            saveData();
+            applyColorTheme(themeId);
+            const theme = colorThemes.find(t => t.id === themeId);
+            document.getElementById('showThemeName').textContent = theme ? theme.name : '自定义';
+            renderColorThemes();
+            showToast('主题已切换');
+        }
+
+        function openCustomColorSheet() {
+            const cc = appData.customColors || { primary: '#2AB5B0', primaryDark: '#1A9D98', primaryLight: '#A3E4D7', primaryBg: '#E8F8F5' };
+            document.getElementById('customPrimary').value = cc.primary;
+            document.getElementById('customPrimaryDark').value = cc.primaryDark;
+            document.getElementById('customPrimaryLight').value = cc.primaryLight;
+            document.getElementById('customPrimaryBg').value = cc.primaryBg;
+            updateColorPreview();
+            document.getElementById('customColorSheet').classList.add('show');
+            // 绑定实时预览
+            ['customPrimary', 'customPrimaryDark', 'customPrimaryLight', 'customPrimaryBg'].forEach(id => {
+                document.getElementById(id).oninput = updateColorPreview;
+            });
+        }
+
+        function closeCustomColorSheet() {
+            document.getElementById('customColorSheet').classList.remove('show');
+        }
+
+        function updateColorPreview() {
+            const p = document.getElementById('customPrimary').value;
+            const pd = document.getElementById('customPrimaryDark').value;
+            document.getElementById('colorPreviewBar').style.background = `linear-gradient(135deg, ${p} 0%, ${pd} 100%)`;
+        }
+
+        function applyCustomTheme() {
+            const customColors = {
+                primary: document.getElementById('customPrimary').value,
+                primaryDark: document.getElementById('customPrimaryDark').value,
+                primaryLight: document.getElementById('customPrimaryLight').value,
+                primaryBg: document.getElementById('customPrimaryBg').value
+            };
+            appData.customColors = customColors;
+            appData.colorTheme = 'custom';
+            saveData();
+            applyColorTheme('custom');
+            document.getElementById('showThemeName').textContent = '自定义';
+            closeCustomColorSheet();
+            renderColorThemes();
+            showToast('自定义主题已应用');
         }
 
         // 体重表情主题
@@ -2121,6 +2880,7 @@
             return val;
         }
         function openEmojiEdit() {
+            pushPageHistory();
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-emoji-edit').classList.add('active');
             document.getElementById('fabBtn').style.display = 'none';
@@ -2266,6 +3026,7 @@
 
         // 数据管理二级页面
         function openDataEdit() {
+            pushPageHistory();
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-data-edit').classList.add('active');
             document.getElementById('fabBtn').style.display = 'none';
@@ -2447,6 +3208,8 @@
                     targetWeight: (catProfile || catAll) ? appData.targetWeight : null,
                     avatarImage: (catProfile || catAll) ? appData.avatarImage : null,
                     emojiTheme: (catProfile || catAll) ? appData.emojiTheme : 'faces',
+                    colorTheme: (catProfile || catAll) ? (appData.colorTheme || 'ocean') : 'ocean',
+                    customColors: (catProfile || catAll) ? (appData.customColors || null) : null,
                     periods: (catPeriod || catAll) ? (appData.periods || []) : [],
                     notes: (catNotes || catAll) ? filteredNotes : [],
                     customNoteCategories: (catNotes || catAll) ? (appData.customNoteCategories || []) : []
@@ -2473,12 +3236,14 @@
             if (catWeight || catAll) {
                 const recordsData = filteredWeights.map(w => ({
                     '日期': w.date,
+                    '时间': w.time || formatTime(w.createdAt),
                     '体重(kg)': w.weight,
-                    '备注': w.note || '',
+                    '状态': w.note || '',
+                    '备注': w.remark || '',
                     '记录时间': new Date(w.createdAt).toLocaleString('zh-CN')
                 }));
-                const ws1 = XLSX.utils.json_to_sheet(recordsData.length > 0 ? recordsData : [{ '日期': '', '体重(kg)': '', '备注': '', '记录时间': '' }]);
-                ws1['!cols'] = [{ wch: 12 }, { wch: 10 }, { wch: 20 }, { wch: 20 }];
+                const ws1 = XLSX.utils.json_to_sheet(recordsData.length > 0 ? recordsData : [{ '日期': '', '时间': '', '体重(kg)': '', '状态': '', '备注': '', '记录时间': '' }]);
+                ws1['!cols'] = [{ wch: 12 }, { wch: 8 }, { wch: 10 }, { wch: 12 }, { wch: 20 }, { wch: 20 }];
                 XLSX.utils.book_append_sheet(wb, ws1, '体重记录');
             }
 
@@ -2517,10 +3282,11 @@
                 const notesData = filteredNotes.map(n => {
                     const cat = getNoteCat(n.category || 'uncategorized');
                     const checklistText = (n.checklist || []).map(c => (c.done ? '☑' : '☐') + ' ' + c.text).join('\n');
+                    const plainContent = (n.content || '').replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
                     return {
                         '标题': n.title || '',
                         '分类': cat.name,
-                        '内容': n.content || '',
+                        '内容': plainContent,
                         '清单': checklistText,
                         '图片数': (n.images || []).length,
                         '创建时间': n.createdAt ? new Date(n.createdAt).toLocaleString('zh-CN') : '',
@@ -2603,7 +3369,7 @@
                 if (pCount > 0) desc += `、${pCount}条生理期`;
                 desc += `、${nCount}条备忘录），当前数据将被清除，是否继续？`;
                 showConfirm('覆盖导入', desc, () => {
-                    if (Array.isArray(data.weights)) appData.weights = data.weights.map(w => ({ id: w.id || genId(), date: w.date, weight: w.weight, note: w.note || '', createdAt: w.createdAt || new Date().toISOString() }));
+                    if (Array.isArray(data.weights)) appData.weights = data.weights.map(w => ({ id: w.id || genId(), date: w.date, time: w.time || '', weight: w.weight, note: w.note || '', remark: w.remark || '', createdAt: w.createdAt || new Date().toISOString() }));
                     if (data.profile) appData.profile = Object.assign({name:'',gender:'',birthday:'',height:''}, data.profile);
                     if (data.targetWeight !== undefined) appData.targetWeight = data.targetWeight;
                     if (data.avatarImage) appData.avatarImage = data.avatarImage;
@@ -2628,7 +3394,7 @@
                     (data.weights || []).forEach(w => {
                         const key = (w.date || '') + '|' + (w.createdAt || '');
                         if (!existingKeys.has(key)) {
-                            appData.weights.push({ id: w.id || genId(), date: w.date, weight: w.weight, note: w.note || '', createdAt: w.createdAt || new Date().toISOString() });
+                            appData.weights.push({ id: w.id || genId(), date: w.date, time: w.time || '', weight: w.weight, note: w.note || '', remark: w.remark || '', createdAt: w.createdAt || new Date().toISOString() });
                             existingKeys.add(key);
                             addedW++;
                         }
@@ -2700,7 +3466,9 @@
                         rows.forEach(row => {
                             const date = row['日期'] ? String(row['日期']).trim() : '';
                             const weight = parseFloat(row['体重(kg)']);
-                            const note = row['备注'] ? String(row['备注']).trim() : '';
+                            const time = row['时间'] ? String(row['时间']).trim() : '';
+                            const note = row['状态'] ? String(row['状态']).trim() : (row['备注'] ? String(row['备注']).trim() : '');
+                            const remark = row['备注'] && row['状态'] ? String(row['备注']).trim() : '';
                             const timeStr = row['记录时间'] ? String(row['记录时间']).trim() : '';
                             if (date && !isNaN(weight)) {
                                 let createdAt = new Date().toISOString();
@@ -2708,7 +3476,7 @@
                                     const parsed = new Date(timeStr);
                                     if (!isNaN(parsed)) createdAt = parsed.toISOString();
                                 }
-                                importedWeights.push({ id: genId(), date, weight, note, createdAt });
+                                importedWeights.push({ id: genId(), date, time, weight, note, remark, createdAt });
                             }
                         });
                     }
@@ -2823,7 +3591,9 @@
         function renderRecordPage() {
             const sorted = [...appData.weights].sort((a, b) => {
                 if (b.date !== a.date) return new Date(b.date) - new Date(a.date);
-                return new Date(b.createdAt) - new Date(a.createdAt);
+                const at = a.time || formatTime(a.createdAt);
+                const bt = b.time || formatTime(b.createdAt);
+                return bt.localeCompare(at);
             });
             const latest = sorted[0];
             if (latest) { document.getElementById('latestWeight').textContent = latest.weight; document.getElementById('latestDate').textContent = latest.date; }
@@ -2864,6 +3634,7 @@
             if (sorted.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
             emptyEl.style.display = 'none';
             const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
+            const currentYear = new Date().getFullYear();
             listEl.innerHTML = sorted.map((item, index) => {
                 const prev = sorted[index + 1];
                 let changeHtml = '<span class="change flat">— 首条</span>';
@@ -2874,67 +3645,33 @@
                     else if (diff < 0) { changeHtml = `<span class="change down">▼ ${diff.toFixed(2)}</span>`; emojiType = 'down'; }
                     else changeHtml = '<span class="change flat">— 持平</span>';
                 }
-                const noteText = item.note ? ` · ${item.note}` : '';
+                const d = new Date(item.date + 'T00:00:00');
+                const dateStr = d.getFullYear() === currentYear
+                    ? `${d.getMonth() + 1}月${d.getDate()}日`
+                    : `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+                const timeStr = getRecordTime(item);
+                const statusText = item.note || '';
+                const remarkHtml = item.remark ? `<div class="record-remark">${item.remark}</div>` : '';
                 return `<div class="record-card-wrapper">
                     <div class="record-actions">
-                        <button class="act-btn edit" onclick="openEditSheet('${item.id}')">✏️</button>
-                        <button class="act-btn delete" onclick="deleteRecord('${item.id}')">🗑️</button>
+                        <div class="act-btn edit" onclick="event.stopPropagation(); openEditSheet('${item.id}')">
+                            <img src="icon/icon-edit.png">
+                        </div>
+                        <div class="act-btn delete" onclick="event.stopPropagation(); deleteRecord('${item.id}')">
+                            <img src="icon/icon-delete.png">
+                        </div>
                     </div>
-                    <div class="record-card" data-id="${item.id}">
+                    <div class="record-card" data-id="${item.id}" data-swipe-width="104">
                         <div class="record-icon">${renderEmojiIcon(currentTheme[emojiType])}</div>
-                        <div class="record-info"><div class="date">${item.date}${noteText}</div><div class="time">${formatTime(item.createdAt)}</div></div>
-                        <div class="record-weight"><div class="value">${item.weight}<span class="unit"> kg</span></div></div>
+                        <div class="record-info"><div class="date">${dateStr}</div><div class="time">${timeStr}</div></div>
+                        <div class="record-mid"><div class="status">${statusText}</div><div class="weight">${item.weight}<span class="unit"> kg</span></div></div>
                         <div class="record-change">${changeHtml}</div>
                     </div>
+                    ${remarkHtml}
                 </div>`;
             }).join('');
             // 绑定左滑手势
             bindRecordSwipe();
-        }
-
-        // ========== 记录卡片左滑手势 ==========
-        function bindRecordSwipe() {
-            const actionsWidth = 128; // 两个按钮各64px
-            let startX = 0, startY = 0, currentX = 0, isDragging = false, activeCard = null;
-
-            document.querySelectorAll('.record-card').forEach(card => {
-                card.addEventListener('touchstart', function(e) {
-                    // 先关闭其他已打开的卡片
-                    document.querySelectorAll('.record-card').forEach(c => {
-                        if (c !== card) c.style.transform = '';
-                    });
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                    currentX = 0;
-                    isDragging = true;
-                    activeCard = card;
-                    card.style.transition = 'none';
-                }, { passive: true });
-
-                card.addEventListener('touchmove', function(e) {
-                    if (!isDragging || !activeCard) return;
-                    const dx = e.touches[0].clientX - startX;
-                    const dy = e.touches[0].clientY - startY;
-                    // 水平滑动优先
-                    if (Math.abs(dx) > Math.abs(dy)) {
-                        currentX = Math.max(-actionsWidth, Math.min(0, dx));
-                        activeCard.style.transform = `translateX(${currentX}px)`;
-                    }
-                }, { passive: true });
-
-                card.addEventListener('touchend', function() {
-                    if (!isDragging || !activeCard) return;
-                    isDragging = false;
-                    activeCard.style.transition = 'transform 0.25s ease';
-                    // 滑动超过一半则展开，否则收回
-                    if (currentX < -actionsWidth / 2) {
-                        activeCard.style.transform = `translateX(${-actionsWidth}px)`;
-                    } else {
-                        activeCard.style.transform = '';
-                    }
-                    activeCard = null;
-                }, { passive: true });
-            });
         }
 
         // 渲染：趋势页
@@ -3182,6 +3919,9 @@
             document.getElementById('showTarget').textContent = appData.targetWeight ? `${appData.targetWeight} kg` : '未设置';
             const emojiTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces'));
             document.getElementById('showEmojiName').textContent = emojiTheme ? emojiTheme.name : '小圆脸';
+            // 显示当前主题名称
+            const cTheme = colorThemes.find(t => t.id === (appData.colorTheme || 'ocean'));
+            document.getElementById('showThemeName').textContent = cTheme ? cTheme.name : '自定义';
 
             const sorted = [...appData.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latest = sorted[0];
@@ -3202,7 +3942,7 @@
                 const arcPercent = Math.min(1, bmi / 35);
                 const circ = 239;
                 bmiArc.style.strokeDashoffset = circ * (1 - arcPercent);
-                bmiArc.style.stroke = bmiStatus.class === 'normal' ? '#27AE60' : bmiStatus.class === 'thin' ? '#F39C12' : bmiStatus.class === 'over' ? '#F39C12' : '#E74C3C';
+                bmiArc.style.stroke = bmiStatus.class === 'normal' ? getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() : bmiStatus.class === 'thin' ? '#F39C12' : bmiStatus.class === 'over' ? '#F39C12' : '#E74C3C';
                 bmiMarker.style.left = Math.min(98, Math.max(2, bmiStatus.percent)) + '%';
             } else {
                 bmiNum.textContent = '--';
@@ -3288,12 +4028,12 @@
 
         // ========== 备忘录功能 ==========
         const DEFAULT_NOTE_CATEGORIES = [
-            { id: 'all', name: '全部', color: '#2AB5B0', bg: '#E0F5F4', system: true },
-            { id: 'diary', name: '日记', color: '#E67E22', bg: '#FDF2E6', system: true },
-            { id: 'travel', name: '旅游', color: '#3498DB', bg: '#E8F4FD', system: true },
-            { id: 'excerpt', name: '摘抄', color: '#9B59B6', bg: '#F4ECF7', system: true },
-            { id: 'essay', name: '随笔', color: '#E74C3C', bg: '#FDEDEC', system: true },
-            { id: 'uncategorized', name: '未分类', color: '#95A5A6', bg: '#F2F4F4', system: true }
+            { id: 'all', name: '全部', color: '#2AB5B0', bg: '#E0F5F4', system: true, locked: true },
+            { id: 'diary', name: '日记', color: '#E67E22', bg: '#FDF2E6', system: true, locked: false },
+            { id: 'travel', name: '旅游', color: '#3498DB', bg: '#E8F4FD', system: true, locked: false },
+            { id: 'excerpt', name: '摘抄', color: '#9B59B6', bg: '#F4ECF7', system: true, locked: false },
+            { id: 'essay', name: '随笔', color: '#E74C3C', bg: '#FDEDEC', system: true, locked: false },
+            { id: 'uncategorized', name: '未分类', color: '#95A5A6', bg: '#F2F4F4', system: true, locked: true }
         ];
         const CAT_COLOR_PALETTE = [
             { color: '#E67E22', bg: '#FDF2E6' },
@@ -3319,9 +4059,24 @@
         let selectedNoteIds = new Set();
 
         function refreshNoteCategories() {
-            NOTE_CATEGORIES = [...DEFAULT_NOTE_CATEGORIES];
+            const deletedDefaults = appData.deletedDefaultCategories || [];
+            const overrides = appData.categoryOverrides || {};
+            NOTE_CATEGORIES = DEFAULT_NOTE_CATEGORIES
+                .filter(c => !deletedDefaults.includes(c.id))
+                .map(c => overrides[c.id] ? { ...c, ...overrides[c.id] } : c);
             if (Array.isArray(appData.customNoteCategories)) {
                 appData.customNoteCategories.forEach(c => NOTE_CATEGORIES.push(c));
+            }
+            // 应用自定义排序
+            if (Array.isArray(appData.noteCategoryOrder) && appData.noteCategoryOrder.length > 0) {
+                NOTE_CATEGORIES.sort((a, b) => {
+                    const idxA = appData.noteCategoryOrder.indexOf(a.id);
+                    const idxB = appData.noteCategoryOrder.indexOf(b.id);
+                    if (idxA === -1 && idxB === -1) return 0;
+                    if (idxA === -1) return 1;
+                    if (idxB === -1) return -1;
+                    return idxA - idxB;
+                });
             }
         }
 
@@ -3338,15 +4093,16 @@
         function renderNotesCategoryBar() {
             const bar = document.getElementById('notesCategoryBar');
             const pills = NOTE_CATEGORIES.map(c => {
-                const isCustom = !c.system;
-                const deleteX = isCustom ? `<span class="cat-delete-x" onclick="event.stopPropagation(); quickDeleteCategory('${c.id}')">×</span>` : '';
-                const editClass = isCustom && categoryEditMode ? 'edit-mode' : '';
-                const clickHandler = (isCustom && categoryEditMode) 
+                const isEditable = !c.locked; // 非锁定的分类（全部和未分类除外）都可编辑
+                const deleteX = isEditable ? `<span class="cat-delete-x" onclick="event.stopPropagation(); quickDeleteCategory('${c.id}')">×</span>` : '';
+                const editClass = isEditable && categoryEditMode ? 'edit-mode' : '';
+                const clickHandler = (isEditable && categoryEditMode) 
                     ? `onclick="openEditCategorySheet('${c.id}')"`
                     : `onclick="selectNoteCategory('${c.id}')"`;
-                return `<div class="note-cat-pill ${currentNoteCategory === c.id ? 'active' : ''} ${isCustom ? 'custom' : ''} ${editClass}"
+                return `<div class="note-cat-pill ${currentNoteCategory === c.id ? 'active' : ''} ${isEditable ? 'editable' : ''} ${editClass}"
                     ${clickHandler}
-                    data-cat-id="${c.id}">
+                    data-cat-id="${c.id}"
+                    draggable="${isEditable && categoryEditMode ? 'true' : 'false'}">
                     ${c.name}${deleteX}
                 </div>`;
             });
@@ -3357,21 +4113,27 @@
             }
             bar.innerHTML = pills.join('');
             bindCategoryLongPress();
+            bindCategoryDrag();
         }
 
         function exitCategoryEditMode() {
             categoryEditMode = false;
+            document.removeEventListener('click', handleCategoryOutsideClick, true);
             renderNotesCategoryBar();
         }
 
         function bindCategoryLongPress() {
-            const customPills = document.querySelectorAll('.note-cat-pill.custom');
-            customPills.forEach(pill => {
+            const editablePills = document.querySelectorAll('.note-cat-pill.editable');
+            editablePills.forEach(pill => {
                 let pressTimer = null;
                 pill.addEventListener('touchstart', function(e) {
                     pressTimer = setTimeout(() => {
                         categoryEditMode = true;
                         renderNotesCategoryBar();
+                        // 添加点击外部退出编辑模式
+                        setTimeout(() => {
+                            document.addEventListener('click', handleCategoryOutsideClick, true);
+                        }, 200);
                     }, 600);
                 }, { passive: true });
                 pill.addEventListener('touchend', function() {
@@ -3385,11 +4147,141 @@
                     pressTimer = setTimeout(() => {
                         categoryEditMode = true;
                         renderNotesCategoryBar();
+                        setTimeout(() => {
+                            document.addEventListener('click', handleCategoryOutsideClick, true);
+                        }, 200);
                     }, 600);
                 });
                 pill.addEventListener('mouseup', function() { clearTimeout(pressTimer); });
                 pill.addEventListener('mouseleave', function() { clearTimeout(pressTimer); });
             });
+        }
+
+        function handleCategoryOutsideClick(e) {
+            if (!categoryEditMode) {
+                document.removeEventListener('click', handleCategoryOutsideClick, true);
+                return;
+            }
+            const bar = document.getElementById('notesCategoryBar');
+            const completeBtn = e.target.closest && e.target.closest('.note-cat-pill[onclick*="exitCategoryEditMode"]');
+            // 点击完成按钮或分类栏外部时退出编辑模式
+            if (completeBtn || (bar && !bar.contains(e.target))) {
+                document.removeEventListener('click', handleCategoryOutsideClick, true);
+                exitCategoryEditMode();
+            }
+        }
+
+        function bindCategoryDrag() {
+            const pills = document.querySelectorAll('.note-cat-pill[draggable="true"]');
+            let draggedItem = null;
+            let isTouchDragging = false;
+            let startX = 0;
+
+            pills.forEach(pill => {
+                // === 桌面端：HTML5 拖拽 ===
+                pill.addEventListener('dragstart', function(e) {
+                    draggedItem = this;
+                    e.dataTransfer.effectAllowed = 'move';
+                    setTimeout(() => this.classList.add('dragging'), 0);
+                });
+                pill.addEventListener('dragend', function() {
+                    if (draggedItem) draggedItem.classList.remove('dragging');
+                    document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
+                    draggedItem = null;
+                    updateCategoryOrder();
+                });
+                pill.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    if (!draggedItem || draggedItem === this) return;
+                    this.classList.add('drag-over');
+                });
+                pill.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+                pill.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (!draggedItem || draggedItem === this) return;
+                    const bar = document.getElementById('notesCategoryBar');
+                    const allPills = Array.from(bar.querySelectorAll('.note-cat-pill[data-cat-id]'));
+                    const draggedIdx = allPills.indexOf(draggedItem);
+                    const targetIdx = allPills.indexOf(this);
+                    if (draggedIdx < targetIdx) {
+                        bar.insertBefore(draggedItem, this.nextSibling);
+                    } else {
+                        bar.insertBefore(draggedItem, this);
+                    }
+                });
+
+                // === 移动端：触摸拖拽 ===
+                pill.addEventListener('touchstart', function(e) {
+                    if (!categoryEditMode) return;
+                    draggedItem = this;
+                    isTouchDragging = false;
+                    startX = e.touches[0].clientX;
+                }, { passive: true });
+
+                pill.addEventListener('touchmove', function(e) {
+                    if (!draggedItem || !categoryEditMode) return;
+                    const touch = e.touches[0];
+                    const dx = touch.clientX - startX;
+                    if (!isTouchDragging && Math.abs(dx) > 10) {
+                        isTouchDragging = true;
+                        draggedItem.classList.add('dragging');
+                    }
+                    if (isTouchDragging) {
+                        const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+                        const targetPill = elements.find(el => el.classList && el.classList.contains('note-cat-pill') && el !== draggedItem && el.hasAttribute('data-cat-id'));
+                        document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
+                        if (targetPill) {
+                            targetPill.classList.add('drag-over');
+                            const bar = document.getElementById('notesCategoryBar');
+                            const allPills = Array.from(bar.querySelectorAll('.note-cat-pill[data-cat-id]'));
+                            const draggedIdx = allPills.indexOf(draggedItem);
+                            const targetIdx = allPills.indexOf(targetPill);
+                            if (draggedIdx < targetIdx) {
+                                bar.insertBefore(draggedItem, targetPill.nextSibling);
+                            } else {
+                                bar.insertBefore(draggedItem, targetPill);
+                            }
+                        }
+                    }
+                }, { passive: true });
+
+                pill.addEventListener('touchend', function(e) {
+                    if (!draggedItem) return;
+                    if (isTouchDragging) {
+                        draggedItem.classList.remove('dragging');
+                        document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
+                        updateCategoryOrder();
+                        // 阻止后续 click 事件触发编辑
+                        e.stopPropagation();
+                        this.addEventListener('click', function prevent(ev) {
+                            ev.preventDefault();
+                            ev.stopPropagation();
+                            this.removeEventListener('click', prevent, true);
+                        }, true);
+                    }
+                    draggedItem = null;
+                    isTouchDragging = false;
+                }, { passive: true });
+            });
+        }
+
+        function updateCategoryOrder() {
+            const categoryIds = Array.from(document.querySelectorAll('.note-cat-pill[data-cat-id]'))
+                .map(pill => pill.getAttribute('data-cat-id'));
+            appData.noteCategoryOrder = categoryIds;
+            // 同步更新 NOTE_CATEGORIES 数组顺序
+            NOTE_CATEGORIES.sort((a, b) => {
+                const idxA = categoryIds.indexOf(a.id);
+                const idxB = categoryIds.indexOf(b.id);
+                if (idxA === -1 && idxB === -1) return 0;
+                if (idxA === -1) return 1;
+                if (idxB === -1) return -1;
+                return idxA - idxB;
+            });
+            saveData();
         }
 
         function selectNoteCategory(catId) {
@@ -3407,15 +4299,21 @@
             if (currentNoteCategory !== 'all') {
                 notes = notes.filter(n => (n.category || 'uncategorized') === currentNoteCategory);
             }
-            // 搜索筛选
+            // 搜索筛选（支持搜索HTML内容中的纯文本）
             if (searchVal) {
-                notes = notes.filter(n => 
-                    (n.title || '').toLowerCase().includes(searchVal) ||
-                    (n.content || '').toLowerCase().includes(searchVal)
-                );
+                notes = notes.filter(n => {
+                    const title = (n.title || '').toLowerCase();
+                    const plainContent = (n.content || '').replace(/<[^>]+>/g, '').toLowerCase();
+                    return title.includes(searchVal) || plainContent.includes(searchVal);
+                });
             }
             // 按日期倒序
-            notes.sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt));
+            notes.sort((a, b) => {
+                const aP = a.pinned ? 1 : 0;
+                const bP = b.pinned ? 1 : 0;
+                if (aP !== bP) return bP - aP;
+                return new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt);
+            });
 
             // 统计
             document.getElementById('notesTotalCount').textContent = `${notes.length} 条笔记`;
@@ -3435,30 +4333,40 @@
             listEl.innerHTML = notes.map(n => {
                 const cat = getNoteCat(n.category || 'uncategorized');
                 const dateStr = formatDate(n.updatedAt || n.createdAt);
-                const contentPreview = (n.content || '').substring(0, 100);
-                const imagesHtml = (n.images && n.images.length > 0) 
-                    ? `<div class="note-card-images">${n.images.slice(0, 3).map(img => `<img src="${img}" alt="图片">`).join('')}${n.images.length > 3 ? `<div style="width:60px;height:60px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-secondary);">+${n.images.length - 3}</div>` : ''}</div>` 
-                    : '';
-                const checklistCount = (n.checklist || []).length;
-                const checklistHtml = checklistCount > 0 ? `<span style="font-size:11px;color:var(--text-light);">☑️ ${n.checklist.filter(c => c.done).length}/${checklistCount}</span>` : '';
+                // 渲染HTML内容预览（取前50个字符的纯文本，但保留基本样式）
+                const contentHtml = n.content || '';
+                // 提取纯文本用于搜索预览
+                const plainText = contentHtml.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').trim();
+                const contentPreview = plainText.substring(0, 50);
+                // 渲染HTML内容（保留样式），截取前100个字符的HTML
+                const htmlPreview = contentHtml.substring(0, 200);
                 const titleHtml = n.title ? `<div class="note-card-title">${escapeHtml(n.title)}</div>` : '';
                 const isChecked = selectedNoteIds.has(n.id);
                 const checkboxHtml = batchDeleteMode ? `<div class="note-checkbox ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleNoteSelection('${n.id}')"></div>` : '';
-                const cardClick = batchDeleteMode ? `onclick="toggleNoteSelection('${n.id}')"` : `onclick="openNoteSheet('${n.id}')"`;
-                const actionsHtml = batchDeleteMode ? '' : `<div class="note-card-actions"><div class="act-btn delete" onclick="deleteNote('${n.id}')">删除</div></div>`;
+                const cardClick = batchDeleteMode ? `onclick="toggleNoteSelection('${n.id}')"` : `onclick="openNoteEditPage('${n.id}')"`;
+                const isPinned = !!n.pinned;
+                const actionsHtml = batchDeleteMode ? '' : `<div class="note-card-actions">
+                    <div class="act-btn ${isPinned ? 'unpin' : 'pin'}" onclick="event.stopPropagation(); toggleNotePin('${n.id}')">
+                        <img src="icon/icon-${isPinned ? 'unpin' : 'pin'}.png">
+                    </div>
+                    <div class="act-btn edit" onclick="event.stopPropagation(); openNoteEditPageDirect('${n.id}')">
+                        <img src="icon/icon-edit.png">
+                    </div>
+                    <div class="act-btn delete" onclick="event.stopPropagation(); deleteNote('${n.id}')">
+                        <img src="icon/icon-delete.png">
+                    </div>
+                </div>`;
                 return `<div class="note-card-wrapper">
                     ${checkboxHtml}
                     ${actionsHtml}
-                    <div class="note-card" data-note-id="${n.id}" ${cardClick}>
+                    <div class="note-card" data-note-id="${n.id}" data-swipe-width="156" ${cardClick}>
                         <div class="note-card-header">
                             ${titleHtml}
                             <div class="note-card-cat" style="color:${cat.color};background:${cat.bg};${!n.title ? 'margin-left:auto;' : ''}">${cat.name}</div>
                         </div>
-                        ${contentPreview ? `<div class="note-card-content">${escapeHtml(contentPreview)}</div>` : ''}
-                        ${imagesHtml}
+                        ${htmlPreview ? `<div class="note-card-content">${htmlPreview}</div>` : ''}
                         <div class="note-card-footer">
-                            <span class="note-card-date">${dateStr}</span>
-                            ${checklistHtml}
+                            <span class="note-card-date">${dateStr}${isPinned ? '<span class="pin-badge">置顶</span>' : ''}</span>
                         </div>
                     </div>
                 </div>`;
@@ -3467,53 +4375,93 @@
             updateBatchDeleteUI();
         }
 
-        // 笔记卡片左滑手势
-        function bindNoteSwipe() {
-            const actionsWidth = 72;
-            let startX = 0, startY = 0, currentX = 0, isDragging = false, activeCard = null;
+        // ========== 通用卡片左滑手势（触摸 + 鼠标）==========
+        let suppressCardClick = false; // 拖拽后抑制一次 click
+        let cardSwipeDocBound = false; // document 级事件只绑定一次
+        const swipeState = {
+            actionsWidth: 156,
+            startX: 0, startY: 0, currentX: 0,
+            isDragging: false, activeCard: null, dragMoved: false
+        };
 
-            document.querySelectorAll('.note-card').forEach(card => {
-                card.addEventListener('touchstart', function(e) {
-                    // 先关闭其他已打开的卡片
-                    document.querySelectorAll('.note-card').forEach(c => {
-                        if (c !== card) c.style.transform = '';
-                    });
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                    currentX = 0;
-                    isDragging = true;
-                    activeCard = card;
-                    card.style.transition = 'none';
-                }, { passive: true });
-
-                card.addEventListener('touchmove', function(e) {
-                    if (!isDragging || !activeCard) return;
-                    const dx = e.touches[0].clientX - startX;
-                    const dy = e.touches[0].clientY - startY;
-                    if (Math.abs(dx) > Math.abs(dy)) {
-                        currentX = Math.max(-actionsWidth, Math.min(0, dx));
-                        activeCard.style.transform = `translateX(${currentX}px)`;
-                    }
-                }, { passive: true });
-
-                card.addEventListener('touchend', function() {
-                    if (!isDragging || !activeCard) return;
-                    isDragging = false;
-                    activeCard.style.transition = 'transform 0.25s ease';
-                    if (currentX < -actionsWidth / 2) {
-                        activeCard.style.transform = `translateX(${-actionsWidth}px)`;
-                    } else {
-                        activeCard.style.transform = '';
-                    }
-                    activeCard = null;
-                }, { passive: true });
+        function swipeCloseOthers(card) {
+            document.querySelectorAll('.note-card, .record-card').forEach(c => {
+                if (c !== card) c.style.transform = '';
             });
         }
+        function swipeStart(clientX, clientY, card) {
+            swipeCloseOthers(card);
+            swipeState.actionsWidth = parseInt(card.dataset.swipeWidth) || 156;
+            swipeState.startX = clientX; swipeState.startY = clientY;
+            swipeState.currentX = 0; swipeState.isDragging = true; swipeState.dragMoved = false;
+            swipeState.activeCard = card;
+            card.style.transition = 'none';
+        }
+        function swipeMove(clientX, clientY) {
+            if (!swipeState.isDragging || !swipeState.activeCard) return;
+            const dx = clientX - swipeState.startX;
+            const dy = clientY - swipeState.startY;
+            if (Math.abs(dx) > Math.abs(dy)) {
+                swipeState.currentX = Math.max(-swipeState.actionsWidth, Math.min(0, dx));
+                swipeState.activeCard.style.transform = `translateX(${swipeState.currentX}px)`;
+                if (Math.abs(dx) > 5) swipeState.dragMoved = true;
+            }
+        }
+        function swipeEnd() {
+            if (!swipeState.isDragging || !swipeState.activeCard) return;
+            swipeState.isDragging = false;
+            swipeState.activeCard.style.transition = 'transform 0.25s ease';
+            if (swipeState.currentX < -swipeState.actionsWidth / 2) {
+                swipeState.activeCard.style.transform = `translateX(${-swipeState.actionsWidth}px)`;
+            } else {
+                swipeState.activeCard.style.transform = '';
+            }
+            if (swipeState.dragMoved) suppressCardClick = true;
+            swipeState.activeCard = null;
+        }
+
+        // 通用绑定函数：为指定选择器的卡片绑定左滑事件
+        function bindCardSwipe(selector) {
+            document.querySelectorAll(selector).forEach(card => {
+                card.addEventListener('touchstart', function(e) {
+                    swipeStart(e.touches[0].clientX, e.touches[0].clientY, card);
+                }, { passive: true });
+                card.addEventListener('touchmove', function(e) {
+                    swipeMove(e.touches[0].clientX, e.touches[0].clientY);
+                }, { passive: true });
+                card.addEventListener('touchend', swipeEnd, { passive: true });
+                card.addEventListener('mousedown', function(e) {
+                    if (e.button !== 0) return;
+                    swipeStart(e.clientX, e.clientY, card);
+                    e.preventDefault();
+                });
+            });
+            // document 级事件只绑定一次
+            if (!cardSwipeDocBound) {
+                cardSwipeDocBound = true;
+                document.addEventListener('mousemove', function(e) {
+                    if (swipeState.isDragging) swipeMove(e.clientX, e.clientY);
+                });
+                document.addEventListener('mouseup', swipeEnd);
+                document.addEventListener('mouseleave', swipeEnd);
+                document.addEventListener('click', function(e) {
+                    if (suppressCardClick) {
+                        suppressCardClick = false;
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }, true);
+            }
+        }
+
+        function bindNoteSwipe() { bindCardSwipe('.note-card'); }
+        function bindRecordSwipe() { bindCardSwipe('.record-card'); }
 
         // ========== 视图切换 ==========
         function toggleNotesView() {
             notesViewMode = notesViewMode === 'list' ? 'grid' : 'list';
             document.getElementById('notesViewLabel').textContent = notesViewMode === 'grid' ? '列表视图' : '宫格视图';
+            document.getElementById('notesViewIcon').src = notesViewMode === 'grid' ? 'icon/icon-view-list.png' : 'icon/icon-view-grid.png';
             document.getElementById('dropdownMenuNotes').classList.remove('show');
             renderNotesList();
         }
@@ -3554,9 +4502,9 @@
                 notes = notes.filter(n => (n.category || 'uncategorized') === currentNoteCategory);
             }
             if (searchVal) {
-                notes = notes.filter(n => 
+                notes = notes.filter(n =>
                     (n.title || '').toLowerCase().includes(searchVal) ||
-                    (n.content || '').toLowerCase().includes(searchVal)
+                    (n.content || '').replace(/<[^>]+>/g, '').toLowerCase().includes(searchVal)
                 );
             }
             const allSelected = notes.every(n => selectedNoteIds.has(n.id));
@@ -3582,9 +4530,9 @@
                 notes = notes.filter(n => (n.category || 'uncategorized') === currentNoteCategory);
             }
             if (searchVal) {
-                notes = notes.filter(n => 
+                notes = notes.filter(n =>
                     (n.title || '').toLowerCase().includes(searchVal) ||
-                    (n.content || '').toLowerCase().includes(searchVal)
+                    (n.content || '').replace(/<[^>]+>/g, '').toLowerCase().includes(searchVal)
                 );
             }
             const allSelected = notes.length > 0 && notes.every(n => selectedNoteIds.has(n.id));
@@ -3624,40 +4572,234 @@
             return `${d.getFullYear()}/${m}/${day}`;
         }
 
-        function openNoteSheet(noteId) {
+        let noteEditMode = false; // false=查看模式, true=编辑模式
+        let noteDraftTimer = null;
+        let noteIsNew = false;
+
+        function openNoteEditPage(noteId) {
+            pushPageHistory();
             refreshNoteCategories();
-            document.getElementById('noteSheet').classList.add('show');
-            tempNoteImages = [];
-            tempChecklist = [];
+            const editor = document.getElementById('noteContentEditor');
+            const body = document.querySelector('.note-edit-body');
+            noteIsNew = !noteId;
             if (noteId) {
                 const note = (appData.notes || []).find(n => n.id === noteId);
                 if (note) {
                     document.getElementById('editNoteId').value = note.id;
                     document.getElementById('noteTitle').value = note.title || '';
-                    document.getElementById('noteContent').value = note.content || '';
+                    // 兼容旧数据：如果content不是HTML，转换为HTML
+                    const content = note.content || '';
+                    if (content.includes('<')) {
+                        editor.innerHTML = content;
+                    } else if (content) {
+                        editor.innerHTML = escapeHtml(content).replace(/\n/g, '<br>');
+                    } else {
+                        editor.innerHTML = '';
+                    }
                     selectedNoteCategory = note.category || 'uncategorized';
-                    tempNoteImages = [...(note.images || [])];
-                    tempChecklist = (note.checklist || []).map(c => ({...c}));
                     document.getElementById('noteTimestamp').textContent = '编辑于 ' + formatDate(note.updatedAt || note.createdAt);
+                    document.getElementById('noteEditTitle').textContent = '查看笔记';
+                    // 进入查看模式
+                    noteEditMode = false;
+                    body.classList.add('view-mode');
+                    renderNoteEditActions();
                 }
             } else {
                 document.getElementById('editNoteId').value = '';
                 document.getElementById('noteTitle').value = '';
-                document.getElementById('noteContent').value = '';
-                selectedNoteCategory = 'uncategorized';
+                editor.innerHTML = '';
+                selectedNoteCategory = currentNoteCategory !== 'all' ? currentNoteCategory : 'uncategorized';
                 document.getElementById('noteTimestamp').textContent = '新建笔记';
+                document.getElementById('noteEditTitle').textContent = '新建笔记';
+                // 进入编辑模式
+                noteEditMode = true;
+                body.classList.remove('view-mode');
+                renderNoteEditActions();
             }
             updateNoteCategoryLabel();
-            renderNoteImagePreview();
-            renderNoteChecklist();
-            setTimeout(() => document.getElementById('noteTitle').focus(), 300);
+            // 切换到二级页面
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-note-edit').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'none';
+            document.querySelector('.bottom-nav').style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+            // 绑定快捷键和自动保存
+            bindEditorShortcuts();
+            startAutoSaveDraft();
+            if (noteIsNew) {
+                setTimeout(() => document.getElementById('noteTitle').focus(), 300);
+            }
         }
 
-        function closeNoteSheet() {
-            document.getElementById('noteSheet').classList.remove('show');
+        // 左滑编辑按钮：直接进入编辑模式（跳过查看模式）
+        function openNoteEditPageDirect(noteId) {
+            openNoteEditPage(noteId);
+            enterNoteEditMode();
         }
 
+        function backToNotes() {
+            stopAutoSaveDraft();
+            pageHistory.pop();
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-notes').classList.add('active');
+            document.getElementById('fabBtn').style.display = 'flex';
+            document.querySelector('.bottom-nav').style.display = 'flex';
+            document.querySelector('.page-container').scrollTop = 0;
+            renderNotesList();
+        }
+
+        function renderNoteEditActions() {
+            const actionsEl = document.getElementById('noteEditActions');
+            if (noteEditMode) {
+                // 编辑模式：撤销 + 回退 + 保存
+                actionsEl.innerHTML = `
+                    <div class="icon-btn" onclick="execCmd('undo')" style="font-size:16px;color:white;">↶</div>
+                    <div class="icon-btn" onclick="execCmd('redo')" style="font-size:16px;color:white;">↷</div>
+                    <div class="icon-btn" onclick="saveNoteFromEdit()" style="font-size:14px;font-weight:600;color:white;">保存</div>
+                `;
+            } else {
+                // 查看模式：删除和编辑按钮
+                actionsEl.innerHTML = `
+                    <div class="icon-btn" onclick="deleteNoteFromEdit()" style="font-size:14px;font-weight:600;color:white;">删除</div>
+                    <div class="icon-btn" onclick="enterNoteEditMode()" style="font-size:14px;font-weight:600;color:white;">编辑</div>
+                `;
+            }
+        }
+
+        function enterNoteEditMode() {
+            noteEditMode = true;
+            document.querySelector('.note-edit-body').classList.remove('view-mode');
+            document.getElementById('noteEditTitle').textContent = '编辑笔记';
+            renderNoteEditActions();
+            setTimeout(() => document.getElementById('noteContentEditor').focus(), 100);
+        }
+
+        function saveNoteFromEdit() {
+            const title = document.getElementById('noteTitle').value.trim();
+            const content = document.getElementById('noteContentEditor').innerHTML.trim();
+            const plainText = document.getElementById('noteContentEditor').innerText.trim();
+            if (!title && !plainText) {
+                showToast('请输入笔记内容', 'error');
+                return;
+            }
+            const editId = document.getElementById('editNoteId').value;
+            const now = new Date().toISOString();
+            if (editId) {
+                const idx = (appData.notes || []).findIndex(n => n.id === editId);
+                if (idx !== -1) {
+                    appData.notes[idx].title = title;
+                    appData.notes[idx].content = content;
+                    appData.notes[idx].category = selectedNoteCategory;
+                    appData.notes[idx].updatedAt = now;
+                }
+            } else {
+                appData.notes.push({
+                    id: genId(),
+                    title: title,
+                    content: content,
+                    category: selectedNoteCategory,
+                    createdAt: now,
+                    updatedAt: now
+                });
+            }
+            saveData();
+            showToast('笔记已保存');
+            backToNotes();
+        }
+
+        function deleteNoteFromEdit() {
+            const editId = document.getElementById('editNoteId').value;
+            if (!editId) { backToNotes(); return; }
+            const note = (appData.notes || []).find(n => n.id === editId);
+            const title = note ? (note.title || '未命名') : '此笔记';
+            showConfirm('删除笔记', `确定要删除"${title}"吗？此操作不可撤销。`, () => {
+                appData.notes = (appData.notes || []).filter(n => n.id !== editId);
+                saveData();
+                showToast('笔记已删除');
+                backToNotes();
+            });
+        }
+
+        function deleteNote(id) {
+            const note = (appData.notes || []).find(n => n.id === id);
+            const title = note ? (note.title || '未命名') : '此笔记';
+            showConfirm('删除笔记', `确定要删除"${title}"吗？此操作不可撤销。`, () => {
+                appData.notes = (appData.notes || []).filter(n => n.id !== id);
+                saveData();
+                renderNotesList();
+                showToast('笔记已删除');
+            });
+        }
+
+        function toggleNotePin(id) {
+            const note = (appData.notes || []).find(n => n.id === id);
+            if (!note) return;
+            note.pinned = !note.pinned;
+            saveData();
+            renderNotesList();
+            showToast(note.pinned ? '已置顶' : '已取消置顶');
+        }
+
+        // ========== 富文本编辑器命令 ==========
+        function execCmd(cmd, val) {
+            document.getElementById('noteContentEditor').focus();
+            document.execCommand(cmd, false, val || null);
+        }
+
+        function changeFontSize(size) {
+            if (!size) return;
+            execCmd('fontSize', size);
+        }
+
+        function changeTextColor(color) {
+            execCmd('foreColor', color);
+        }
+
+        function changeBgColor(color) {
+            execCmd('hiliteColor', color);
+        }
+
+        function toggleList(type) {
+            execCmd(type === 'ul' ? 'insertUnorderedList' : 'insertOrderedList');
+        }
+
+        function clearFormat() {
+            execCmd('removeFormat');
+            execCmd('fontSize', '3');
+            execCmd('foreColor', '#333333');
+        }
+
+        function handleNoteImageUpload(event) {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+            const editor = document.getElementById('noteContentEditor');
+            editor.focus();
+            files.forEach(file => {
+                if (file.size > 2 * 1024 * 1024) {
+                    showToast('图片不能超过2MB', 'error');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // 在光标位置插入图片
+                    const img = `<img src="${e.target.result}" alt="图片">`;
+                    document.execCommand('insertHTML', false, img);
+                };
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        }
+
+        function insertChecklist() {
+            const editor = document.getElementById('noteContentEditor');
+            editor.focus();
+            const html = `<div class="checklist-block"><input type="checkbox"><span contenteditable="true">清单项</span></div><br>`;
+            document.execCommand('insertHTML', false, html);
+        }
+
+        // ========== 分类菜单 ==========
         function toggleNoteCategoryMenu() {
+            if (!noteEditMode) return;
             const dropdown = document.getElementById('noteCategoryDropdown');
             if (dropdown.style.display === 'none') {
                 dropdown.innerHTML = NOTE_CATEGORIES.filter(c => c.id !== 'all').map(c =>
@@ -3684,129 +4826,42 @@
             document.getElementById('noteCategoryLabel').textContent = cat.name;
         }
 
-        function renderNoteImagePreview() {
-            const previewEl = document.getElementById('noteImagePreview');
-            if (tempNoteImages.length === 0) {
-                previewEl.style.display = 'none';
-                previewEl.innerHTML = '';
-                return;
+        // ========== 自动保存草稿 ==========
+        function startAutoSaveDraft() {
+            stopAutoSaveDraft();
+            noteDraftTimer = setInterval(function() {
+                const editId = document.getElementById('editNoteId').value;
+                const title = document.getElementById('noteTitle').value.trim();
+                const content = document.getElementById('noteContentEditor').innerHTML.trim();
+                const plainText = document.getElementById('noteContentEditor').innerText.trim();
+                if (!title && !plainText) return;
+                // 保存草稿到localStorage
+                const draft = { editId, title, content, category: selectedNoteCategory, savedAt: new Date().toISOString() };
+                localStorage.setItem('noteDraft', JSON.stringify(draft));
+            }, 30000);
+        }
+
+        function stopAutoSaveDraft() {
+            if (noteDraftTimer) {
+                clearInterval(noteDraftTimer);
+                noteDraftTimer = null;
             }
-            previewEl.style.display = 'flex';
-            previewEl.innerHTML = tempNoteImages.map((img, idx) =>
-                `<div class="img-wrap">
-                    <img src="${img}" alt="图片${idx+1}">
-                    <button class="img-remove" onclick="removeNoteImage(${idx})">×</button>
-                </div>`
-            ).join('');
         }
 
-        function removeNoteImage(idx) {
-            tempNoteImages.splice(idx, 1);
-            renderNoteImagePreview();
-        }
-
-        function handleNoteImageUpload(event) {
-            const files = Array.from(event.target.files);
-            if (!files.length) return;
-            let loaded = 0;
-            files.forEach(file => {
-                if (file.size > 3 * 1024 * 1024) { showToast('图片不能超过3MB', 'error'); return; }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempNoteImages.push(e.target.result);
-                    loaded++;
-                    if (loaded === files.length) renderNoteImagePreview();
-                };
-                reader.readAsDataURL(file);
-            });
-            event.target.value = '';
-        }
-
-        function renderNoteChecklist() {
-            const clEl = document.getElementById('noteChecklist');
-            if (tempChecklist.length === 0) {
-                clEl.style.display = 'none';
-                clEl.innerHTML = '';
-                return;
-            }
-            clEl.style.display = 'block';
-            clEl.innerHTML = tempChecklist.map((item, idx) =>
-                `<div class="checklist-item ${item.done ? 'done' : ''}">
-                    <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleChecklistItem(${idx})">
-                    <input type="text" value="${escapeHtml(item.text)}" oninput="updateChecklistText(${idx}, this.value)" placeholder="清单项">
-                    <span class="del-item" onclick="removeChecklistItem(${idx})">×</span>
-                </div>`
-            ).join('');
-        }
-
-        function addChecklistItem() {
-            tempChecklist.push({ text: '', done: false });
-            renderNoteChecklist();
-            // 聚焦最后一项输入框
-            setTimeout(() => {
-                const inputs = document.querySelectorAll('#noteChecklist input[type="text"]');
-                if (inputs.length > 0) inputs[inputs.length - 1].focus();
-            }, 100);
-        }
-
-        function toggleChecklistItem(idx) {
-            tempChecklist[idx].done = !tempChecklist[idx].done;
-            renderNoteChecklist();
-        }
-
-        function updateChecklistText(idx, val) {
-            tempChecklist[idx].text = val;
-        }
-
-        function removeChecklistItem(idx) {
-            tempChecklist.splice(idx, 1);
-            renderNoteChecklist();
-        }
-
-        function saveNote() {
-            const title = document.getElementById('noteTitle').value.trim();
-            const content = document.getElementById('noteContent').value.trim();
-            if (!title && !content && tempNoteImages.length === 0 && tempChecklist.length === 0) {
-                showToast('请输入笔记内容', 'error');
-                return;
-            }
-            const editId = document.getElementById('editNoteId').value;
-            const now = new Date().toISOString();
-            if (editId) {
-                const idx = (appData.notes || []).findIndex(n => n.id === editId);
-                if (idx !== -1) {
-                    appData.notes[idx].title = title;
-                    appData.notes[idx].content = content;
-                    appData.notes[idx].category = selectedNoteCategory;
-                    appData.notes[idx].images = [...tempNoteImages];
-                    appData.notes[idx].checklist = tempChecklist.filter(c => c.text.trim());
-                    appData.notes[idx].updatedAt = now;
+        // ========== 快捷键 ==========
+        function bindEditorShortcuts() {
+            const editor = document.getElementById('noteContentEditor');
+            // 移除旧绑定避免重复
+            editor.onkeydown = function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key.toLowerCase()) {
+                        case 'b': e.preventDefault(); execCmd('bold'); break;
+                        case 'i': e.preventDefault(); execCmd('italic'); break;
+                        case 'u': e.preventDefault(); execCmd('underline'); break;
+                        case 'z': e.preventDefault(); document.execCommand('undo'); break;
+                    }
                 }
-            } else {
-                appData.notes.push({
-                    id: genId(),
-                    title: title,
-                    content: content,
-                    category: selectedNoteCategory,
-                    images: [...tempNoteImages],
-                    checklist: tempChecklist.filter(c => c.text.trim()),
-                    createdAt: now,
-                    updatedAt: now
-                });
-            }
-            saveData();
-            renderNotesList();
-            closeNoteSheet();
-            showToast('笔记已保存');
-        }
-
-        function deleteNote(id) {
-            showConfirm('删除笔记', '确定要删除这条笔记吗？此操作不可撤销。', () => {
-                appData.notes = (appData.notes || []).filter(n => n.id !== id);
-                saveData();
-                renderNotesList();
-                showToast('笔记已删除');
-            });
+            };
         }
 
         // ========== 笔记分类管理 ==========
@@ -3828,7 +4883,6 @@
             document.getElementById('catSheetTitle').textContent = '新建分类';
             document.getElementById('editCatId').value = '';
             document.getElementById('catNameInput').value = '';
-            document.getElementById('catDeleteBtn').style.display = 'none';
             selectedCatColorIdx = 0;
             renderCatColorGrid();
             document.getElementById('catSheet').classList.add('show');
@@ -3836,17 +4890,17 @@
         }
 
         function openEditCategorySheet(catId) {
-            const cat = (appData.customNoteCategories || []).find(c => c.id === catId);
+            const cat = NOTE_CATEGORIES.find(c => c.id === catId);
             if (!cat) return;
             document.getElementById('catSheetTitle').textContent = '编辑分类';
             document.getElementById('editCatId').value = catId;
             document.getElementById('catNameInput').value = cat.name;
-            document.getElementById('catDeleteBtn').style.display = 'block';
             // 找到颜色索引
             const colorIdx = CAT_COLOR_PALETTE.findIndex(p => p.color === cat.color);
             selectedCatColorIdx = colorIdx >= 0 ? colorIdx : 0;
             renderCatColorGrid();
             document.getElementById('catSheet').classList.add('show');
+            setTimeout(() => document.getElementById('catNameInput').focus(), 300);
         }
 
         function closeCatSheet() {
@@ -3862,12 +4916,19 @@
             const palette = CAT_COLOR_PALETTE[selectedCatColorIdx];
             const editId = document.getElementById('editCatId').value;
             if (editId) {
-                // 编辑现有分类
-                const idx = (appData.customNoteCategories || []).findIndex(c => c.id === editId);
-                if (idx !== -1) {
-                    appData.customNoteCategories[idx].name = name;
-                    appData.customNoteCategories[idx].color = palette.color;
-                    appData.customNoteCategories[idx].bg = palette.bg;
+                const cat = NOTE_CATEGORIES.find(c => c.id === editId);
+                if (cat && cat.system) {
+                    // 编辑默认分类，存储覆盖
+                    if (!appData.categoryOverrides) appData.categoryOverrides = {};
+                    appData.categoryOverrides[editId] = { name: name, color: palette.color, bg: palette.bg };
+                } else {
+                    // 编辑自定义分类
+                    const idx = (appData.customNoteCategories || []).findIndex(c => c.id === editId);
+                    if (idx !== -1) {
+                        appData.customNoteCategories[idx].name = name;
+                        appData.customNoteCategories[idx].color = palette.color;
+                        appData.customNoteCategories[idx].bg = palette.bg;
+                    }
                 }
             } else {
                 // 新建分类
@@ -3891,16 +4952,23 @@
             const editId = document.getElementById('editCatId').value;
             if (!editId) return;
             const cat = getNoteCat(editId);
+            if (!cat || cat.locked) return;
             const noteCount = (appData.notes || []).filter(n => (n.category || 'uncategorized') === editId).length;
             const msg = noteCount > 0
                 ? `分类"${cat.name}"下有 ${noteCount} 条笔记，删除后笔记将归入"未分类"。确定删除吗？`
                 : `确定要删除分类"${cat.name}"吗？`;
             showConfirm('删除分类', msg, () => {
-                // 将该分类下的笔记归入未分类
                 (appData.notes || []).forEach(n => {
                     if (n.category === editId) n.category = 'uncategorized';
                 });
-                appData.customNoteCategories = (appData.customNoteCategories || []).filter(c => c.id !== editId);
+                if (cat.system) {
+                    if (!appData.deletedDefaultCategories) appData.deletedDefaultCategories = [];
+                    if (!appData.deletedDefaultCategories.includes(editId)) {
+                        appData.deletedDefaultCategories.push(editId);
+                    }
+                } else {
+                    appData.customNoteCategories = (appData.customNoteCategories || []).filter(c => c.id !== editId);
+                }
                 if (currentNoteCategory === editId) currentNoteCategory = 'all';
                 saveData();
                 refreshNoteCategories();
@@ -3913,7 +4981,7 @@
 
         function quickDeleteCategory(catId) {
             const cat = getNoteCat(catId);
-            if (!cat || cat.system) return;
+            if (!cat || cat.locked) return;
             const noteCount = (appData.notes || []).filter(n => (n.category || 'uncategorized') === catId).length;
             const msg = noteCount > 0
                 ? `分类"${cat.name}"下有 ${noteCount} 条笔记，删除后笔记将归入"未分类"。确定删除吗？`
@@ -3922,7 +4990,14 @@
                 (appData.notes || []).forEach(n => {
                     if (n.category === catId) n.category = 'uncategorized';
                 });
-                appData.customNoteCategories = (appData.customNoteCategories || []).filter(c => c.id !== catId);
+                if (cat.system) {
+                    if (!appData.deletedDefaultCategories) appData.deletedDefaultCategories = [];
+                    if (!appData.deletedDefaultCategories.includes(catId)) {
+                        appData.deletedDefaultCategories.push(catId);
+                    }
+                } else {
+                    appData.customNoteCategories = (appData.customNoteCategories || []).filter(c => c.id !== catId);
+                }
                 if (currentNoteCategory === catId) currentNoteCategory = 'all';
                 saveData();
                 refreshNoteCategories();
@@ -3942,7 +5017,7 @@
 
         // ========== 左滑返回手势 ==========
         (function() {
-            const subPages = ['page-profile-edit', 'page-target-edit', 'page-data-edit', 'page-emoji-edit'];
+            const subPages = ['page-profile-edit', 'page-target-edit', 'page-data-edit', 'page-emoji-edit', 'page-note-edit', 'page-theme-edit'];
             let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
             const container = document.querySelector('.page-container');
             if (!container) return;
@@ -3962,13 +5037,171 @@
                 const elapsed = Date.now() - touchStartTime;
                 // 左滑：水平位移为负且绝对值>60，水平位移>垂直位移，时间<500ms
                 if (deltaX < -60 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5 && elapsed < 500) {
-                    backToProfile();
+                    if (activePage.id === 'page-note-edit') {
+                        backToNotes();
+                    } else {
+                        goBack();
+                    }
                 }
             }, { passive: true });
         })();
 
+        // ========== 底部弹窗手势（上滑铺满 / 下滑关闭 / 左滑关闭） ==========
+        function bindSheetGestures() {
+            const sheetIds = ['customColorSheet', 'catSheet', 'recordSheet', 'remarkSheet', 'clockSheet', 'quickSheet', 'downloadSheet', 'importModeSheet'];
+            sheetIds.forEach(id => {
+                const overlay = document.getElementById(id);
+                if (!overlay || overlay._gestureBound) return;
+                overlay._gestureBound = true;
+                const sheet = overlay.querySelector('.bottom-sheet');
+                if (!sheet) return;
+
+                let startY = 0, startX = 0, currentY = 0, currentX = 0;
+                let isDragging = false, isFullscreen = false;
+                let dragMode = 'none'; // 'vertical' | 'horizontal'
+
+                // 手柄区域可触发拖拽
+                const handle = sheet.querySelector('.sheet-handle');
+                const title = sheet.querySelector('.sheet-title');
+                const dragZone = handle || title || sheet;
+
+                function closeSheet() {
+                    overlay.classList.remove('show');
+                    sheet.classList.remove('fullscreen');
+                    sheet.style.transform = '';
+                    isFullscreen = false;
+                }
+
+                function getCloseFunction() {
+                    const closeMap = {
+                        'customColorSheet': 'closeCustomColorSheet',
+                        'catSheet': 'closeCatSheet',
+                        'recordSheet': 'closeRecordSheet',
+                        'remarkSheet': 'closeRemarkSheet',
+                        'clockSheet': 'closeClockSheet',
+                        'quickSheet': 'closeQuickSheet',
+                        'downloadSheet': 'closeDownloadSheet',
+                        'importModeSheet': 'closeImportModeSheet'
+                    };
+                    const fnName = closeMap[id];
+                    if (fnName && typeof window[fnName] === 'function') window[fnName]();
+                    else closeSheet();
+                }
+
+                dragZone.addEventListener('touchstart', function(e) {
+                    if (!overlay.classList.contains('show')) return;
+                    startY = e.touches[0].clientY;
+                    startX = e.touches[0].clientX;
+                    currentY = 0; currentX = 0;
+                    isDragging = true;
+                    dragMode = 'none';
+                    sheet.style.transition = 'none';
+                }, { passive: true });
+
+                sheet.addEventListener('touchstart', function(e) {
+                    if (!overlay.classList.contains('show')) return;
+                    // 只在滚动到顶部时才允许下拉关闭
+                    if (sheet.scrollTop > 0 && !isFullscreen) return;
+                    startY = e.touches[0].clientY;
+                    startX = e.touches[0].clientX;
+                    currentY = 0; currentX = 0;
+                    isDragging = true;
+                    dragMode = 'none';
+                    sheet.style.transition = 'none';
+                }, { passive: true });
+
+                function handleMove(clientX, clientY) {
+                    if (!isDragging) return;
+                    const dy = clientY - startY;
+                    const dx = clientX - startX;
+                    // 判断拖拽方向
+                    if (dragMode === 'none' && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+                        dragMode = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
+                    }
+                    if (dragMode === 'vertical') {
+                        currentY = dy;
+                        if (dy > 0) {
+                            // 下拉
+                            sheet.style.transform = `translateY(${dy}px)`;
+                        } else if (dy < 0 && !isFullscreen) {
+                            // 上拉 -> 铺满
+                            sheet.style.transform = `translateY(${dy * 0.3}px)`;
+                        }
+                    } else if (dragMode === 'horizontal') {
+                        currentX = dx;
+                        if (dx < 0) {
+                            // 左滑
+                            sheet.style.transform = `translateX(${dx}px)`;
+                        }
+                    }
+                }
+
+                function handleEnd() {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    sheet.style.transition = '';
+
+                    if (dragMode === 'vertical') {
+                        if (currentY > 100) {
+                            // 下拉超过阈值 -> 关闭
+                            getCloseFunction();
+                        } else if (currentY < -50 && !isFullscreen) {
+                            // 上拉超过阈值 -> 铺满
+                            sheet.style.transform = '';
+                            sheet.classList.add('fullscreen');
+                            isFullscreen = true;
+                        } else {
+                            sheet.style.transform = '';
+                        }
+                    } else if (dragMode === 'horizontal') {
+                        if (currentX < -80) {
+                            // 左滑超过阈值 -> 关闭
+                            getCloseFunction();
+                        } else {
+                            sheet.style.transform = '';
+                        }
+                    }
+                    dragMode = 'none';
+                }
+
+                sheet.addEventListener('touchmove', function(e) {
+                    handleMove(e.touches[0].clientX, e.touches[0].clientY);
+                }, { passive: true });
+                sheet.addEventListener('touchend', handleEnd, { passive: true });
+
+                // 鼠标支持（电脑端）
+                dragZone.addEventListener('mousedown', function(e) {
+                    if (!overlay.classList.contains('show')) return;
+                    if (e.button !== 0) return;
+                    startY = e.clientY; startX = e.clientX;
+                    currentY = 0; currentX = 0;
+                    isDragging = true; dragMode = 'none';
+                    sheet.style.transition = 'none';
+                    e.preventDefault();
+                });
+                document.addEventListener('mousemove', function(e) {
+                    if (isDragging) handleMove(e.clientX, e.clientY);
+                });
+                document.addEventListener('mouseup', function() {
+                    if (isDragging) handleEnd();
+                });
+
+                // 点击遮罩关闭时重置状态
+                overlay.addEventListener('click', function(e) {
+                    if (e.target === overlay) {
+                        sheet.classList.remove('fullscreen');
+                        sheet.style.transform = '';
+                        isFullscreen = false;
+                    }
+                });
+            });
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
-            loadData(); renderAll();
+            loadData();
+            applyColorTheme(appData.colorTheme || 'ocean');
+            renderAll();
+            bindSheetGestures();
             window.addEventListener('resize', () => { if (trendChart) trendChart.resize(); });
 
             // 注册 Service Worker（需 HTTPS 或 localhost）
@@ -4001,3 +5234,4 @@
     </script>
 </body>
 </html>
+
