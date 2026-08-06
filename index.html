@@ -88,6 +88,7 @@
             .app-frame { max-width: 500px; }
             .bottom-nav { max-width: 500px; }
             .bottom-sheet { max-width: 500px; }
+            .rich-toolbar, .rich-toolbar-panel { max-width: 500px; }
         }
 
         .page-container {
@@ -138,6 +139,23 @@
             transition: opacity 0.2s;
         }
         .header-icons .icon-btn:active { opacity: 0.6; }
+        .today-record-status {
+            height: 28px; padding: 0 10px; border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.16); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 600; white-space: nowrap;
+            cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        }
+        .today-record-status.missing {
+            background: rgba(255,255,255,0.24);
+            border-color: rgba(255,255,255,0.5);
+        }
+        .today-record-status:active { opacity: 0.72; transform: scale(0.96); }
+        .weight-display .today-record-status {
+            margin-left: auto;
+            align-self: center;
+        }
 
         .weight-display {
             display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px;
@@ -216,8 +234,8 @@
         }
 
         .record-info {
-            flex: 0 0 116px;
-            min-width: 116px;
+            flex: 1 1 0;
+            min-width: 0;
         }
         .record-info .date {
             font-size: 14px;
@@ -234,7 +252,7 @@
             justify-content: flex-start;
         }
 
-        .record-mid { flex: 1 1 68px; min-width: 0; text-align: left; }
+        .record-mid { flex: 1 1 0; min-width: 0; text-align: left; }
         .record-mid .status,
         .record-change .status-placeholder {
             font-size: 11px;
@@ -247,12 +265,39 @@
         .record-mid .weight { font-size: 18px; font-weight: 700; }
         .record-mid .weight .unit { font-size: 11px; color: var(--text-secondary); font-weight: 400; }
 
-        .record-change { flex: 0 1 68px; min-width: 52px; text-align: left; }
-        .record-change .change { font-size: 16px; font-weight: 700; display: block; line-height: 1.2; }
+        .record-change { flex: 1 1 0; min-width: 0; text-align: left; }
+        .record-change .change {
+            font-size: 18px; font-weight: 700; line-height: 1.2;
+            display: inline-flex; align-items: center; gap: 4px;
+            white-space: nowrap;
+        }
+        .record-change .change-icon {
+            width: 17px; height: 17px; flex-shrink: 0;
+            display: inline-block;
+            background: currentColor;
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            mask-position: center;
+            -webkit-mask-size: contain;
+            mask-size: contain;
+        }
+        .record-change .change-icon.up {
+            -webkit-mask-image: url('icon/icon-weight-up.png');
+            mask-image: url('icon/icon-weight-up.png');
+        }
+        .record-change .change-icon.down {
+            -webkit-mask-image: url('icon/icon-weight-down.png');
+            mask-image: url('icon/icon-weight-down.png');
+        }
+        .record-change .change-icon.flat {
+            -webkit-mask-image: url('icon/icon-weight-flat.png');
+            mask-image: url('icon/icon-weight-flat.png');
+        }
         .record-change .change .small { font-size: 11px; font-weight: 400; }
         .change.down { color: var(--success); }
         .change.up { color: var(--danger); }
-        .change.flat { color: var(--text-secondary); font-size: 13px; font-weight: 500; }
+        .change.flat { color: var(--text-secondary); font-size: 18px; font-weight: 700; }
 
         .record-status-tag {
             display: inline-flex;
@@ -293,7 +338,6 @@
 
         @media (max-width: 360px) {
             .record-card { gap: 6px; padding: 14px 12px; }
-            .record-info { flex-basis: 108px; min-width: 108px; }
             .record-info .date { font-size: 13px; }
             .record-mid .weight { font-size: 17px; }
             .record-change .change { font-size: 15px; }
@@ -351,6 +395,7 @@
             font-size: 13px; border: 1px solid var(--border);
             background: var(--card-bg); color: var(--text-secondary);
             cursor: pointer; transition: all 0.2s; white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 6px;
         }
         .note-cat-pill.active {
             background: var(--primary); color: white; border-color: var(--primary);
@@ -361,9 +406,12 @@
         }
         .note-card-wrapper {
             position: relative;
+            margin-bottom: 10px;
             overflow: hidden;
             border-radius: 14px;
+            isolation: isolate;
         }
+        .notes-list .note-card-wrapper:last-child { margin-bottom: 0; }
         .note-card {
             background: var(--card-bg); border-radius: 14px;
             padding: 14px 16px;
@@ -435,8 +483,8 @@
             display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: stretch;
         }
         .notes-list.grid-view .note-card-wrapper {
-            overflow: hidden; border-radius: 14px;
-            display: flex; flex-direction: column;
+            margin-bottom: 0; overflow: hidden; border-radius: 14px;
+            display: flex; flex-direction: column; height: auto;
         }
         .notes-list.grid-view .note-card {
             min-height: 100px; height: 100%;
@@ -522,6 +570,9 @@
             opacity: 0.5;
             transform: scale(0.95);
         }
+        .note-cat-pill.dragging .cat-delete-x {
+            pointer-events: none;
+        }
         .note-cat-pill.drag-over {
             border-style: dashed;
             border-color: var(--primary);
@@ -538,8 +589,26 @@
             z-index: 5;
         }
         .note-cat-pill.edit-mode .cat-delete-x { display: flex; }
-        .note-cat-pill.edit-mode { animation: jiggle 0.4s ease-in-out infinite; cursor: grab; }
-        .note-cat-pill.edit-mode:active { cursor: grabbing; }
+        .note-cat-pill.edit-mode {
+            animation: jiggle 0.4s ease-in-out infinite;
+            cursor: pointer;
+            padding: 7px 9px 7px 15px;
+            font-size: 15px;
+        }
+        .note-cat-pill.edit-mode .cat-delete-x {
+            width: 18px; height: 18px;
+            font-size: 12px;
+        }
+        .note-cat-pill.edit-mode .cat-name { max-width: 86px; overflow: hidden; text-overflow: ellipsis; }
+        .cat-drag-handle {
+            width: 22px; height: 22px; border-radius: 50%;
+            display: none; align-items: center; justify-content: center;
+            color: var(--text-light); background: rgba(0,0,0,0.05);
+            font-size: 15px; line-height: 1; cursor: grab;
+            touch-action: none; user-select: none; -webkit-user-select: none;
+        }
+        .note-cat-pill.edit-mode .cat-drag-handle { display: inline-flex; }
+        .cat-drag-handle:active { cursor: grabbing; transform: scale(0.92); }
         @keyframes jiggle {
             0%, 100% { transform: rotate(-2deg); }
             50% { transform: rotate(2deg); }
@@ -563,7 +632,7 @@
         .cat-color-dot.selected { border-color: var(--text); transform: scale(1.15); }
 
         /* ========== 笔记编辑二级页面 ========== */
-        .note-edit-body { padding: 16px 20px; padding-bottom: 60px; }
+        .note-edit-body { padding: 16px 20px; padding-bottom: 80px; }
         .note-title-input {
             width: 100%; border: none; outline: none;
             font-size: 20px; font-weight: 700; color: var(--text);
@@ -592,45 +661,108 @@
         .note-cat-option.active { color: var(--primary); font-weight: 600; }
 
         /* 富文本工具栏 */
+        /* 悬浮主工具栏（固定在页面底部） */
         .rich-toolbar {
-            display: flex; align-items: center; gap: 4px;
-            padding: 8px 0; overflow-x: auto; overflow-y: hidden;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 12px;
-            position: sticky; top: 0; background: var(--bg); z-index: 5;
+            display: none; /* 默认隐藏，编辑模式才显示 */
+            align-items: stretch; justify-content: space-around;
+            padding: 6px 0 calc(8px + env(safe-area-inset-bottom, 0px)); gap: 0;
+            border-top: 1px solid var(--border);
+            background: var(--card-bg);
+            position: fixed; bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 100%; max-width: 430px;
+            z-index: 20;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         }
-        .rich-toolbar::-webkit-scrollbar { display: none; }
+        .note-edit-body:not(.view-mode) ~ .rich-toolbar { display: flex; }
+        .rt-main-btn {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 2px; padding: 4px 2px; border: none; background: transparent;
+            cursor: pointer; color: var(--text-secondary); font-size: 10px;
+            touch-action: manipulation; transition: color 0.15s;
+        }
+        .rt-main-btn .rt-main-icon { font-size: 20px; line-height: 1; }
+        .rt-main-btn .rt-main-img {
+            width: 22px; height: 22px; object-fit: contain;
+            display: block; opacity: 0.75;
+        }
+        .rt-main-btn.active .rt-main-img,
+        .rt-main-btn:active .rt-main-img { opacity: 1; }
+        .rt-main-btn.active { color: var(--primary); }
+        .rt-main-btn:active { transform: scale(0.92); }
+
+        /* 展开式格式面板（固定在主工具栏上方） */
+        .rich-toolbar-panel {
+            display: none; flex-direction: column; gap: 0;
+            background: var(--card-bg); border-top: 1px solid var(--border);
+            position: fixed; bottom: 56px; left: 50%;
+            transform: translateX(-50%);
+            width: 100%; max-width: 430px;
+            z-index: 19;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            max-height: 280px; overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 14px 14px 0 0;
+        }
+        .rich-toolbar-panel.show { display: flex; animation: slideUp 0.2s ease; }
+        @keyframes slideUp { from { transform: translateX(-50%) translateY(100%); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+        .panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 14px; font-size: 13px; color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        .panel-close { font-size: 18px; color: var(--text-light); cursor: pointer; padding: 0 4px; }
+        .panel-row {
+            display: flex; align-items: center; justify-content: space-around;
+            padding: 6px 8px; gap: 4px;
+        }
+        .panel-row + .panel-row { border-top: 1px solid var(--border); }
         .rt-btn {
-            flex-shrink: 0; min-width: 36px; height: 36px; min-height: 36px;
+            flex-shrink: 0; min-width: 40px; height: 38px;
             border-radius: 8px; border: 1px solid var(--border);
-            background: var(--card-bg); font-size: 15px; cursor: pointer;
+            background: var(--bg); font-size: 16px; cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            padding: 0 8px; touch-action: manipulation;
+            padding: 0 10px; touch-action: manipulation; color: var(--text);
         }
         .rt-btn:active { background: var(--border); }
-        .rt-select {
-            flex-shrink: 0; height: 36px; border-radius: 8px;
-            border: 1px solid var(--border); background: var(--card-bg);
-            font-size: 13px; color: var(--text); font-family: inherit;
-            padding: 0 4px; outline: none;
+        .rt-list-icon {
+            display: inline-flex; align-items: center; gap: 4px;
+            min-width: 32px; color: inherit;
         }
-        .rt-color-wrap {
-            flex-shrink: 0; position: relative; width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            border: 1px solid var(--border); border-radius: 8px;
-            background: var(--card-bg); cursor: pointer; overflow: hidden;
+        .rt-list-mark {
+            width: 14px; text-align: right; font-size: 10px; line-height: 1.05;
+            color: var(--primary-light); font-weight: 700;
         }
-        .rt-color-icon {
-            font-size: 15px; font-weight: 700; pointer-events: none;
-            line-height: 1;
+        .rt-list-mark.alpha { font-size: 9px; }
+        .rt-list-lines {
+            display: flex; flex-direction: column; gap: 4px;
         }
-        .rt-color-input {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; opacity: 0; cursor: pointer;
-            border: none;
+        .rt-list-lines i {
+            display: block; width: 18px; height: 2px; border-radius: 2px;
+            background: currentColor;
         }
+        .font-size-row {
+            justify-content: center; gap: 14px; padding: 10px 14px;
+        }
+        .font-size-label {
+            font-weight: 700; color: var(--text); line-height: 1;
+        }
+        .font-size-label.small { font-size: 14px; }
+        .font-size-label.large { font-size: 24px; }
+        .font-size-slider {
+            flex: 1; max-width: 260px; accent-color: var(--primary-light);
+        }
+        .rt-color-dot {
+            flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+            border: 2px solid var(--card-bg); cursor: pointer; touch-action: manipulation;
+            box-shadow: 0 0 0 1px var(--border);
+        }
+        .panel-color-label {
+            flex-shrink: 0; width: 36px; text-align: center;
+            font-size: 13px; font-weight: 700; color: var(--text-secondary);
+        }
+        .rt-color-dot:active { transform: scale(0.85); }
+        .rt-sep { width: 1px; height: 24px; background: var(--border); flex-shrink: 0; margin: 0 2px; }
 
         /* 富文本编辑区 */
         .rich-editor-wrap {
@@ -660,14 +792,19 @@
             width: 18px; height: 18px; margin-right: 6px; vertical-align: middle;
         }
 
-        /* 查看模式隐藏工具栏 */
-        .note-edit-body.view-mode .rich-toolbar { display: none; }
-        .note-edit-body.view-mode .rich-editor { 
+        /* 查看模式：工具栏由兄弟选择器控制隐藏 */
+        .note-edit-body.view-mode .rich-editor {
             min-height: auto; padding-top: 0;
             -webkit-user-select: text; user-select: text;
         }
-        .note-edit-body.view-mode .note-title-input { pointer-events: none; }
+        .note-edit-body.view-mode .note-title-input { pointer-events: none; background: transparent; }
         .note-edit-body.view-mode .note-category-select { pointer-events: none; }
+        .note-edit-body.view-mode .rich-editor input,
+        .note-edit-body.view-mode .rich-editor textarea,
+        .note-edit-body.view-mode .rich-editor select,
+        .note-edit-body.view-mode .rich-editor button {
+            pointer-events: none;
+        }
 
         /* 笔记列表HTML内容预览 */
         .note-card-content { line-height: 1.5; }
@@ -862,7 +999,10 @@
 
         .bmi-body { display: flex; align-items: center; gap: 18px; }
 
-        .bmi-gauge { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
+        .bmi-gauge {
+            position: relative; width: 90px; height: 90px; flex-shrink: 0;
+            cursor: pointer; touch-action: manipulation;
+        }
         .bmi-gauge svg { transform: rotate(-90deg); }
         .bmi-gauge .gauge-value {
             position: absolute; top: 50%; left: 50%;
@@ -870,6 +1010,24 @@
         }
         .bmi-gauge .gauge-value .num { font-size: 22px; font-weight: 700; }
         .bmi-gauge .gauge-value .lbl { font-size: 10px; color: var(--text-secondary); }
+        .bmi-formula-tip {
+            position: absolute; left: 18px; right: 18px; top: 54px;
+            background: rgba(52, 73, 94, 0.94); color: white;
+            border-radius: 12px; padding: 10px 12px;
+            font-size: 12px; line-height: 1.5; z-index: 30;
+            box-shadow: var(--shadow-md); text-align: center;
+            animation: bmiTipIn 0.18s ease;
+            pointer-events: none;
+        }
+        .bmi-formula-tip::after {
+            content: ''; position: absolute; left: 52px; bottom: -6px;
+            width: 12px; height: 12px; background: rgba(52, 73, 94, 0.94);
+            transform: rotate(45deg);
+        }
+        @keyframes bmiTipIn {
+            from { transform: translateY(6px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
 
         .bmi-details { flex: 1; }
         .bmi-detail-item {
@@ -1516,7 +1674,7 @@
                     <div class="weight-display">
                         <span class="number" id="latestWeight">--</span>
                         <span class="unit">公斤</span>
-                        <span class="date-label" id="latestDate"></span>
+                        <span class="today-record-status missing" id="todayRecordStatus" onclick="openTodayRecordSheet()">今日未记录</span>
                     </div>
                     <button class="target-card" id="targetCard" onclick="openTargetEdit()">
                         <span id="targetText">未设置目标</span>
@@ -1696,7 +1854,7 @@
                         <span class="bmi-status-tag none" id="profileHealthBmiStatusTag">--</span>
                     </div>
                     <div class="bmi-body">
-                        <div class="bmi-gauge">
+                        <div class="bmi-gauge" onclick="showBmiFormulaTip(this, 'profileHealth')" title="查看 BMI 计算公式">
                             <svg width="90" height="90" viewBox="0 0 90 90">
                                 <circle cx="45" cy="45" r="38" fill="none" stroke="#ECF0F1" stroke-width="7"/>
                                 <circle id="profileHealthBmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
@@ -1807,7 +1965,7 @@
                         <span class="bmi-status-tag none" id="recordHealthBmiStatusTag">--</span>
                     </div>
                     <div class="bmi-body">
-                        <div class="bmi-gauge">
+                        <div class="bmi-gauge" onclick="showBmiFormulaTip(this, 'recordHealth')" title="查看 BMI 计算公式">
                             <svg width="90" height="90" viewBox="0 0 90 90">
                                 <circle cx="45" cy="45" r="38" fill="none" stroke="#ECF0F1" stroke-width="7"/>
                                 <circle id="recordHealthBmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
@@ -2052,43 +2210,89 @@
                     </div>
                     <div class="note-category-dropdown" id="noteCategoryDropdown" style="display:none;"></div>
 
-                    <!-- 富文本工具栏 -->
-                    <div class="rich-toolbar" id="richToolbar">
-                        <button class="rt-btn" onclick="execCmd('bold')" title="加粗"><b>B</b></button>
-                        <button class="rt-btn" onclick="execCmd('italic')" title="斜体"><i>I</i></button>
-                        <button class="rt-btn" onclick="execCmd('underline')" title="下划线"><u>U</u></button>
-                        <select class="rt-select" onchange="changeFontSize(this.value)" title="字号">
-                            <option value="">字号</option>
-                            <option value="2">12px</option>
-                            <option value="3">14px</option>
-                            <option value="4">16px</option>
-                            <option value="5">18px</option>
-                            <option value="6">20px</option>
-                            <option value="7">24px</option>
-                        </select>
-                        <label class="rt-color-wrap" title="文字颜色">
-                            <span class="rt-color-icon">A</span>
-                            <input type="color" class="rt-color-input" onchange="changeTextColor(this.value)" value="#333333">
-                        </label>
-                        <label class="rt-color-wrap" title="背景色">
-                            <span class="rt-color-icon" style="background:#fff5ba;">H</span>
-                            <input type="color" class="rt-color-input" onchange="changeBgColor(this.value)" value="#fff5ba">
-                        </label>
-                        <button class="rt-btn" onclick="toggleList('ul')" title="无序列表">•</button>
-                        <button class="rt-btn" onclick="toggleList('ol')" title="有序列表">1.</button>
-                        <button class="rt-btn" onclick="execCmd('justifyLeft')" title="左对齐">≡</button>
-                        <button class="rt-btn" onclick="execCmd('justifyCenter')" title="居中">=center</button>
-                        <button class="rt-btn" onclick="execCmd('justifyRight')" title="右对齐">≡</button>
-                        <button class="rt-btn" onclick="document.getElementById('noteImageInput').click()" title="插入图片">🖼️</button>
-                        <button class="rt-btn" onclick="insertChecklist()" title="清单">☑️</button>
-                        <button class="rt-btn" onclick="clearFormat()" title="清除格式">✖️</button>
-                        <input type="file" id="noteImageInput" accept="image/*" multiple style="display:none;" onchange="handleNoteImageUpload(event)">
-                    </div>
-
                     <!-- 富文本编辑区 -->
                     <div class="rich-editor-wrap">
                         <div id="noteContentEditor" class="rich-editor" contenteditable="true" data-placeholder="今天想写点什么..."></div>
                     </div>
+                </div>
+
+                <!-- 富文本格式面板（点击"文本编辑"展开，悬浮在页面底部） -->
+                <div class="rich-toolbar-panel" id="richToolbarPanel">
+                    <div class="panel-header">
+                        <span>文本编辑</span>
+                        <span class="panel-close" onclick="toggleRichPanel(false)">×</span>
+                    </div>
+                    <div class="panel-row">
+                        <button class="rt-btn" onclick="execCmd('bold')" title="加粗"><b>B</b></button>
+                        <button class="rt-btn" onclick="execCmd('italic')" title="斜体"><i>I</i></button>
+                        <button class="rt-btn" onclick="execCmd('underline')" title="下划线"><u>U</u></button>
+                        <div class="rt-sep"></div>
+                        <button class="rt-btn" onclick="execCmd('justifyLeft')" title="左对齐">⬅</button>
+                        <button class="rt-btn" onclick="execCmd('justifyCenter')" title="居中">⬌</button>
+                        <button class="rt-btn" onclick="execCmd('justifyRight')" title="右对齐">➡</button>
+                    </div>
+                    <div class="panel-row">
+                        <button class="rt-btn" onclick="toggleList('ol')" title="有序列表">
+                            <span class="rt-list-icon">
+                                <span class="rt-list-mark">1<br>2<br>3</span>
+                                <span class="rt-list-lines"><i></i><i></i><i></i></span>
+                            </span>
+                        </button>
+                        <button class="rt-btn" onclick="toggleAlphaList()" title="字母列表">
+                            <span class="rt-list-icon">
+                                <span class="rt-list-mark alpha">a<br>b<br>c</span>
+                                <span class="rt-list-lines"><i></i><i></i><i></i></span>
+                            </span>
+                        </button>
+                        <button class="rt-btn" onclick="toggleList('ul')" title="无序列表">
+                            <span class="rt-list-icon">
+                                <span class="rt-list-mark">•<br>•<br>•</span>
+                                <span class="rt-list-lines"><i></i><i></i><i></i></span>
+                            </span>
+                        </button>
+                        <div class="rt-sep"></div>
+                        <button class="rt-btn" onclick="clearFormat()" title="清除格式">✖</button>
+                    </div>
+                    <div class="panel-row font-size-row">
+                        <span class="font-size-label small">Aa</span>
+                        <input type="range" class="font-size-slider" min="2" max="7" step="1" value="3" oninput="changeFontSize(this.value)" title="字号">
+                        <span class="font-size-label large">Aa</span>
+                    </div>
+                    <div class="panel-row" id="panelColorRow">
+                        <span class="panel-color-label">字体</span>
+                        <span class="rt-color-dot" style="background:#E74C3C;" onmousedown="event.preventDefault()" onclick="changeTextColor('#E74C3C')"></span>
+                        <span class="rt-color-dot" style="background:#F39C12;" onmousedown="event.preventDefault()" onclick="changeTextColor('#F39C12')"></span>
+                        <span class="rt-color-dot" style="background:#27AE60;" onmousedown="event.preventDefault()" onclick="changeTextColor('#27AE60')"></span>
+                        <span class="rt-color-dot" style="background:#2980B9;" onmousedown="event.preventDefault()" onclick="changeTextColor('#2980B9')"></span>
+                        <span class="rt-color-dot" style="background:#8E44AD;" onmousedown="event.preventDefault()" onclick="changeTextColor('#8E44AD')"></span>
+                        <span class="rt-color-dot" style="background:#34495E;" onmousedown="event.preventDefault()" onclick="changeTextColor('#34495E')"></span>
+                    </div>
+                    <div class="panel-row" id="panelBgColorRow">
+                        <span class="panel-color-label">背景</span>
+                        <span class="rt-color-dot" style="background:#FADBD8;" onmousedown="event.preventDefault()" onclick="changeBgColor('#FADBD8')"></span>
+                        <span class="rt-color-dot" style="background:#FCF3CF;" onmousedown="event.preventDefault()" onclick="changeBgColor('#FCF3CF')"></span>
+                        <span class="rt-color-dot" style="background:#D5F5E3;" onmousedown="event.preventDefault()" onclick="changeBgColor('#D5F5E3')"></span>
+                        <span class="rt-color-dot" style="background:#D6EAF8;" onmousedown="event.preventDefault()" onclick="changeBgColor('#D6EAF8')"></span>
+                        <span class="rt-color-dot" style="background:#E8DAEF;" onmousedown="event.preventDefault()" onclick="changeBgColor('#E8DAEF')"></span>
+                        <span class="rt-color-dot" style="background:#F2F3F4;" onmousedown="event.preventDefault()" onclick="changeBgColor('#F2F3F4')"></span>
+                    </div>
+                </div>
+
+                <!-- 悬浮主工具栏（固定在页面底部） -->
+                <div class="rich-toolbar" id="richToolbar">
+                    <div class="rt-main-btn" onclick="insertChecklist()">
+                        <span class="rt-main-icon">☑</span><span>清单</span>
+                    </div>
+                    <div class="rt-main-btn" id="rtBtnTextEdit" onclick="toggleRichPanel()">
+                        <span class="rt-main-icon">Aa</span><span>文本编辑</span>
+                    </div>
+                    <div class="rt-main-btn" onclick="document.getElementById('noteImageInput').click()">
+                        <img class="rt-main-img" src="icon/icon-note-image.png" alt="图片"><span>图片</span>
+                    </div>
+                    <div class="rt-main-btn" onclick="startVoiceInput()">
+                        <span class="rt-main-icon">🎤</span><span>语音</span>
+                    </div>
+                    <input type="file" id="noteImageInput" accept="image/*" multiple style="display:none;" onchange="handleNoteImageUpload(event)">
                 </div>
             </div>
 
@@ -2492,6 +2696,33 @@
         function calcBMI(weight, height) {
             if (!weight || !height) return null;
             const h = height / 100; return weight / (h * h);
+        }
+        let bmiFormulaTipTimer = null;
+        function showBmiFormulaTip(target, prefix) {
+            const card = target && target.closest('.bmi-card');
+            if (!card) return;
+            card.querySelectorAll('.bmi-formula-tip').forEach(el => el.remove());
+
+            const p = appData.profile || {};
+            const height = Number(p.height);
+            const weightText = prefix === 'recordHealth'
+                ? (document.getElementById('recordHealthWeight')?.textContent || '')
+                : (appData.records && appData.records.length ? String(appData.records[0].weight) : '');
+            const weight = Number(String(weightText).replace(/[^\d.]/g, ''));
+            const bmiText = document.getElementById(prefix + 'BmiNum')?.textContent || '';
+            const bmi = Number(String(bmiText).replace(/[^\d.]/g, ''));
+            const hasValues = weight && height && bmi;
+            const h = height ? (height / 100).toFixed(2) : '--';
+            const detail = hasValues
+                ? `<div>BMI = ${weight.toFixed(1)} ÷ ${h}² = ${bmi.toFixed(1)}</div>`
+                : `<div>完善身高和体重后，会自动计算 BMI。</div>`;
+
+            const tip = document.createElement('div');
+            tip.className = 'bmi-formula-tip';
+            tip.innerHTML = `<strong>BMI 计算公式</strong><div>BMI = 体重(kg) ÷ 身高(m)²</div>${detail}`;
+            card.appendChild(tip);
+            clearTimeout(bmiFormulaTipTimer);
+            bmiFormulaTipTimer = setTimeout(() => tip.remove(), 3200);
         }
         function calcBodyFat(bmi, age, gender) {
             if (!bmi || !age || !gender) return null;
@@ -3971,16 +4202,40 @@
             });
         }
 
+        function updateTodayRecordStatus() {
+            const el = document.getElementById('todayRecordStatus');
+            if (!el) return;
+            const hasToday = (appData.weights || []).some(item => item.date === todayStr());
+            el.textContent = hasToday ? '今日已记录' : '今日未记录';
+            el.classList.toggle('missing', !hasToday);
+            el.title = hasToday ? '点击编辑今天的体重记录' : '点击添加今天的体重记录';
+        }
+
+        function openTodayRecordSheet() {
+            const today = todayStr();
+            const todayRecords = (appData.weights || [])
+                .filter(item => item.date === today)
+                .sort((a, b) => {
+                    const aTime = a.time || formatTime(a.createdAt) || '';
+                    const bTime = b.time || formatTime(b.createdAt) || '';
+                    return bTime.localeCompare(aTime);
+                });
+            if (todayRecords.length > 0) {
+                openEditSheet(todayRecords[0].id);
+            } else {
+                openAddSheet();
+            }
+        }
+
         // 渲染：每日记录
         function renderRecordPage() {
             const sorted = getSortedWeightRecordsDesc();
+            updateTodayRecordStatus();
             const latest = sorted[0];
             if (latest) {
-                const latestDate = new Date(latest.date + 'T00:00:00');
                 document.getElementById('latestWeight').textContent = latest.weight;
-                document.getElementById('latestDate').textContent = `${latestDate.getFullYear()}/${latestDate.getMonth() + 1}/${latestDate.getDate()}`;
             }
-            else { document.getElementById('latestWeight').textContent = '--'; document.getElementById('latestDate').textContent = ''; }
+            else { document.getElementById('latestWeight').textContent = '--'; }
 
             const targetCard = document.getElementById('targetCard');
             const targetText = document.getElementById('targetText');
@@ -4019,16 +4274,16 @@
             const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
             listEl.innerHTML = sorted.map((item, index) => {
                 const prev = sorted[index + 1];
-                let changeHtml = '<span class="change flat">— 首条</span>';
+                let changeHtml = '<span class="change flat"><span class="change-icon flat" aria-label="首条"></span>0</span>';
                 let emojiType = 'flat';
                 if (prev) {
                     const diff = item.weight - prev.weight;
-                    if (diff > 0) { changeHtml = `<span class="change up">↑ +${diff.toFixed(2)}</span>`; emojiType = 'up'; }
-                    else if (diff < 0) { changeHtml = `<span class="change down">↓ ${diff.toFixed(2)}</span>`; emojiType = 'down'; }
-                    else changeHtml = '<span class="change flat">— 持平</span>';
+                    if (diff > 0) { changeHtml = `<span class="change up"><span class="change-icon up" aria-label="上升"></span>+${diff.toFixed(2)}</span>`; emojiType = 'up'; }
+                    else if (diff < 0) { changeHtml = `<span class="change down"><span class="change-icon down" aria-label="下降"></span>${diff.toFixed(2)}</span>`; emojiType = 'down'; }
+                    else changeHtml = '<span class="change flat"><span class="change-icon flat" aria-label="持平"></span>0</span>';
                 }
                 const d = new Date(item.date + 'T00:00:00');
-                const dateStr = `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`;
+                const dateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                 const timeStr = getRecordTime(item);
                 const statusHtml = item.note ? renderRecordStatusTag(item.note) : '';
                 const remarkHtml = item.remark ? `<div class="record-remark">${item.remark}</div>` : '';
@@ -4428,16 +4683,16 @@
             const bar = document.getElementById('notesCategoryBar');
             const pills = NOTE_CATEGORIES.map(c => {
                 const isEditable = !c.locked; // 非锁定的分类（全部和未分类除外）都可编辑
-                const deleteX = isEditable ? `<span class="cat-delete-x" onclick="event.stopPropagation(); quickDeleteCategory('${c.id}')">×</span>` : '';
+                const deleteX = (isEditable && categoryEditMode) ? `<span class="cat-delete-x" onclick="event.stopPropagation(); quickDeleteCategory('${c.id}')">×</span>` : '';
+                const dragHandle = (isEditable && categoryEditMode) ? `<span class="cat-drag-handle" onclick="event.stopPropagation();" title="拖动排序">☰</span>` : '';
                 const editClass = isEditable && categoryEditMode ? 'edit-mode' : '';
                 const clickHandler = (isEditable && categoryEditMode) 
                     ? `onclick="openEditCategorySheet('${c.id}')"`
                     : `onclick="selectNoteCategory('${c.id}')"`;
                 return `<div class="note-cat-pill ${currentNoteCategory === c.id ? 'active' : ''} ${isEditable ? 'editable' : ''} ${editClass}"
                     ${clickHandler}
-                    data-cat-id="${c.id}"
-                    draggable="${isEditable && categoryEditMode ? 'true' : 'false'}">
-                    ${c.name}${deleteX}
+                    data-cat-id="${c.id}">
+                    <span class="cat-name">${escapeHtml(c.name)}</span>${dragHandle}${deleteX}
                 </div>`;
             });
             if (categoryEditMode) {
@@ -4450,6 +4705,15 @@
             bindCategoryDrag();
         }
 
+        function enterCategoryEditMode() {
+            if (categoryEditMode) return;
+            categoryEditMode = true;
+            renderNotesCategoryBar();
+            setTimeout(() => {
+                document.addEventListener('click', handleCategoryOutsideClick, true);
+            }, 200);
+        }
+
         function exitCategoryEditMode() {
             categoryEditMode = false;
             document.removeEventListener('click', handleCategoryOutsideClick, true);
@@ -4460,34 +4724,29 @@
             const editablePills = document.querySelectorAll('.note-cat-pill.editable');
             editablePills.forEach(pill => {
                 let pressTimer = null;
-                pill.addEventListener('touchstart', function(e) {
-                    pressTimer = setTimeout(() => {
-                        categoryEditMode = true;
-                        renderNotesCategoryBar();
-                        // 添加点击外部退出编辑模式
-                        setTimeout(() => {
-                            document.addEventListener('click', handleCategoryOutsideClick, true);
-                        }, 200);
-                    }, 600);
-                }, { passive: true });
-                pill.addEventListener('touchend', function() {
+                let startX = 0;
+                let startY = 0;
+                const clearPressTimer = () => {
                     clearTimeout(pressTimer);
-                }, { passive: true });
-                pill.addEventListener('touchmove', function() {
-                    clearTimeout(pressTimer);
-                }, { passive: true });
-                // 鼠标长按（桌面端）
-                pill.addEventListener('mousedown', function() {
+                    pressTimer = null;
+                    pill.classList.remove('long-press-active');
+                };
+                pill.addEventListener('pointerdown', function(e) {
+                    if (categoryEditMode || e.target.closest('.cat-delete-x, .cat-drag-handle')) return;
+                    startX = e.clientX;
+                    startY = e.clientY;
                     pressTimer = setTimeout(() => {
-                        categoryEditMode = true;
-                        renderNotesCategoryBar();
-                        setTimeout(() => {
-                            document.addEventListener('click', handleCategoryOutsideClick, true);
-                        }, 200);
-                    }, 600);
+                        pill.classList.add('long-press-active');
+                        enterCategoryEditMode();
+                    }, 550);
                 });
-                pill.addEventListener('mouseup', function() { clearTimeout(pressTimer); });
-                pill.addEventListener('mouseleave', function() { clearTimeout(pressTimer); });
+                pill.addEventListener('pointermove', function(e) {
+                    if (!pressTimer) return;
+                    if (Math.abs(e.clientX - startX) > 8 || Math.abs(e.clientY - startY) > 8) clearPressTimer();
+                });
+                pill.addEventListener('pointerup', clearPressTimer);
+                pill.addEventListener('pointercancel', clearPressTimer);
+                pill.addEventListener('pointerleave', clearPressTimer);
             });
         }
 
@@ -4506,100 +4765,95 @@
         }
 
         function bindCategoryDrag() {
-            const pills = document.querySelectorAll('.note-cat-pill[draggable="true"]');
+            const bar = document.getElementById('notesCategoryBar');
+            if (!bar) return;
+            if (!categoryEditMode) {
+                bar.onpointermove = null;
+                bar.onpointerup = null;
+                bar.onpointercancel = null;
+                return;
+            }
+
             let draggedItem = null;
-            let isTouchDragging = false;
-            let startX = 0;
+            let dragPointerId = null;
+            let autoScrollTimer = null;
 
-            pills.forEach(pill => {
-                // === 桌面端：HTML5 拖拽 ===
-                pill.addEventListener('dragstart', function(e) {
-                    draggedItem = this;
-                    e.dataTransfer.effectAllowed = 'move';
-                    setTimeout(() => this.classList.add('dragging'), 0);
-                });
-                pill.addEventListener('dragend', function() {
-                    if (draggedItem) draggedItem.classList.remove('dragging');
-                    document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
-                    draggedItem = null;
-                    updateCategoryOrder();
-                });
-                pill.addEventListener('dragover', function(e) {
+            const stopAutoScroll = () => {
+                if (autoScrollTimer) {
+                    cancelAnimationFrame(autoScrollTimer);
+                    autoScrollTimer = null;
+                }
+            };
+
+            const autoScroll = (clientX) => {
+                stopAutoScroll();
+                const rect = bar.getBoundingClientRect();
+                const edgeSize = 44;
+                let speed = 0;
+                if (clientX < rect.left + edgeSize) speed = -8;
+                if (clientX > rect.right - edgeSize) speed = 8;
+                if (!speed) return;
+                const tick = () => {
+                    bar.scrollLeft += speed;
+                    autoScrollTimer = requestAnimationFrame(tick);
+                };
+                autoScrollTimer = requestAnimationFrame(tick);
+            };
+
+            const clearDragState = () => {
+                if (draggedItem) draggedItem.classList.remove('dragging');
+                document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
+                draggedItem = null;
+                dragPointerId = null;
+                stopAutoScroll();
+            };
+
+            const moveDraggedItem = (clientX, clientY) => {
+                if (!draggedItem) return;
+                const elements = document.elementsFromPoint(clientX, clientY);
+                const targetPill = elements.find(el => el.classList && el.classList.contains('note-cat-pill') && el !== draggedItem && el.classList.contains('editable') && el.hasAttribute('data-cat-id'));
+                document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
+                if (!targetPill) return;
+
+                targetPill.classList.add('drag-over');
+                const targetRect = targetPill.getBoundingClientRect();
+                const insertAfter = clientX > targetRect.left + targetRect.width / 2;
+                if (insertAfter) {
+                    bar.insertBefore(draggedItem, targetPill.nextSibling);
+                } else {
+                    bar.insertBefore(draggedItem, targetPill);
+                }
+            };
+
+            bar.querySelectorAll('.cat-drag-handle').forEach(handle => {
+                handle.addEventListener('pointerdown', function(e) {
                     e.preventDefault();
-                    if (!draggedItem || draggedItem === this) return;
-                    this.classList.add('drag-over');
-                });
-                pill.addEventListener('dragleave', function() {
-                    this.classList.remove('drag-over');
-                });
-                pill.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    this.classList.remove('drag-over');
-                    if (!draggedItem || draggedItem === this) return;
-                    const bar = document.getElementById('notesCategoryBar');
-                    const allPills = Array.from(bar.querySelectorAll('.note-cat-pill[data-cat-id]'));
-                    const draggedIdx = allPills.indexOf(draggedItem);
-                    const targetIdx = allPills.indexOf(this);
-                    if (draggedIdx < targetIdx) {
-                        bar.insertBefore(draggedItem, this.nextSibling);
-                    } else {
-                        bar.insertBefore(draggedItem, this);
-                    }
-                });
-
-                // === 移动端：触摸拖拽 ===
-                pill.addEventListener('touchstart', function(e) {
-                    if (!categoryEditMode) return;
-                    draggedItem = this;
-                    isTouchDragging = false;
-                    startX = e.touches[0].clientX;
-                }, { passive: true });
-
-                pill.addEventListener('touchmove', function(e) {
-                    if (!draggedItem || !categoryEditMode) return;
-                    const touch = e.touches[0];
-                    const dx = touch.clientX - startX;
-                    if (!isTouchDragging && Math.abs(dx) > 10) {
-                        isTouchDragging = true;
-                        draggedItem.classList.add('dragging');
-                    }
-                    if (isTouchDragging) {
-                        const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
-                        const targetPill = elements.find(el => el.classList && el.classList.contains('note-cat-pill') && el !== draggedItem && el.hasAttribute('data-cat-id'));
-                        document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
-                        if (targetPill) {
-                            targetPill.classList.add('drag-over');
-                            const bar = document.getElementById('notesCategoryBar');
-                            const allPills = Array.from(bar.querySelectorAll('.note-cat-pill[data-cat-id]'));
-                            const draggedIdx = allPills.indexOf(draggedItem);
-                            const targetIdx = allPills.indexOf(targetPill);
-                            if (draggedIdx < targetIdx) {
-                                bar.insertBefore(draggedItem, targetPill.nextSibling);
-                            } else {
-                                bar.insertBefore(draggedItem, targetPill);
-                            }
-                        }
-                    }
-                }, { passive: true });
-
-                pill.addEventListener('touchend', function(e) {
+                    e.stopPropagation();
+                    draggedItem = this.closest('.note-cat-pill');
                     if (!draggedItem) return;
-                    if (isTouchDragging) {
-                        draggedItem.classList.remove('dragging');
-                        document.querySelectorAll('.note-cat-pill.drag-over').forEach(p => p.classList.remove('drag-over'));
-                        updateCategoryOrder();
-                        // 阻止后续 click 事件触发编辑
-                        e.stopPropagation();
-                        this.addEventListener('click', function prevent(ev) {
-                            ev.preventDefault();
-                            ev.stopPropagation();
-                            this.removeEventListener('click', prevent, true);
-                        }, true);
-                    }
-                    draggedItem = null;
-                    isTouchDragging = false;
-                }, { passive: true });
+                    dragPointerId = e.pointerId;
+                    this.setPointerCapture && this.setPointerCapture(e.pointerId);
+                    draggedItem.classList.add('dragging');
+                });
             });
+
+            bar.onpointermove = function(e) {
+                if (!draggedItem || e.pointerId !== dragPointerId) return;
+                e.preventDefault();
+                moveDraggedItem(e.clientX, e.clientY);
+                autoScroll(e.clientX);
+            };
+
+            const finishDrag = function(e) {
+                if (!draggedItem || e.pointerId !== dragPointerId) return;
+                e.preventDefault();
+                e.stopPropagation();
+                updateCategoryOrder();
+                clearDragState();
+            };
+
+            bar.onpointerup = finishDrag;
+            bar.onpointercancel = clearDragState;
         }
 
         function updateCategoryOrder() {
@@ -4928,11 +5182,52 @@
         let noteDraftTimer = null;
         let noteIsNew = false;
 
+        function applyNoteEditMode(isEdit) {
+            noteEditMode = isEdit;
+            const body = document.querySelector('.note-edit-body');
+            const editor = document.getElementById('noteContentEditor');
+            const titleInput = document.getElementById('noteTitle');
+            const dropdown = document.getElementById('noteCategoryDropdown');
+            body.classList.toggle('view-mode', !isEdit);
+            editor.setAttribute('contenteditable', isEdit ? 'true' : 'false');
+            editor.querySelectorAll('[contenteditable]').forEach(el => {
+                el.setAttribute('contenteditable', isEdit ? 'true' : 'false');
+            });
+            titleInput.readOnly = !isEdit;
+            if (!isEdit && dropdown) dropdown.style.display = 'none';
+            editor.querySelectorAll('input, textarea, select, button').forEach(el => {
+                el.disabled = !isEdit;
+            });
+            // 切换模式时收起格式面板
+            const panel = document.getElementById('richToolbarPanel');
+            const textBtn = document.getElementById('rtBtnTextEdit');
+            if (panel) panel.classList.remove('show');
+            if (textBtn) textBtn.classList.remove('active');
+            document.removeEventListener('click', handleRichPanelOutsideClick, true);
+            renderNoteEditActions();
+            if (isEdit) {
+                editor.onmouseup = saveEditorSelection;
+                editor.onkeyup = saveEditorSelection;
+                editor.oninput = saveEditorSelection;
+                document.removeEventListener('selectionchange', saveEditorSelection);
+                document.addEventListener('selectionchange', saveEditorSelection);
+                bindEditorShortcuts();
+                startAutoSaveDraft();
+            } else {
+                editor.onkeydown = null;
+                editor.onmouseup = null;
+                editor.onkeyup = null;
+                editor.oninput = null;
+                document.removeEventListener('selectionchange', saveEditorSelection);
+                noteEditorSavedRange = null;
+                stopAutoSaveDraft();
+            }
+        }
+
         function openNoteEditPage(noteId, defaultCategory) {
             pushPageHistory();
             refreshNoteCategories();
             const editor = document.getElementById('noteContentEditor');
-            const body = document.querySelector('.note-edit-body');
             noteIsNew = !noteId;
             if (noteId) {
                 const note = (appData.notes || []).find(n => n.id === noteId);
@@ -4951,10 +5246,7 @@
                     selectedNoteCategory = note.category || 'uncategorized';
                     document.getElementById('noteTimestamp').textContent = '编辑于 ' + formatDate(note.updatedAt || note.createdAt);
                     document.getElementById('noteEditTitle').textContent = '查看笔记';
-                    // 进入查看模式
-                    noteEditMode = false;
-                    body.classList.add('view-mode');
-                    renderNoteEditActions();
+                    applyNoteEditMode(false);
                 }
             } else {
                 document.getElementById('editNoteId').value = '';
@@ -4963,10 +5255,7 @@
                 selectedNoteCategory = defaultCategory || (currentNoteCategory !== 'all' ? currentNoteCategory : 'uncategorized');
                 document.getElementById('noteTimestamp').textContent = '新建笔记';
                 document.getElementById('noteEditTitle').textContent = '新建笔记';
-                // 进入编辑模式
-                noteEditMode = true;
-                body.classList.remove('view-mode');
-                renderNoteEditActions();
+                applyNoteEditMode(true);
             }
             updateNoteCategoryLabel();
             // 切换到二级页面
@@ -4975,9 +5264,6 @@
             document.getElementById('fabBtn').style.display = 'none';
             document.querySelector('.bottom-nav').style.display = 'none';
             document.querySelector('.page-container').scrollTop = 0;
-            // 绑定快捷键和自动保存
-            bindEditorShortcuts();
-            startAutoSaveDraft();
             if (noteIsNew) {
                 setTimeout(() => document.getElementById('noteTitle').focus(), 300);
             }
@@ -5019,14 +5305,13 @@
         }
 
         function enterNoteEditMode() {
-            noteEditMode = true;
-            document.querySelector('.note-edit-body').classList.remove('view-mode');
             document.getElementById('noteEditTitle').textContent = '编辑笔记';
-            renderNoteEditActions();
+            applyNoteEditMode(true);
             setTimeout(() => document.getElementById('noteContentEditor').focus(), 100);
         }
 
         function saveNoteFromEdit() {
+            if (!noteEditMode) return;
             const title = document.getElementById('noteTitle').value.trim();
             const content = document.getElementById('noteContentEditor').innerHTML.trim();
             const plainText = document.getElementById('noteContentEditor').innerText.trim();
@@ -5036,6 +5321,7 @@
             }
             const editId = document.getElementById('editNoteId').value;
             const now = new Date().toISOString();
+            let savedId = editId;
             if (editId) {
                 const idx = (appData.notes || []).findIndex(n => n.id === editId);
                 if (idx !== -1) {
@@ -5045,8 +5331,9 @@
                     appData.notes[idx].updatedAt = now;
                 }
             } else {
+                savedId = genId();
                 appData.notes.push({
-                    id: genId(),
+                    id: savedId,
                     title: title,
                     content: content,
                     category: selectedNoteCategory,
@@ -5055,8 +5342,20 @@
                 });
             }
             saveData();
+            noteIsNew = false;
+            document.getElementById('editNoteId').value = savedId;
+            const savedNote = (appData.notes || []).find(n => n.id === savedId);
+            if (savedNote) {
+                document.getElementById('noteTitle').value = savedNote.title || '';
+                document.getElementById('noteContentEditor').innerHTML = savedNote.content || '';
+                selectedNoteCategory = savedNote.category || 'uncategorized';
+                updateNoteCategoryLabel();
+                document.getElementById('noteTimestamp').textContent = '编辑于 ' + formatDate(savedNote.updatedAt || savedNote.createdAt);
+            }
+            document.getElementById('noteEditTitle').textContent = '查看笔记';
+            applyNoteEditMode(false);
+            renderNotesList();
             showToast('笔记已保存');
-            backToNotes();
         }
 
         function deleteNoteFromEdit() {
@@ -5093,9 +5392,34 @@
         }
 
         // ========== 富文本编辑器命令 ==========
+        let noteEditorSavedRange = null;
+
+        function saveEditorSelection() {
+            const editor = document.getElementById('noteContentEditor');
+            const selection = window.getSelection();
+            if (!selection || selection.rangeCount === 0) return;
+            const range = selection.getRangeAt(0);
+            if (editor && editor.contains(range.commonAncestorContainer)) {
+                noteEditorSavedRange = range.cloneRange();
+            }
+        }
+
+        function restoreEditorSelection() {
+            const editor = document.getElementById('noteContentEditor');
+            const selection = window.getSelection();
+            if (!editor || !selection) return;
+            editor.focus();
+            if (noteEditorSavedRange) {
+                selection.removeAllRanges();
+                selection.addRange(noteEditorSavedRange);
+            }
+        }
+
         function execCmd(cmd, val) {
-            document.getElementById('noteContentEditor').focus();
+            if (!noteEditMode) return;
+            restoreEditorSelection();
             document.execCommand(cmd, false, val || null);
+            saveEditorSelection();
         }
 
         function changeFontSize(size) {
@@ -5111,8 +5435,27 @@
             execCmd('hiliteColor', color);
         }
 
+        function setCurrentOrderedListStyle(styleType) {
+            const selection = window.getSelection();
+            if (!selection || selection.rangeCount === 0) return;
+            let node = selection.anchorNode;
+            while (node && node !== document.getElementById('noteContentEditor')) {
+                if (node.nodeType === 1 && node.tagName === 'OL') {
+                    node.style.listStyleType = styleType;
+                    return;
+                }
+                node = node.parentNode;
+            }
+        }
+
         function toggleList(type) {
             execCmd(type === 'ul' ? 'insertUnorderedList' : 'insertOrderedList');
+            if (type === 'ol') setCurrentOrderedListStyle('decimal');
+        }
+
+        function toggleAlphaList() {
+            execCmd('insertOrderedList');
+            setCurrentOrderedListStyle('lower-alpha');
         }
 
         function clearFormat() {
@@ -5122,6 +5465,7 @@
         }
 
         function handleNoteImageUpload(event) {
+            if (!noteEditMode) return;
             const files = Array.from(event.target.files);
             if (!files.length) return;
             const editor = document.getElementById('noteContentEditor');
@@ -5143,10 +5487,72 @@
         }
 
         function insertChecklist() {
+            if (!noteEditMode) return;
             const editor = document.getElementById('noteContentEditor');
             editor.focus();
             const html = `<div class="checklist-block"><input type="checkbox"><span contenteditable="true">清单项</span></div><br>`;
             document.execCommand('insertHTML', false, html);
+        }
+
+        // ========== 工具栏面板展开/收起 ==========
+        function toggleRichPanel(forceShow) {
+            if (!noteEditMode) return;
+            const panel = document.getElementById('richToolbarPanel');
+            const btn = document.getElementById('rtBtnTextEdit');
+            const shouldShow = forceShow !== undefined ? forceShow : !panel.classList.contains('show');
+            panel.classList.toggle('show', shouldShow);
+            btn.classList.toggle('active', shouldShow);
+            document.removeEventListener('click', handleRichPanelOutsideClick, true);
+            if (shouldShow) {
+                setTimeout(() => {
+                    document.addEventListener('click', handleRichPanelOutsideClick, true);
+                }, 0);
+            }
+            if (shouldShow) {
+                document.getElementById('noteContentEditor').focus();
+            }
+        }
+
+        function handleRichPanelOutsideClick(e) {
+            const panel = document.getElementById('richToolbarPanel');
+            const toolbar = document.getElementById('richToolbar');
+            const editor = document.getElementById('noteContentEditor');
+            const editorWrap = document.querySelector('.rich-editor-wrap');
+            if (!panel || !panel.classList.contains('show')) {
+                document.removeEventListener('click', handleRichPanelOutsideClick, true);
+                return;
+            }
+            if (
+                (panel && panel.contains(e.target)) ||
+                (toolbar && toolbar.contains(e.target)) ||
+                (editor && editor.contains(e.target)) ||
+                (editorWrap && editorWrap.contains(e.target))
+            ) return;
+            toggleRichPanel(false);
+        }
+
+        // ========== 语音输入（占位） ==========
+        function startVoiceInput() {
+            if (!noteEditMode) return;
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                showToast('当前浏览器不支持语音输入', 'error');
+                return;
+            }
+            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SR();
+            recognition.lang = 'zh-CN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            const btn = event.currentTarget;
+            btn.classList.add('active');
+            recognition.onresult = function(e) {
+                const text = e.results[0][0].transcript;
+                document.execCommand('insertText', false, text);
+            };
+            recognition.onerror = function() { showToast('语音识别失败', 'error'); };
+            recognition.onend = function() { btn.classList.remove('active'); };
+            recognition.start();
+            showToast('正在聆听...');
         }
 
         // ========== 分类菜单 ==========
@@ -5180,8 +5586,10 @@
 
         // ========== 自动保存草稿 ==========
         function startAutoSaveDraft() {
+            if (!noteEditMode) return;
             stopAutoSaveDraft();
             noteDraftTimer = setInterval(function() {
+                if (!noteEditMode) return;
                 const editId = document.getElementById('editNoteId').value;
                 const title = document.getElementById('noteTitle').value.trim();
                 const content = document.getElementById('noteContentEditor').innerHTML.trim();
