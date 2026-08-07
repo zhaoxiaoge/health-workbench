@@ -1507,6 +1507,267 @@
         .dropdown-item:active { background: var(--bg); }
         .dropdown-item .icon { font-size: 16px; width: 20px; text-align: center; }
 
+        /* ========== 生理期页 ========== */
+        .period-page-content { padding: 16px; }
+        .period-summary-card {
+            display: flex; align-items: center; gap: 14px;
+            background: var(--card-bg); border-radius: 16px;
+            padding: 16px 20px; margin-bottom: 16px;
+            box-shadow: var(--shadow);
+        }
+        .period-summary-icon {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: linear-gradient(135deg, #FF6B9D, #FF8FAB);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; flex-shrink: 0;
+        }
+        .period-summary-info { flex: 1; }
+        .period-summary-title { font-size: 16px; font-weight: 600; color: var(--text); }
+        .period-summary-sub { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+        .period-calendar-wrap {
+            background: var(--card-bg); border-radius: 16px;
+            padding: 16px; box-shadow: var(--shadow);
+        }
+        .period-cal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .period-cal-title { font-size: 17px; font-weight: 600; color: var(--text); }
+        .period-cal-nav {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 20px; color: var(--text);
+            background: var(--bg); transition: background 0.15s;
+        }
+        .period-cal-nav:active { background: var(--border); }
+        .period-cal-weekdays {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 8px;
+        }
+        .period-cal-weekdays span {
+            text-align: center; font-size: 12px; font-weight: 500;
+            color: var(--text-secondary); padding: 4px 0;
+        }
+        .period-cal-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+        .period-cal-day {
+            aspect-ratio: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            border-radius: 10px; cursor: pointer; position: relative;
+            font-size: 14px; color: var(--text);
+            transition: background 0.15s, transform 0.1s;
+            min-height: 38px;
+        }
+        .period-cal-day:active { transform: scale(0.92); }
+        .period-cal-day.other-month { color: var(--text-light); }
+        .period-cal-day.today {
+            font-weight: 700;
+            outline: 2px solid var(--primary);
+            outline-offset: -3px;
+        }
+        .period-cal-day.today::after {
+            content: ''; position: absolute; bottom: 3px;
+            width: 4px; height: 4px; border-radius: 50%; background: var(--primary);
+        }
+        .period-cal-day.actual {
+            background: #FF6B9D; color: white; font-weight: 600;
+        }
+        .period-cal-day.actual.today::after { background: white; }
+        .period-cal-day.predicted {
+            background: #FFD6E5; color: #C7365A;
+        }
+        .period-cal-day.ovulation {
+            background: #D6EAF8; color: #2471A3;
+        }
+        .period-cal-day.ovulation-day {
+            background: #3498DB; color: white; font-weight: 600;
+        }
+        .period-cal-day.start-marker {
+            border: 2px solid #FF6B9D;
+        }
+        .period-cal-day.end-marker {
+            border: 2px solid #E91E63;
+        }
+        .period-legend {
+            display: flex; flex-wrap: wrap; gap: 12px;
+            padding: 12px 4px; margin-bottom: 8px;
+        }
+        .legend-item {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 12px; color: var(--text-secondary);
+        }
+        .legend-dot {
+            width: 14px; height: 14px; border-radius: 4px;
+        }
+        .legend-dot.actual { background: #FF6B9D; }
+        .legend-dot.predicted { background: #FFD6E5; }
+        .legend-dot.ovulation { background: #D6EAF8; }
+        .legend-dot.ovulation-day { background: #3498DB; }
+
+        .period-setting-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 0;
+        }
+        .period-setting-row + .period-setting-row { border-top: 1px solid var(--border); }
+        .period-setting-label { font-size: 14px; color: var(--text); }
+        .period-setting-control {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .period-step-btn {
+            width: 30px; height: 30px; border-radius: 50%;
+            border: 1px solid var(--border); background: var(--bg);
+            font-size: 18px; color: var(--text); cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s;
+        }
+        .period-step-btn:active { background: var(--primary); color: white; border-color: var(--primary); }
+        .period-setting-value {
+            min-width: 30px; text-align: center;
+            font-size: 16px; font-weight: 600; color: var(--primary);
+        }
+        .period-setting-unit { font-size: 12px; color: var(--text-secondary); }
+
+        .period-record-card {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 12px;
+            background: var(--card-bg); border-radius: 12px;
+            padding: 12px 16px; margin-bottom: 8px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .period-record-card:active { transform: scale(0.98); box-shadow: var(--shadow-md); }
+        .period-record-info { flex: 1; min-width: 0; }
+        .period-record-dates { font-size: 14px; font-weight: 500; color: var(--text); }
+        .period-record-days { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .period-cycle-chart {
+            width: 150px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-shrink: 0;
+        }
+        .period-cycle-bar {
+            height: 22px;
+            min-width: 56px;
+            border-radius: 0 11px 11px 0;
+            background: linear-gradient(90deg, #FF6B9D 0%, #FF7FAE 100%);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1;
+            box-shadow: 0 2px 6px rgba(255, 107, 157, 0.22);
+        }
+        .period-cycle-bar.predicted {
+            background: linear-gradient(90deg, #FFD6E5 0%, #FFC2D8 100%);
+            color: #C7365A;
+            box-shadow: 0 2px 6px rgba(255, 107, 157, 0.12);
+        }
+        .period-record-tag {
+            padding: 4px 10px; border-radius: 12px;
+            font-size: 12px; font-weight: 500;
+        }
+        .period-record-tag.actual { background: #FFD6E5; color: #C7365A; }
+        .period-record-tag.predicted { background: #E8F8F5; color: var(--primary); }
+
+        .period-note-card {
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+        }
+        .period-note-card:active { transform: scale(0.98); box-shadow: var(--shadow-md); }
+        .period-note-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .period-note-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        .period-note-selected-date {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .period-note-preview {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            min-height: 20px;
+            word-break: break-word;
+        }
+        .period-note-preview.has-note {
+            color: var(--text);
+        }
+        .period-note-arrow {
+            color: var(--text-light);
+            font-size: 18px;
+        }
+        .period-note-popup-input {
+            width: 100%;
+            min-height: 120px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 10px 12px;
+            resize: vertical;
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            margin-bottom: 12px;
+        }
+        .period-note-popup-input:focus {
+            border-color: var(--primary);
+            background: var(--card-bg);
+        }
+
+        /* 日历日期操作弹窗 */
+        .period-day-popup {
+            position: fixed; bottom: 0; left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            width: 100%; max-width: 430px;
+            background: var(--card-bg);
+            border-radius: 20px 20px 0 0;
+            padding: 20px; z-index: 300;
+            transition: transform 0.3s ease;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        }
+        .period-day-popup.show { transform: translateX(-50%) translateY(0); }
+        .period-day-popup-title {
+            font-size: 16px; font-weight: 600; color: var(--text);
+            text-align: center; margin-bottom: 16px;
+        }
+        .period-day-popup-btn {
+            display: flex; align-items: center; gap: 10px;
+            width: 100%; padding: 14px 16px;
+            border: none; border-radius: 12px;
+            font-size: 15px; cursor: pointer;
+            background: var(--bg); color: var(--text);
+            margin-bottom: 8px; transition: background 0.15s;
+        }
+        .period-day-popup-btn:active { background: var(--border); }
+        .period-day-popup-btn .popup-icon { font-size: 18px; }
+        .period-day-popup-btn.start { background: #FFE0EC; color: #C7365A; }
+        .period-day-popup-btn.end { background: #FCE4EC; color: #AD1457; }
+        .period-day-popup-btn.clear { background: var(--danger-light); color: var(--danger); }
+        .period-day-popup-btn.cancel { background: var(--bg); color: var(--text-secondary); }
+
         /* Toast */
         .toast {
             position: fixed; top: 60px; left: 50%;
@@ -1833,6 +2094,85 @@
                     </div>
                 </div>
                 <div id="trendDayDetail" style="display:none; padding:0 16px 16px;"></div>
+            </div>
+
+            <!-- ============ 生理期 ============ -->
+            <div class="page" id="page-period">
+                <div class="sticky-nav-bar">
+                    <div class="header-top">
+                        <div class="header-title">生理期</div>
+                        <div class="header-icons" style="position:relative;">
+                            <div class="icon-btn" onclick="togglePeriodSettings()">⋯</div>
+                            <div class="dropdown-menu" id="periodSettingsMenu" style="min-width:240px; padding:16px;">
+                                <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:12px;">经期设置</div>
+                                <div class="period-setting-row">
+                                    <span class="period-setting-label">经期天数</span>
+                                    <div class="period-setting-control">
+                                        <button class="period-step-btn" onclick="adjustPeriodLength(-1)">−</button>
+                                        <span class="period-setting-value" id="periodLengthValue">5</span>
+                                        <button class="period-step-btn" onclick="adjustPeriodLength(1)">+</button>
+                                        <span class="period-setting-unit">天</span>
+                                    </div>
+                                </div>
+                                <div class="period-setting-row">
+                                    <span class="period-setting-label">经期周期</span>
+                                    <div class="period-setting-control">
+                                        <button class="period-step-btn" onclick="adjustCycleLength(-1)">−</button>
+                                        <span class="period-setting-value" id="cycleLengthValue">28</span>
+                                        <button class="period-step-btn" onclick="adjustCycleLength(1)">+</button>
+                                        <span class="period-setting-unit">天</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="period-page-content">
+                    <!-- 状态摘要卡片 -->
+                    <div class="period-summary-card" id="periodSummaryCard">
+                        <div class="period-summary-icon" id="periodSummaryIcon">🌸</div>
+                        <div class="period-summary-info">
+                            <div class="period-summary-title" id="periodSummaryTitle">暂无经期记录</div>
+                            <div class="period-summary-sub" id="periodSummarySub">点击日历日期设置经期</div>
+                        </div>
+                    </div>
+                    <!-- 日历 -->
+                    <div class="period-calendar-wrap">
+                        <div class="period-cal-header">
+                            <div class="period-cal-nav icon-btn" onclick="prevPeriodMonth()">‹</div>
+                            <div class="period-cal-title" id="periodCalTitle">2026年8月</div>
+                            <div class="period-cal-nav icon-btn" onclick="nextPeriodMonth()">›</div>
+                        </div>
+                        <div class="period-cal-weekdays">
+                            <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
+                        </div>
+                        <div class="period-cal-grid" id="periodCalGrid"></div>
+                    </div>
+                    <!-- 图例 -->
+                    <div class="period-legend">
+                        <div class="legend-item"><span class="legend-dot actual"></span>经期</div>
+                        <div class="legend-item"><span class="legend-dot predicted"></span>预测经期</div>
+                        <div class="legend-item"><span class="legend-dot ovulation"></span>排卵期</div>
+                        <div class="legend-item"><span class="legend-dot ovulation-day"></span>排卵日</div>
+                    </div>
+                    <!-- 备注 -->
+                    <div class="period-note-card" onclick="openPeriodNotePopup()">
+                        <div class="period-note-head">
+                            <span class="period-note-title">备注</span>
+                            <span class="period-note-selected-date" id="periodNoteSelectedDate"></span>
+                            <span class="period-note-arrow">›</span>
+                        </div>
+                        <div class="period-note-preview" id="periodNotePreview">点击填写备注</div>
+                    </div>
+                    <!-- 经期记录列表 -->
+                    <div class="period-records-section" id="periodRecordsSection" style="display:none;">
+                        <div class="section-title" style="padding:0 0 8px;">
+                            <span>经期记录</span>
+                            <span class="count" id="periodRecordCount">0 条</span>
+                        </div>
+                        <div id="periodRecordList"></div>
+                    </div>
+                </div>
             </div>
 
             <!-- ============ 我的 ============ -->
@@ -2333,6 +2673,9 @@
             <button class="nav-item" data-page="trend">
                 <span class="nav-icon">📈</span><span class="nav-label">趋势</span>
             </button>
+            <button class="nav-item" data-page="period">
+                <span class="nav-icon">🌸</span><span class="nav-label">生理期</span>
+            </button>
             <button class="nav-item" data-page="profile">
                 <span class="nav-icon">👤</span><span class="nav-label">我的</span>
             </button>
@@ -2351,6 +2694,42 @@
                 <button class="cancel" id="confirmCancel">取消</button>
                 <button class="confirm" id="confirmOk">确定</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 经期日期操作弹窗 -->
+    <div class="sheet-overlay" id="periodDayOverlay" onclick="closePeriodDayPopup()">
+        <div class="period-day-popup" id="periodDayPopup" onclick="event.stopPropagation()">
+            <div class="period-day-popup-title" id="periodDayPopupTitle">设置经期</div>
+            <button class="period-day-popup-btn start" onclick="setPeriodDay('start')">
+                <span class="popup-icon">🩸</span> 设为经期开始
+            </button>
+            <button class="period-day-popup-btn end" onclick="setPeriodDay('end')">
+                <span class="popup-icon">✋</span> 设为经期结束
+            </button>
+            <button class="period-day-popup-btn clear" id="periodDayClearBtn" onclick="setPeriodDay('clear')" style="display:none;">
+                <span class="popup-icon">🗑️</span> 清除该日期记录
+            </button>
+            <button class="period-day-popup-btn cancel" onclick="closePeriodDayPopup()">
+                <span class="popup-icon">✕</span> 取消
+            </button>
+        </div>
+    </div>
+
+    <!-- 经期备注弹窗 -->
+    <div class="sheet-overlay" id="periodNoteOverlay" onclick="closePeriodNotePopup()">
+        <div class="period-day-popup" id="periodNotePopup" onclick="event.stopPropagation()">
+            <div class="period-day-popup-title" id="periodNotePopupTitle">备注</div>
+            <textarea id="periodNotePopupInput" class="period-note-popup-input" placeholder="记录这一天的身体感受、流量、疼痛等备注"></textarea>
+            <button class="period-day-popup-btn start" onclick="savePeriodNotePopup()">
+                <span class="popup-icon">✓</span> 保存备注
+            </button>
+            <button class="period-day-popup-btn clear" onclick="clearPeriodNotePopup()">
+                <span class="popup-icon">🗑️</span> 清空备注
+            </button>
+            <button class="period-day-popup-btn cancel" onclick="closePeriodNotePopup()">
+                <span class="popup-icon">✕</span> 取消
+            </button>
         </div>
     </div>
 
@@ -2516,6 +2895,8 @@
             colorTheme: 'ocean',
             customColors: null,
             periods: [],
+            periodSettings: { periodLength: 5, cycleLength: 28 },
+            periodNotes: {},
             notes: [],
             customNoteCategories: []
         };
@@ -2524,6 +2905,9 @@
         let customDateRange = null;
         let selectedGender = '';
         let currentRecordHealthId = null;
+        let currentPeriodCalMonth = null;
+        let selectedPeriodDay = null;
+        let selectedPeriodNoteDate = null;
 
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -2536,6 +2920,10 @@
                     if (!Array.isArray(appData.notes)) appData.notes = [];
                     if (!Array.isArray(appData.customNoteCategories)) appData.customNoteCategories = [];
                     if (!Array.isArray(appData.periods)) appData.periods = [];
+                    if (!appData.periodNotes || typeof appData.periodNotes !== 'object' || Array.isArray(appData.periodNotes)) appData.periodNotes = {};
+                    if (!appData.periodSettings) appData.periodSettings = { periodLength: 5, cycleLength: 28 };
+                    appData.periodSettings.periodLength = Math.min(9, Math.max(1, appData.periodSettings.periodLength || 5));
+                    appData.periodSettings.cycleLength = Math.min(60, Math.max(10, appData.periodSettings.cycleLength || 28));
                 } catch(e) {}
             }
         }
@@ -2576,6 +2964,7 @@
                 document.getElementById('fabBtn').style.display = (page === 'record' || page === 'notes') ? 'flex' : 'none';
                 if (page === 'trend') setTimeout(renderTrendChart, 100);
                 if (page === 'notes') renderNotesPage();
+                if (page === 'period') renderPeriodPage();
                 document.querySelector('.page-container').scrollTop = 0;
             });
         });
@@ -2658,6 +3047,9 @@
 
         function todayStr() {
             const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        }
+        function formatDateStr(d) {
             return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
         }
         function formatTime(iso) {
@@ -3738,6 +4130,21 @@
             return (document.title || '月半日记').trim() || '月半日记';
         }
 
+        function getPeriodRangeNotes(p) {
+            if (!p || !p.startDate || !p.endDate) return p && p.note ? p.note : '';
+            const notes = appData.periodNotes || {};
+            const start = new Date(p.startDate + 'T00:00:00');
+            const end = new Date(p.endDate + 'T00:00:00');
+            if (isNaN(start) || isNaN(end) || start > end) return p.note || '';
+            const parts = [];
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                const dateStr = formatDateStr(d);
+                const note = (notes[dateStr] || '').trim();
+                if (note) parts.push(`（${dateStr}：${note}）`);
+            }
+            return parts.join('') || p.note || '';
+        }
+
         function downloadBlob(blob, filename) {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -3912,14 +4319,17 @@
 
             // Sheet: 生理期 (仅当勾选生理期或全部时)
             if (catPeriod || catAll) {
+                const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
                 const periodData = (appData.periods || []).map(p => ({
                     '开始日期': p.startDate || '',
                     '结束日期': p.endDate || '',
                     '天数': p.days || '',
-                    '备注': p.note || ''
+                    '备注': getPeriodRangeNotes(p)
                 }));
-                const ws5 = XLSX.utils.json_to_sheet(periodData.length > 0 ? periodData : [{ '开始日期': '', '结束日期': '', '天数': '', '备注': '' }]);
-                ws5['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 20 }];
+                // 添加设置行
+                periodData.push({ '开始日期': '【设置】', '结束日期': '', '天数': `经期天数:${ps.periodLength}`, '备注': `经期周期:${ps.cycleLength}` });
+                const ws5 = XLSX.utils.json_to_sheet(periodData);
+                ws5['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 18 }, { wch: 50 }];
                 XLSX.utils.book_append_sheet(wb, ws5, '生理期');
             }
 
@@ -4019,7 +4429,11 @@
                         appData.avatarImage = data.avatarImage || null;
                         if (data.emojiTheme) appData.emojiTheme = data.emojiTheme;
                     }
-                    if (included.periods) appData.periods = data.periods || [];
+                    if (included.periods) {
+                        appData.periods = data.periods || [];
+                        if (data.periodSettings) appData.periodSettings = data.periodSettings;
+                        appData.periodNotes = (data.periodNotes && typeof data.periodNotes === 'object' && !Array.isArray(data.periodNotes)) ? data.periodNotes : {};
+                    }
                     if (included.notes) {
                         appData.notes = (data.notes || []).map(n => ({ id: n.id || genId(), title: n.title || '', category: n.category || 'uncategorized', content: n.content || '', checklist: n.checklist || [], images: n.images || [], createdAt: n.createdAt || new Date().toISOString(), updatedAt: n.updatedAt || new Date().toISOString() }));
                         appData.customNoteCategories = normalizeCustomNoteCategories(data.customNoteCategories);
@@ -4071,6 +4485,10 @@
                                 addedP++;
                             }
                         });
+                        if (data.periodSettings) appData.periodSettings = data.periodSettings;
+                        if (data.periodNotes && typeof data.periodNotes === 'object' && !Array.isArray(data.periodNotes)) {
+                            appData.periodNotes = Object.assign({}, appData.periodNotes || {}, data.periodNotes);
+                        }
                     }
                     // 合并备忘录：优先按创建时间去重，其次按 id 去重
                     const noteIdMap = new Map(appData.notes.map(n => [n.id, n]));
@@ -4225,14 +4643,35 @@
             }
 
             // 解析生理期
+            let importedPeriodSettings = null;
+            const importedPeriodNotes = {};
             const wsPeriods = wb.Sheets['生理期'];
             if (wsPeriods) {
                 const rows = XLSX.utils.sheet_to_json(wsPeriods);
                 rows.forEach(row => {
                     const startDate = row['开始日期'] ? String(row['开始日期']).trim() : '';
                     const endDate = row['结束日期'] ? String(row['结束日期']).trim() : '';
-                    const days = row['天数'] ? parseInt(row['天数']) : '';
+                    const daysRaw = row['天数'] ? String(row['天数']).trim() : '';
                     const note = row['备注'] ? String(row['备注']).trim() : '';
+                    // 跳过设置行
+                    if (startDate === '【设置】') {
+                        const plMatch = daysRaw.match(/经期天数:(\d+)/);
+                        const clMatch = note.match(/经期周期:(\d+)/);
+                        if (plMatch || clMatch) {
+                            importedPeriodSettings = {
+                                periodLength: plMatch ? Math.min(9, Math.max(1, parseInt(plMatch[1]))) : 5,
+                                cycleLength: clMatch ? Math.min(60, Math.max(10, parseInt(clMatch[1]))) : 28
+                            };
+                        }
+                        return;
+                    }
+                    const days = daysRaw ? parseInt(daysRaw) : '';
+                    const noteMatches = note.matchAll(/（([^：()]+)：([^）]*)）/g);
+                    for (const match of noteMatches) {
+                        const noteDate = (match[1] || '').trim();
+                        const noteText = (match[2] || '').trim();
+                        if (noteDate && noteText) importedPeriodNotes[noteDate] = noteText;
+                    }
                     if (startDate) importedPeriods.push({ id: genId(), startDate, endDate, days, note });
                 });
             }
@@ -4293,6 +4732,8 @@
                 targetWeight: importedTarget,
                 avatarImage: importedAvatar,
                 periods: importedPeriods,
+                periodSettings: importedPeriodSettings,
+                periodNotes: importedPeriodNotes,
                 notes: importedNotes,
                 customNoteCategories: importedCategories
             }, label, recoveredImageCount, canRecoverImages);
@@ -4364,7 +4805,7 @@
 
         function clearAllData() {
             showConfirm('清空数据', '将删除所有体重记录和个人信息，此操作不可撤销！', () => {
-                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces', periods: [], notes: [], customNoteCategories: [] };
+                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces', colorTheme: 'ocean', customColors: null, periods: [], periodSettings: { periodLength: 5, cycleLength: 28 }, periodNotes: {}, notes: [], customNoteCategories: [] };
                 saveData(); renderAll(); showToast('所有数据已清空');
             });
         }
@@ -6031,11 +6472,660 @@
             });
         }
 
+        // ========== 生理期功能 ==========
+        function renderPeriodPage() {
+            const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+            document.getElementById('periodLengthValue').textContent = ps.periodLength;
+            document.getElementById('cycleLengthValue').textContent = ps.cycleLength;
+            if (!currentPeriodCalMonth) {
+                const now = new Date();
+                currentPeriodCalMonth = { year: now.getFullYear(), month: now.getMonth() };
+            }
+            renderPeriodCalendar();
+            renderPeriodSummary();
+            renderPeriodNoteEditor();
+            renderPeriodRecords();
+        }
+
+        function renderPeriodNoteEditor() {
+            if (!appData.periodNotes || typeof appData.periodNotes !== 'object' || Array.isArray(appData.periodNotes)) {
+                appData.periodNotes = {};
+            }
+            if (!selectedPeriodNoteDate) selectedPeriodNoteDate = formatDateStr(new Date());
+            const dateEl = document.getElementById('periodNoteSelectedDate');
+            const previewEl = document.getElementById('periodNotePreview');
+            const note = (appData.periodNotes[selectedPeriodNoteDate] || '').trim();
+            if (dateEl) dateEl.textContent = selectedPeriodNoteDate;
+            if (previewEl) {
+                previewEl.textContent = note || '点击填写备注';
+                previewEl.classList.toggle('has-note', !!note);
+            }
+        }
+
+        function openPeriodNotePopup() {
+            if (!selectedPeriodNoteDate) selectedPeriodNoteDate = formatDateStr(new Date());
+            if (!appData.periodNotes || typeof appData.periodNotes !== 'object' || Array.isArray(appData.periodNotes)) {
+                appData.periodNotes = {};
+            }
+            const titleEl = document.getElementById('periodNotePopupTitle');
+            const inputEl = document.getElementById('periodNotePopupInput');
+            if (titleEl) titleEl.textContent = `${selectedPeriodNoteDate} 备注`;
+            if (inputEl) inputEl.value = appData.periodNotes[selectedPeriodNoteDate] || '';
+            document.getElementById('periodNoteOverlay').classList.add('show');
+            document.getElementById('periodNotePopup').classList.add('show');
+        }
+
+        function closePeriodNotePopup() {
+            document.getElementById('periodNoteOverlay').classList.remove('show');
+            document.getElementById('periodNotePopup').classList.remove('show');
+        }
+
+        function savePeriodNotePopup() {
+            if (!selectedPeriodNoteDate) selectedPeriodNoteDate = formatDateStr(new Date());
+            if (!appData.periodNotes || typeof appData.periodNotes !== 'object' || Array.isArray(appData.periodNotes)) {
+                appData.periodNotes = {};
+            }
+            const noteInput = document.getElementById('periodNotePopupInput');
+            const text = (noteInput ? noteInput.value : '').trim();
+            if (text) {
+                appData.periodNotes[selectedPeriodNoteDate] = text;
+            } else {
+                delete appData.periodNotes[selectedPeriodNoteDate];
+            }
+            saveData();
+            renderPeriodNoteEditor();
+            closePeriodNotePopup();
+            showToast('备注已保存');
+        }
+
+        function clearPeriodNotePopup() {
+            if (selectedPeriodNoteDate && appData.periodNotes) {
+                delete appData.periodNotes[selectedPeriodNoteDate];
+            }
+            saveData();
+            renderPeriodNoteEditor();
+            closePeriodNotePopup();
+            showToast('备注已清空');
+        }
+
+        function renderPeriodCalendar() {
+            if (!currentPeriodCalMonth) {
+                const now = new Date();
+                currentPeriodCalMonth = { year: now.getFullYear(), month: now.getMonth() };
+            }
+            const { year, month } = currentPeriodCalMonth;
+            document.getElementById('periodCalTitle').textContent = `${year}年${month + 1}月`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const startWeekday = firstDay.getDay();
+            const daysInMonth = lastDay.getDate();
+            const prevMonthLastDay = new Date(year, month, 0).getDate();
+
+            const today = new Date();
+            const todayStr = formatDateStr(today);
+
+            // 获取实际和预测经期日期集合
+            const actualDays = getActualPeriodDays();
+            const predictedDays = getPredictedPeriodDays();
+            const ovulationDays = getOvulationPeriodDays();
+            const ovulationDaySet = getOvulationDays();
+            const startDays = getPeriodStartDays();
+            const endDays = getPeriodEndDays();
+
+            let html = '';
+            // 上月填充
+            for (let i = startWeekday - 1; i >= 0; i--) {
+                const day = prevMonthLastDay - i;
+                const dateStr = formatDateStr(new Date(year, month - 1, day));
+                html += `<div class="period-cal-day other-month" onclick="onPeriodDayClick('${dateStr}')">${day}</div>`;
+            }
+            // 本月
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = formatDateStr(new Date(year, month, d));
+                let classes = 'period-cal-day';
+                if (dateStr === todayStr) classes += ' today';
+                if (actualDays.has(dateStr)) { classes += ' actual'; }
+                else if (predictedDays.has(dateStr)) { classes += ' predicted'; }
+                else if (ovulationDaySet.has(dateStr)) { classes += ' ovulation-day'; }
+                else if (ovulationDays.has(dateStr)) { classes += ' ovulation'; }
+                if (startDays.has(dateStr)) classes += ' start-marker';
+                if (endDays.has(dateStr)) classes += ' end-marker';
+                html += `<div class="${classes}" onclick="onPeriodDayClick('${dateStr}')">${d}</div>`;
+            }
+            // 下月填充
+            const totalCells = startWeekday + daysInMonth;
+            const remaining = (7 - (totalCells % 7)) % 7;
+            for (let d = 1; d <= remaining; d++) {
+                const dateStr = formatDateStr(new Date(year, month + 1, d));
+                html += `<div class="period-cal-day other-month" onclick="onPeriodDayClick('${dateStr}')">${d}</div>`;
+            }
+            document.getElementById('periodCalGrid').innerHTML = html;
+        }
+
+        function prevPeriodMonth() {
+            if (!currentPeriodCalMonth) return;
+            currentPeriodCalMonth.month--;
+            if (currentPeriodCalMonth.month < 0) {
+                currentPeriodCalMonth.month = 11;
+                currentPeriodCalMonth.year--;
+            }
+            renderPeriodCalendar();
+        }
+
+        function nextPeriodMonth() {
+            if (!currentPeriodCalMonth) return;
+            currentPeriodCalMonth.month++;
+            if (currentPeriodCalMonth.month > 11) {
+                currentPeriodCalMonth.month = 0;
+                currentPeriodCalMonth.year++;
+            }
+            renderPeriodCalendar();
+        }
+
+        function togglePeriodSettings() {
+            document.querySelectorAll('.dropdown-menu').forEach(m => {
+                if (m.id !== 'periodSettingsMenu') m.classList.remove('show');
+            });
+            document.getElementById('periodSettingsMenu').classList.toggle('show');
+        }
+
+        function adjustPeriodLength(delta) {
+            if (!appData.periodSettings) appData.periodSettings = { periodLength: 5, cycleLength: 28 };
+            let val = appData.periodSettings.periodLength + delta;
+            val = Math.min(9, Math.max(1, val));
+            appData.periodSettings.periodLength = val;
+            document.getElementById('periodLengthValue').textContent = val;
+            saveData();
+            renderPeriodCalendar();
+            renderPeriodSummary();
+            renderPeriodRecords();
+        }
+
+        function adjustCycleLength(delta) {
+            if (!appData.periodSettings) appData.periodSettings = { periodLength: 5, cycleLength: 28 };
+            let val = appData.periodSettings.cycleLength + delta;
+            val = Math.min(60, Math.max(10, val));
+            appData.periodSettings.cycleLength = val;
+            document.getElementById('cycleLengthValue').textContent = val;
+            saveData();
+            renderPeriodCalendar();
+            renderPeriodSummary();
+            renderPeriodRecords();
+        }
+
+        // 点击日历日期
+        function onPeriodDayClick(dateStr) {
+            selectedPeriodDay = dateStr;
+            selectedPeriodNoteDate = dateStr;
+            renderPeriodNoteEditor();
+            const d = new Date(dateStr + 'T00:00:00');
+            const dateDisplay = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
+            document.getElementById('periodDayPopupTitle').textContent = dateDisplay;
+
+            // 检查该日期是否已有记录
+            const periods = getSortedPeriods();
+            const hasRecord = periods.some(p =>
+                (p.startDate === dateStr) || (p.endDate === dateStr)
+            );
+            document.getElementById('periodDayClearBtn').style.display = hasRecord ? 'flex' : 'none';
+
+            document.getElementById('periodDayOverlay').classList.add('show');
+            document.getElementById('periodDayPopup').classList.add('show');
+        }
+
+        function closePeriodDayPopup() {
+            document.getElementById('periodDayOverlay').classList.remove('show');
+            document.getElementById('periodDayPopup').classList.remove('show');
+            selectedPeriodDay = null;
+        }
+
+        function setPeriodDay(type) {
+            if (!selectedPeriodDay) return;
+            const dateStr = selectedPeriodDay;
+            const periods = appData.periods || [];
+
+            if (type === 'start') {
+                const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+                const startD = new Date(dateStr + 'T00:00:00');
+
+                // 如果新开始日期落在已有经期范围内，或可向前扩展已有记录，直接更新这条记录的开始日期
+                const activePeriod = periods.find(p => {
+                    if (!p.startDate || !p.endDate) return false;
+                    const start = new Date(p.startDate + 'T00:00:00');
+                    const end = new Date(p.endDate + 'T00:00:00');
+                    const daysToEnd = Math.round((end - startD) / 86400000) + 1;
+                    return startD <= end && (startD >= start || daysToEnd <= 9);
+                });
+                if (activePeriod) {
+                    activePeriod.startDate = dateStr;
+                    activePeriod.days = Math.round((new Date(activePeriod.endDate + 'T00:00:00') - startD) / 86400000) + 1;
+                    showToast('已更新经期开始日期');
+                } else {
+                    // 同一开始日期只保留一条记录
+                    const existing = periods.find(p => p.startDate === dateStr);
+                    if (existing) {
+                        showToast('该日期已有经期开始记录', 'error');
+                        return;
+                    }
+                    // 根据经期天数自动计算结束日期
+                    const endD = new Date(startD);
+                    endD.setDate(endD.getDate() + ps.periodLength - 1);
+                    const endDateStr = formatDateStr(endD);
+                    periods.push({ id: genId(), startDate: dateStr, endDate: endDateStr, days: ps.periodLength, note: '' });
+                    showToast(`已设置经期（${ps.periodLength}天）`);
+                }
+            } else if (type === 'end') {
+                const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+                const endD = new Date(dateStr + 'T00:00:00');
+
+                // 如果新结束日期落在已有经期范围内，直接更新这条记录的结束日期
+                const activePeriod = periods.find(p => {
+                    if (!p.startDate || !p.endDate) return false;
+                    const start = new Date(p.startDate + 'T00:00:00');
+                    const end = new Date(p.endDate + 'T00:00:00');
+                    const daysFromStart = Math.round((endD - start) / 86400000) + 1;
+                    return endD >= start && (endD <= end || daysFromStart <= 9);
+                });
+                if (activePeriod) {
+                    activePeriod.endDate = dateStr;
+                    activePeriod.days = Math.round((endD - new Date(activePeriod.startDate + 'T00:00:00')) / 86400000) + 1;
+                    showToast('已更新经期结束日期');
+                } else {
+                    // 根据经期天数自动向前计算开始日期，生成完整记录
+                    const startD = new Date(endD);
+                    startD.setDate(startD.getDate() - ps.periodLength + 1);
+                    const startDateStr = formatDateStr(startD);
+                    const existing = periods.find(p => p.startDate === startDateStr || p.endDate === dateStr);
+                    if (existing) {
+                        showToast('该经期记录已存在', 'error');
+                        return;
+                    }
+                    periods.push({ id: genId(), startDate: startDateStr, endDate: dateStr, days: ps.periodLength, note: '' });
+                    showToast(`已设置经期（${ps.periodLength}天）`);
+                }
+            } else if (type === 'clear') {
+                // 清除该日期的开始或结束标记
+                const idx = periods.findIndex(p => p.startDate === dateStr || p.endDate === dateStr);
+                if (idx >= 0) {
+                    const p = periods[idx];
+                    if (p.startDate === dateStr) {
+                        if (p.endDate) {
+                            // 有结束日期，删除整条记录
+                            periods.splice(idx, 1);
+                        } else {
+                            // 只有开始日期，删除整条记录
+                            periods.splice(idx, 1);
+                        }
+                    } else if (p.endDate === dateStr) {
+                        // 自动计算的完整记录，清除结束日期时删除整条记录
+                        periods.splice(idx, 1);
+                    }
+                    showToast('已清除该日期记录');
+                }
+            }
+
+            appData.periods = periods;
+            saveData();
+            closePeriodDayPopup();
+            renderPeriodCalendar();
+            renderPeriodSummary();
+            renderPeriodRecords();
+        }
+
+        // 获取排序后的经期记录（按开始日期降序）
+        function getSortedPeriods() {
+            return (appData.periods || [])
+                .filter(p => p.startDate || p.endDate)
+                .slice()
+                .sort((a, b) => {
+                    const aDate = a.startDate || a.endDate;
+                    const bDate = b.startDate || b.endDate;
+                    return new Date(bDate) - new Date(aDate);
+                });
+        }
+
+        // 获取实际经期日期集合
+        function getActualPeriodDays() {
+            const days = new Set();
+            const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+            (appData.periods || []).forEach(p => {
+                if (p.startDate && p.endDate) {
+                    const start = new Date(p.startDate + 'T00:00:00');
+                    const end = new Date(p.endDate + 'T00:00:00');
+                    for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+                        days.add(formatDateStr(d));
+                    }
+                } else if (p.startDate && !p.endDate) {
+                    // 有开始没有结束，用设置的经期天数填充
+                    const start = new Date(p.startDate + 'T00:00:00');
+                    for (let i = 0; i < ps.periodLength; i++) {
+                        const d = new Date(start);
+                        d.setDate(d.getDate() + i);
+                        days.add(formatDateStr(d));
+                    }
+                }
+            });
+            return days;
+        }
+
+        // 获取预测经期日期集合
+        function getPredictedPeriodDays() {
+            const days = new Set();
+            const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+            const sorted = getSortedPeriods();
+            if (sorted.length === 0) return days;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            // 找最近一条不晚于今天的开始日期作为预测基准，避免未来记录截断前面的预测
+            const lastPeriod = sorted.find(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
+            if (!lastPeriod) return days;
+
+            const lastStart = new Date(lastPeriod.startDate + 'T00:00:00');
+            // 预测到未来3个月（取第3个月的最后一天）
+            const futureLimit = new Date(today.getFullYear(), today.getMonth() + 4, 0);
+
+            let i = 1;
+            while (true) {
+                const predStart = new Date(lastStart);
+                predStart.setDate(predStart.getDate() + ps.cycleLength * i);
+                if (predStart > futureLimit) break;
+                const predEnd = new Date(predStart);
+                predEnd.setDate(predEnd.getDate() + ps.periodLength - 1);
+
+                for (let d = new Date(predStart); d <= predEnd; d.setDate(d.getDate() + 1)) {
+                    const dateStr = formatDateStr(d);
+                    if (!days.has(dateStr)) days.add(dateStr);
+                }
+                i++;
+            }
+            return days;
+        }
+
+        // 获取预测经期记录（用于记录列表）
+        function getPredictedPeriodRecords() {
+            const records = [];
+            const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+            const sorted = getSortedPeriods();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const lastPeriod = sorted.find(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
+            if (!lastPeriod) return records;
+
+            const lastStart = new Date(lastPeriod.startDate + 'T00:00:00');
+            const futureLimit = new Date(today.getFullYear(), today.getMonth() + 4, 0);
+
+            let i = 1;
+            while (true) {
+                const start = new Date(lastStart);
+                start.setDate(start.getDate() + ps.cycleLength * i);
+                if (start > futureLimit) break;
+                const end = new Date(start);
+                end.setDate(end.getDate() + ps.periodLength - 1);
+                const startDate = formatDateStr(start);
+                const endDate = formatDateStr(end);
+                const hasActual = (appData.periods || []).some(p => p.startDate === startDate);
+                if (!hasActual) {
+                    records.push({
+                        id: `pred-${startDate}`,
+                        startDate,
+                        endDate,
+                        days: ps.periodLength,
+                        predicted: true
+                    });
+                }
+                i++;
+            }
+            return records;
+        }
+
+        // 获取排卵日期集合（单日）
+        function getOvulationDays() {
+            const days = new Set();
+            const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+            const sorted = getSortedPeriods();
+            if (sorted.length === 0) return days;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const lastPeriod = sorted.find(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
+            if (!lastPeriod) return days;
+
+            const lastStart = new Date(lastPeriod.startDate + 'T00:00:00');
+            const futureLimit = new Date(today.getFullYear(), today.getMonth() + 4, 0);
+
+            // 排卵日 = 下次经期开始前14天
+            let i = 0;
+            while (true) {
+                const nextStart = new Date(lastStart);
+                nextStart.setDate(nextStart.getDate() + ps.cycleLength * (i + 1));
+                if (nextStart > futureLimit) break;
+                const ovulation = new Date(nextStart);
+                ovulation.setDate(ovulation.getDate() - 14);
+                days.add(formatDateStr(ovulation));
+                i++;
+            }
+            return days;
+        }
+
+        // 获取排卵期集合（排卵日前后各2天）
+        function getOvulationPeriodDays() {
+            const days = new Set();
+            const ovulationDays = getOvulationDays();
+            ovulationDays.forEach(dateStr => {
+                const d = new Date(dateStr + 'T00:00:00');
+                for (let offset = -2; offset <= 2; offset++) {
+                    if (offset === 0) continue; // 排卵日本身不重复添加
+                    const adj = new Date(d);
+                    adj.setDate(adj.getDate() + offset);
+                    days.add(formatDateStr(adj));
+                }
+            });
+            return days;
+        }
+
+        // 获取经期开始日期集合
+        function getPeriodStartDays() {
+            const days = new Set();
+            (appData.periods || []).forEach(p => {
+                if (p.startDate) days.add(p.startDate);
+            });
+            return days;
+        }
+
+        // 获取经期结束日期集合
+        function getPeriodEndDays() {
+            const days = new Set();
+            (appData.periods || []).forEach(p => {
+                if (p.endDate) days.add(p.endDate);
+            });
+            return days;
+        }
+
+        // 渲染状态摘要
+        function renderPeriodSummary() {
+            const sorted = getSortedPeriods();
+            const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayStr = formatDateStr(today);
+
+            const titleEl = document.getElementById('periodSummaryTitle');
+            const subEl = document.getElementById('periodSummarySub');
+            const iconEl = document.getElementById('periodSummaryIcon');
+
+            const actualDays = getActualPeriodDays();
+
+            if (sorted.length === 0) {
+                iconEl.textContent = '🌸';
+                titleEl.textContent = '暂无经期记录';
+                subEl.textContent = '点击日历日期设置经期';
+                return;
+            }
+
+            // 检查今天是否在经期内
+            if (actualDays.has(todayStr)) {
+                const activePeriod = sorted.find(p => {
+                    if (!p.startDate) return false;
+                    const start = new Date(p.startDate + 'T00:00:00');
+                    let end;
+                    if (p.endDate) {
+                        end = new Date(p.endDate + 'T00:00:00');
+                    } else {
+                        end = new Date(start);
+                        end.setDate(end.getDate() + ps.periodLength - 1);
+                    }
+                    return today >= start && today <= end;
+                });
+                if (activePeriod) {
+                    const start = new Date(activePeriod.startDate + 'T00:00:00');
+                    const dayNum = Math.round((today - start) / 86400000) + 1;
+                    iconEl.textContent = '🩸';
+                    titleEl.textContent = `经期第${dayNum}天`;
+                    subEl.textContent = `开始于 ${activePeriod.startDate}`;
+                    return;
+                }
+            }
+
+            // 预测下次经期：不显示延迟状态，已过的预测继续顺延到下一周期
+            const lastPeriod = sorted.find(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
+            if (lastPeriod) {
+                const lastStart = new Date(lastPeriod.startDate + 'T00:00:00');
+                const nextStart = new Date(lastStart);
+                nextStart.setDate(nextStart.getDate() + ps.cycleLength);
+                let predEnd = new Date(nextStart);
+                predEnd.setDate(predEnd.getDate() + ps.periodLength - 1);
+
+                while (predEnd < today) {
+                    nextStart.setDate(nextStart.getDate() + ps.cycleLength);
+                    predEnd = new Date(nextStart);
+                    predEnd.setDate(predEnd.getDate() + ps.periodLength - 1);
+                }
+
+                const diffDays = Math.round((nextStart - today) / 86400000);
+
+                if (today >= nextStart && today <= predEnd) {
+                    iconEl.textContent = '🩸';
+                    titleEl.textContent = '预测经期内';
+                    subEl.textContent = `预计${formatDateStr(nextStart)}-${formatDateStr(predEnd)}`;
+                } else if (diffDays > 0) {
+                    // 计算排卵日
+                    const ovulationDay = new Date(nextStart);
+                    ovulationDay.setDate(ovulationDay.getDate() - 14);
+                    const ovulationDiff = Math.round((ovulationDay - today) / 86400000);
+
+                    if (ovulationDiff > 0 && ovulationDiff <= 5) {
+                        iconEl.textContent = '💧';
+                        titleEl.textContent = `距排卵日${ovulationDiff}天`;
+                        subEl.textContent = `预计${formatDateStr(ovulationDay)}排卵`;
+                    } else {
+                        iconEl.textContent = '🌸';
+                        titleEl.textContent = `距下次经期${diffDays}天`;
+                        subEl.textContent = `预计${formatDateStr(nextStart)}开始`;
+                    }
+                } else if (diffDays === 0) {
+                    iconEl.textContent = '🌸';
+                    titleEl.textContent = '今天预计经期开始';
+                    subEl.textContent = '请留意身体变化';
+                }
+            } else {
+                iconEl.textContent = '🌸';
+                titleEl.textContent = '暂无经期记录';
+                subEl.textContent = '点击日历日期设置经期';
+            }
+        }
+
+        // 渲染经期记录列表
+        function renderPeriodRecords() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const actualRecordsAsc = (appData.periods || [])
+                .filter(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today)
+                .map(p => Object.assign({}, p, { predicted: false }))
+                .slice()
+                .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+            const predictedRecords = getPredictedPeriodRecords(3)
+                .filter(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
+            const recordsAsc = actualRecordsAsc.concat(predictedRecords)
+                .sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+            const cycleInfoMap = new Map();
+            const cycleDayValues = [];
+            recordsAsc.forEach((p, index) => {
+                if (index === 0) {
+                    cycleInfoMap.set(p.id || p.startDate, { type: 'first' });
+                } else {
+                    const prev = recordsAsc[index - 1];
+                    const diff = Math.round((new Date(p.startDate + 'T00:00:00') - new Date(prev.startDate + 'T00:00:00')) / 86400000);
+                    cycleInfoMap.set(p.id || p.startDate, { type: 'cycle', days: diff });
+                    cycleDayValues.push(diff);
+                }
+            });
+            const maxCycleDays = Math.max(...cycleDayValues, 1);
+            const sorted = recordsAsc.slice().sort((a, b) => new Date(b.startDate) - new Date(a.startDate));
+            const section = document.getElementById('periodRecordsSection');
+            const list = document.getElementById('periodRecordList');
+            const countEl = document.getElementById('periodRecordCount');
+
+            if (sorted.length === 0) {
+                section.style.display = 'none';
+                return;
+            }
+            section.style.display = 'block';
+            countEl.textContent = `${sorted.length} 条`;
+
+            let html = '';
+            sorted.forEach(p => {
+                let datesStr = '';
+                let daysStr = '';
+                if (p.startDate && p.endDate) {
+                    datesStr = `${p.startDate} ~ ${p.endDate}`;
+                    const days = Math.round((new Date(p.endDate) - new Date(p.startDate)) / 86400000) + 1;
+                    daysStr = `${days}天`;
+                } else if (p.startDate) {
+                    datesStr = `${p.startDate} ~ 进行中`;
+                    daysStr = '';
+                }
+                const cycleInfo = cycleInfoMap.get(p.id || p.startDate) || { type: 'first' };
+                let cycleHtml = '<div class="period-record-tag actual">首条</div>';
+                if (cycleInfo.type === 'cycle') {
+                    const barWidth = Math.max(36, Math.min(100, Math.round(cycleInfo.days / maxCycleDays * 100)));
+                    cycleHtml = `<div class="period-cycle-chart">
+                        <div class="period-cycle-bar ${p.predicted ? 'predicted' : ''}" style="width:${barWidth}%;">${cycleInfo.days}天</div>
+                    </div>`;
+                }
+                html += `<div class="period-record-card" onclick="jumpToPeriodDate('${p.startDate}')">
+                    <div class="period-record-info">
+                        <div class="period-record-dates">${datesStr}</div>
+                        ${daysStr ? `<div class="period-record-days">${daysStr}</div>` : ''}
+                    </div>
+                    ${cycleHtml}
+                </div>`;
+            });
+            list.innerHTML = html;
+        }
+
+        function jumpToPeriodDate(dateStr) {
+            if (!dateStr) return;
+            const d = new Date(dateStr + 'T00:00:00');
+            if (isNaN(d)) return;
+            currentPeriodCalMonth = { year: d.getFullYear(), month: d.getMonth() };
+            selectedPeriodNoteDate = dateStr;
+            renderPeriodCalendar();
+            renderPeriodNoteEditor();
+            const container = document.querySelector('.page-container');
+            const calendar = document.querySelector('.period-calendar-wrap');
+            if (container && calendar) {
+                container.scrollTo({ top: Math.max(calendar.offsetTop - 12, 0), behavior: 'smooth' });
+            }
+        }
+
         function renderAll() {
             renderRecordPage();
             renderTrendStats();
             renderProfilePage();
             renderNotesPage();
+            renderPeriodPage();
             if (document.getElementById('page-trend').classList.contains('active')) renderTrendChart();
             if (document.getElementById('page-record-health').classList.contains('active') && currentRecordHealthId) {
                 renderRecordHealthPage(currentRecordHealthId);
