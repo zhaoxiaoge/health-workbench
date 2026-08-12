@@ -140,6 +140,11 @@
             transition: opacity 0.2s;
         }
         .header-icons .icon-btn:active { opacity: 0.6; }
+        .header-today-icon {
+            width: 22px; height: 22px;
+            filter: brightness(0) invert(1);
+            pointer-events: none;
+        }
         .today-record-status {
             height: 28px; padding: 0 10px; border-radius: 999px;
             border: 1px solid rgba(255,255,255,0.35);
@@ -847,6 +852,15 @@
         .nav-item.active { color: var(--primary); }
         .nav-item .nav-icon { font-size: 22px; line-height: 1; }
         .nav-item .nav-label { font-size: 11px; font-weight: 500; }
+        .nav-icon-img {
+            width: 24px; height: 24px;
+            background-color: var(--text-light);
+            -webkit-mask-size: contain; mask-size: contain;
+            -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+            -webkit-mask-position: center; mask-position: center;
+            transition: background-color 0.2s;
+        }
+        .nav-item.active .nav-icon-img { background-color: var(--primary); }
 
         /* ========== 固定顶部导航栏 ========== */
         .sticky-nav-bar {
@@ -868,12 +882,20 @@
         }
         .trend-sticky-nav .nav-center { color: white; }
 
-        /* ========== 趋势页 - 全屏青绿背景 ========== */
+        /* ========== 数据看板趋势页 - 全屏青绿背景 ========== */
         .trend-page-bg {
             background: var(--teal-gradient);
             min-height: 100%;
             color: white;
             padding-top: 0;
+        }
+        .trend-card-wrap {
+            background: var(--card-bg);
+            color: var(--text);
+            margin: 12px 16px 0;
+            border-radius: 16px;
+            padding: 12px 0 4px;
+            box-shadow: var(--shadow);
         }
 
         .trend-nav {
@@ -895,14 +917,14 @@
         }
         .trend-filter {
             padding: 6px 16px; border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.3);
-            background: transparent; color: white;
+            border: 1px solid var(--border);
+            background: transparent; color: var(--text-secondary);
             font-size: 13px; cursor: pointer; font-family: inherit;
             transition: all 0.2s;
         }
         .trend-filter.active {
-            background: white; color: var(--primary-dark);
-            border-color: white; font-weight: 600;
+            background: var(--primary); color: white;
+            border-color: var(--primary); font-weight: 600;
         }
         .date-quick-btn {
             padding: 5px 12px; border-radius: 16px;
@@ -917,24 +939,23 @@
         .trend-info-bar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 20px 8px;
-            font-size: 13px; opacity: 0.85;
+            font-size: 13px; color: var(--text-secondary);
             position: relative;
             z-index: 10;
         }
         .trend-info-bar .left { display: flex; align-items: center; gap: 8px; }
-        .trend-info-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: white; }
+        .trend-info-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); }
         .trend-info-bar .arrow-up { font-size: 11px; opacity: 0.7; }
 
         #trendChart {
-            width: 100%; height: 320px;
+            width: 100%; height: 200px;
         }
 
         .trend-stats-card {
-            margin: 8px 16px 20px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
+            margin: 8px 16px 16px;
+            background: var(--primary-bg);
             border-radius: 16px;
-            padding: 16px;
+            padding: 14px;
             display: flex;
         }
         .trend-stat-item {
@@ -943,11 +964,104 @@
         .trend-stat-item:not(:last-child)::after {
             content: ''; position: absolute; right: 0; top: 20%;
             height: 60%; width: 1px;
-            background: rgba(255, 255, 255, 0.2);
+            background: var(--primary-light);
         }
-        .trend-stat-item .label { font-size: 11px; opacity: 0.75; margin-bottom: 4px; }
-        .trend-stat-item .value { font-size: 18px; font-weight: 700; }
-        .trend-stat-item .value .unit { font-size: 11px; opacity: 0.7; }
+        .trend-stat-item .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
+        .trend-stat-item .value { font-size: 17px; font-weight: 700; color: var(--primary); }
+        .trend-stat-item .value .unit { font-size: 11px; color: var(--text-secondary); }
+
+        /* ========== 首页 ========== */
+        .home-header {
+            background: var(--teal-gradient);
+            padding: calc(env(safe-area-inset-top, 0px) + 28px) 20px 20px;
+            border-radius: 0 0 28px 28px;
+        }
+        .home-date {
+            font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+            color: rgba(255,255,255,0.7); font-weight: 600;
+        }
+        .home-greeting {
+            font-size: 24px; font-weight: 700; color: white; margin-top: 4px;
+        }
+        .home-content {
+            padding: 16px;
+        }
+        .home-weight-card {
+            background: var(--teal-gradient);
+            border-radius: 20px;
+            padding: 20px;
+            color: white;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .home-weight-card:active { transform: scale(0.98); }
+        .home-weight-top {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px;
+        }
+        .home-weight-status { font-size: 13px; opacity: 0.85; }
+        .home-weight-arrow { font-size: 22px; opacity: 0.7; }
+        .home-weight-value { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+        .home-weight-value .number { font-size: 42px; font-weight: 800; line-height: 1; }
+        .home-weight-value .unit { font-size: 16px; opacity: 0.8; }
+        .home-weight-trend { font-size: 13px; opacity: 0.8; }
+
+        .home-section-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 24px 0 12px;
+        }
+        .home-section-header span:first-child { font-size: 16px; font-weight: 700; color: var(--text); }
+        .home-section-link { font-size: 13px; color: var(--primary); cursor: pointer; }
+        .home-section-link.cycle-link { color: #E91E63; }
+
+        .home-goal-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex; align-items: center; gap: 16px;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .home-goal-card:active { transform: scale(0.98); }
+        .home-goal-ring { position: relative; width: 60px; height: 60px; flex-shrink: 0; }
+        .home-goal-percent {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 13px; font-weight: 700; color: var(--primary);
+        }
+        .home-goal-info { flex: 1; min-width: 0; }
+        .home-goal-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .home-goal-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+        .home-cycle-card {
+            background: linear-gradient(135deg, #FF6B8A, #FF8E9E);
+            border-radius: 20px;
+            padding: 24px 20px 16px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: transform 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .home-cycle-card:active { transform: scale(0.98); }
+        .home-cycle-ring { position: relative; width: 130px; height: 130px; margin-bottom: 16px; }
+        .home-cycle-ring-content {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; display: flex; flex-direction: column; align-items: center;
+        }
+        .home-cycle-countdown { font-size: 30px; font-weight: 800; color: white; line-height: 1; }
+        .home-cycle-ring-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+        .home-cycle-ring-date { font-size: 14px; color: white; font-weight: 600; margin-top: 2px; }
+        .home-cycle-bottom {
+            display: flex; width: 100%; align-items: center; justify-content: center;
+            padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.15);
+        }
+        .home-cycle-stat { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .home-cycle-stat-label { font-size: 11px; color: rgba(255,255,255,0.7); }
+        .home-cycle-stat-value { font-size: 16px; font-weight: 700; color: white; }
+        .home-cycle-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
 
         /* ========== 我的页面 ========== */
         .profile-header {
@@ -1507,7 +1621,7 @@
         .dropdown-item:active { background: var(--bg); }
         .dropdown-item .icon { font-size: 16px; width: 20px; text-align: center; }
 
-        /* ========== 生理期页 ========== */
+        /* ========== 生理周期页 ========== */
         .period-page-content { padding: 16px; }
         .period-summary-card {
             display: flex; align-items: center; gap: 14px;
@@ -1553,6 +1667,16 @@
             display: grid; grid-template-columns: repeat(7, 1fr);
             gap: 2px;
         }
+        .period-cal-grid.cal-anim-next { animation: calSlideInRight 0.28s ease; }
+        .period-cal-grid.cal-anim-prev { animation: calSlideInLeft 0.28s ease; }
+        @keyframes calSlideInRight {
+            from { transform: translateX(40px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes calSlideInLeft {
+            from { transform: translateX(-40px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
         .period-cal-day {
             aspect-ratio: 1; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
@@ -1565,12 +1689,14 @@
         .period-cal-day.other-month { color: var(--text-light); }
         .period-cal-day.today {
             font-weight: 700;
-            outline: 2px solid var(--primary);
-            outline-offset: -3px;
         }
         .period-cal-day.today::after {
             content: ''; position: absolute; bottom: 3px;
             width: 4px; height: 4px; border-radius: 50%; background: var(--primary);
+        }
+        .period-cal-day.selected {
+            outline: 2px solid var(--primary);
+            outline-offset: -3px;
         }
         .period-cal-day.actual {
             background: #FF6B9D; color: white; font-weight: 600;
@@ -1589,7 +1715,6 @@
             border: 2px solid #FF6B9D;
         }
         .period-cal-day.end-marker {
-            border: 2px solid #E91E63;
         }
         .period-legend {
             display: flex; flex-wrap: wrap; gap: 12px;
@@ -1631,8 +1756,7 @@
         .period-setting-unit { font-size: 12px; color: var(--text-secondary); }
 
         .period-record-card {
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 12px;
+            position: relative; overflow: hidden;
             background: var(--card-bg); border-radius: 12px;
             padding: 12px 16px; margin-bottom: 8px;
             box-shadow: var(--shadow);
@@ -1640,36 +1764,24 @@
             transition: transform 0.12s ease, box-shadow 0.12s ease;
         }
         .period-record-card:active { transform: scale(0.98); box-shadow: var(--shadow-md); }
-        .period-record-info { flex: 1; min-width: 0; }
+        .period-record-info { position: relative; z-index: 1; padding-right: 48px; }
         .period-record-dates { font-size: 14px; font-weight: 500; color: var(--text); }
         .period-record-days { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
-        .period-cycle-chart {
-            width: 150px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            flex-shrink: 0;
+        .period-cycle-bar-bg {
+            position: absolute; top: 0; left: 0; height: 100%;
+            background: linear-gradient(90deg, rgba(255,107,157,0.12) 0%, rgba(255,127,174,0.18) 100%);
+            z-index: 0;
         }
-        .period-cycle-bar {
-            height: 22px;
-            min-width: 56px;
-            border-radius: 0 11px 11px 0;
-            background: linear-gradient(90deg, #FF6B9D 0%, #FF7FAE 100%);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 8px;
-            color: white;
-            font-size: 11px;
-            font-weight: 600;
-            line-height: 1;
-            box-shadow: 0 2px 6px rgba(255, 107, 157, 0.22);
+        .period-cycle-bar-bg.predicted {
+            background: linear-gradient(90deg, rgba(255,214,229,0.25) 0%, rgba(255,194,216,0.35) 100%);
         }
-        .period-cycle-bar.predicted {
-            background: linear-gradient(90deg, #FFD6E5 0%, #FFC2D8 100%);
-            color: #C7365A;
-            box-shadow: 0 2px 6px rgba(255, 107, 157, 0.12);
+        .period-cycle-label {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            z-index: 2;
+            padding: 3px 10px; border-radius: 12px;
+            font-size: 11px; font-weight: 600; color: #C7365A;
+            background: rgba(255, 214, 229, 0.85);
+            white-space: nowrap;
         }
         .period-record-tag {
             padding: 4px 10px; border-radius: 12px;
@@ -1681,35 +1793,36 @@
         .period-note-card {
             background: var(--card-bg);
             border-radius: 14px;
-            padding: 12px 14px;
+            padding: 8px 14px;
             margin-bottom: 12px;
             box-shadow: var(--shadow);
             cursor: pointer;
             transition: transform 0.12s ease, box-shadow 0.12s ease;
-        }
-        .period-note-card:active { transform: scale(0.98); box-shadow: var(--shadow-md); }
-        .period-note-head {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 6px;
+            gap: 8px;
+            overflow: hidden;
         }
+        .period-note-card:active { transform: scale(0.98); box-shadow: var(--shadow-md); }
         .period-note-title {
             font-size: 14px;
             font-weight: 600;
             color: var(--text);
+            flex-shrink: 0;
         }
         .period-note-selected-date {
             font-size: 12px;
             color: var(--text-secondary);
+            flex-shrink: 0;
         }
         .period-note-preview {
             font-size: 13px;
             color: var(--text-secondary);
-            line-height: 1.5;
-            min-height: 20px;
-            word-break: break-word;
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .period-note-preview.has-note {
             color: var(--text);
@@ -1717,6 +1830,7 @@
         .period-note-arrow {
             color: var(--text-light);
             font-size: 18px;
+            flex-shrink: 0;
         }
         .period-note-popup-input {
             width: 100%;
@@ -1914,7 +2028,7 @@
     <div class="app-frame">
         <div class="page-container">
             <!-- ============ 每日记录 ============ -->
-            <div class="page active" id="page-record">
+            <div class="page" id="page-record">
                 <div class="sticky-nav-bar">
                     <div class="header-top">
                         <div class="header-title">体重</div>
@@ -1935,7 +2049,7 @@
                 <div class="header-gradient">
                     <div class="weight-display">
                         <span class="number" id="latestWeight">--</span>
-                        <span class="unit">公斤</span>
+                        <span class="unit">kg</span>
                         <span class="today-record-status missing" id="todayRecordStatus" onclick="openTodayRecordSheet()">今日未记录</span>
                     </div>
                     <button class="target-card" id="targetCard" onclick="openTargetEdit()">
@@ -1959,8 +2073,63 @@
                         </div>
                     </div>
                 </div>
+                <!-- 趋势图卡片 -->
+                <div class="trend-card-wrap">
+                    <div class="trend-filters">
+                        <button class="trend-filter active" data-period="7">默认</button>
+                        <button class="trend-filter" data-period="30">近一月</button>
+                        <button class="trend-filter" data-period="90">近三月</button>
+                        <button class="trend-filter" data-period="all">全部</button>
+                    </div>
+                    <div class="trend-info-bar">
+                        <div class="left">
+                            <span>单位：kg</span>
+                            <span class="dot"></span>
+                            <span id="trendDays">0天</span>
+                        </div>
+                        <div style="opacity:0.85; cursor:pointer; position:relative;" id="dateRangeBtn" onclick="event.stopPropagation(); toggleDateDropdown();">
+                            <span id="dateRangeText">日期 ▾</span>
+                        </div>
+                        <div class="dropdown-menu" id="dateDropdown" style="top:36px; right:0; min-width:220px; padding:12px; z-index:9999;">
+                            <div style="font-size:12px; color:var(--text); margin-bottom:8px; font-weight:600;">快速选择</div>
+                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
+                                <button class="date-quick-btn active" onclick="selectPeriod('7')">默认</button>
+                                <button class="date-quick-btn" onclick="selectPeriod('30')">近一月</button>
+                                <button class="date-quick-btn" onclick="selectPeriod('90')">近三月</button>
+                                <button class="date-quick-btn" onclick="selectPeriod('all')">全部</button>
+                            </div>
+                            <div style="font-size:12px; color:var(--text); margin-bottom:8px; font-weight:600;">自定义范围</div>
+                            <div style="display:flex; flex-direction:column; gap:8px;">
+                                <label style="font-size:12px; color:var(--text);">开始日期</label>
+                                <input type="date" id="customDateStart" style="padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text); background:var(--bg);">
+                                <label style="font-size:12px; color:var(--text);">结束日期</label>
+                                <input type="date" id="customDateEnd" style="padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text); background:var(--bg);">
+                                <button onclick="applyCustomDateRange()" style="margin-top:4px; padding:8px; background:var(--primary); color:white; border:none; border-radius:8px; font-size:13px; cursor:pointer;">应用</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="trendChart"></div>
+                    <div class="trend-stats-card">
+                        <div class="trend-stat-item">
+                            <div class="label">减肥天数</div>
+                            <div class="value" id="trendCount">0</div>
+                        </div>
+                        <div class="trend-stat-item">
+                            <div class="label">数值变化</div>
+                            <div class="value" id="trendChange">--</div>
+                        </div>
+                        <div class="trend-stat-item">
+                            <div class="label">最高</div>
+                            <div class="value" id="trendMax">--</div>
+                        </div>
+                        <div class="trend-stat-item">
+                            <div class="label">最低</div>
+                            <div class="value" id="trendMin">--</div>
+                        </div>
+                    </div>
+                </div>
                 <div class="section-title">
-                    <span>历史记录</span>
+                    <span>最近记录</span>
                     <span class="count" id="recordCount">0 条</span>
                 </div>
                 <div class="record-list" id="recordList"></div>
@@ -2020,88 +2189,78 @@
                 <button class="batch-cancel-btn" onclick="exitBatchDeleteMode()">取消</button>
             </div>
 
-            <!-- ============ 趋势 ============ -->
-            <div class="page" id="page-trend">
-                <div class="sticky-nav-bar trend-sticky-nav">
-                    <div class="trend-nav">
-                        <div class="nav-center">趋势 · 体重 ▾</div>
-                        <div class="header-icons">
-                            <div class="icon-btn" onclick="openDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
-                            <div class="icon-btn" onclick="toggleDropdown('dropdownMenuTrend')">⋯</div>
-                            <div class="dropdown-menu" id="dropdownMenuTrend">
-                                <div class="dropdown-item" onclick="document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.remove('show')); openProfileEdit();">
-                                    <span class="icon">👤</span> 个人信息
+            <!-- ============ 首页 ============ -->
+            <div class="page active" id="page-trend">
+                <div class="home-header">
+                    <div class="home-date" id="homeDate"></div>
+                    <div class="home-greeting" id="homeGreeting"></div>
+                </div>
+                <div class="home-content">
+                    <!-- 体重卡片 -->
+                    <div class="home-weight-card" id="homeWeightCard" onclick="switchPage('record')">
+                        <div class="home-weight-top">
+                            <span class="home-weight-status" id="homeWeightStatus">体重 · 今日未记录</span>
+                            <span class="home-weight-arrow">›</span>
+                        </div>
+                        <div class="home-weight-value">
+                            <span class="number" id="homeWeightNum">--</span>
+                            <span class="unit">kg</span>
+                        </div>
+                        <div class="home-weight-trend" id="homeWeightTrend">点击记录今日体重</div>
+                    </div>
+                    <!-- 本周目标 -->
+                    <div class="home-goal-card" onclick="openTargetEdit()">
+                        <div class="home-goal-ring">
+                            <svg width="60" height="60" viewBox="0 0 60 60">
+                                <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="5"/>
+                                <circle id="homeGoalRing" cx="30" cy="30" r="25" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157" transform="rotate(-90 30 30)"/>
+                            </svg>
+                            <span class="home-goal-percent" id="homeGoalPercent">0%</span>
+                        </div>
+                        <div class="home-goal-info">
+                            <div class="home-goal-title" id="homeGoalTitle">未设置目标</div>
+                            <div class="home-goal-desc" id="homeGoalDesc">设置目标体重，追踪进度</div>
+                        </div>
+                    </div>
+                    <!-- 周期状态 -->
+                    <div id="homeCycleSection" style="display:none;">
+                        <div class="home-cycle-card" onclick="switchPage('period')">
+                            <div class="home-cycle-ring">
+                                <svg width="130" height="130" viewBox="0 0 130 130">
+                                    <circle cx="65" cy="65" r="55" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="6"/>
+                                    <circle id="homeCycleRing" cx="65" cy="65" r="55" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="6" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6" transform="rotate(-90 65 65)"/>
+                                </svg>
+                                <div class="home-cycle-ring-content">
+                                    <span class="home-cycle-countdown" id="homeCycleCountdown">--</span>
+                                    <span class="home-cycle-ring-label">下一次经期</span>
+                                    <span class="home-cycle-ring-date" id="homeCycleNextDate">--</span>
                                 </div>
-                                <div class="dropdown-item" onclick="document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.remove('show')); openTargetEdit();">
-                                    <span class="icon">🎯</span> 目标管理
+                            </div>
+                            <div class="home-cycle-bottom">
+                                <div class="home-cycle-stat">
+                                    <span class="home-cycle-stat-label">受孕概率</span>
+                                    <span class="home-cycle-stat-value" id="homeCycleFertility">--</span>
+                                </div>
+                                <div class="home-cycle-divider"></div>
+                                <div class="home-cycle-stat">
+                                    <span class="home-cycle-stat-label">下次排卵</span>
+                                    <span class="home-cycle-stat-value" id="homeCycleOvulation">--</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="trend-page-bg">
-                    <div class="trend-filters">
-                        <button class="trend-filter active" data-period="7">默认</button>
-                        <button class="trend-filter" data-period="30">近一月</button>
-                        <button class="trend-filter" data-period="90">近三月</button>
-                        <button class="trend-filter" data-period="all">全部</button>
-                    </div>
-                    <div class="trend-info-bar">
-                        <div class="left">
-                            <span>单位：公斤</span>
-                            <span class="dot"></span>
-                            <span id="trendDays">0天</span>
-                        </div>
-                        <div style="opacity:0.85; cursor:pointer; position:relative;" id="dateRangeBtn" onclick="event.stopPropagation(); toggleDateDropdown();">
-                            <span id="dateRangeText">日期 ▾</span>
-                        </div>
-                        <div class="dropdown-menu" id="dateDropdown" style="top:36px; right:0; min-width:220px; padding:12px; z-index:9999;">
-                            <div style="font-size:12px; color:var(--text); margin-bottom:8px; font-weight:600;">快速选择</div>
-                            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:12px;">
-                                <button class="date-quick-btn active" onclick="selectPeriod('7')">默认</button>
-                                <button class="date-quick-btn" onclick="selectPeriod('30')">近一月</button>
-                                <button class="date-quick-btn" onclick="selectPeriod('90')">近三月</button>
-                                <button class="date-quick-btn" onclick="selectPeriod('all')">全部</button>
-                            </div>
-                            <div style="font-size:12px; color:var(--text); margin-bottom:8px; font-weight:600;">自定义范围</div>
-                            <div style="display:flex; flex-direction:column; gap:8px;">
-                                <label style="font-size:12px; color:var(--text);">开始日期</label>
-                                <input type="date" id="customDateStart" style="padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text); background:var(--bg);">
-                                <label style="font-size:12px; color:var(--text);">结束日期</label>
-                                <input type="date" id="customDateEnd" style="padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text); background:var(--bg);">
-                                <button onclick="applyCustomDateRange()" style="margin-top:4px; padding:8px; background:var(--primary); color:white; border:none; border-radius:8px; font-size:13px; cursor:pointer;">应用</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="trendChart"></div>
-                    <div class="trend-stats-card">
-                        <div class="trend-stat-item">
-                            <div class="label">减肥天数</div>
-                            <div class="value" id="trendCount">0</div>
-                        </div>
-                        <div class="trend-stat-item">
-                            <div class="label">数值变化</div>
-                            <div class="value" id="trendChange">--</div>
-                        </div>
-                        <div class="trend-stat-item">
-                            <div class="label">最高</div>
-                            <div class="value" id="trendMax">--</div>
-                        </div>
-                        <div class="trend-stat-item">
-                            <div class="label">最低</div>
-                            <div class="value" id="trendMin">--</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="trendDayDetail" style="display:none; padding:0 16px 16px;"></div>
             </div>
 
-            <!-- ============ 生理期 ============ -->
+            <!-- ============ 生理周期 ============ -->
             <div class="page" id="page-period">
                 <div class="sticky-nav-bar">
                     <div class="header-top">
-                        <div class="header-title">生理期</div>
+                        <div class="header-title">生理周期</div>
                         <div class="header-icons" style="position:relative;">
+                            <div class="icon-btn" onclick="jumpToPeriodToday()" title="今天">
+                                <img src="icon/icon-today.png" alt="今天" class="header-today-icon">
+                            </div>
                             <div class="icon-btn" onclick="togglePeriodSettings()">⋯</div>
                             <div class="dropdown-menu" id="periodSettingsMenu" style="min-width:240px; padding:16px;">
                                 <div style="font-size:14px; font-weight:600; color:var(--text); margin-bottom:12px;">经期设置</div>
@@ -2157,12 +2316,10 @@
                     </div>
                     <!-- 备注 -->
                     <div class="period-note-card" onclick="openPeriodNotePopup()">
-                        <div class="period-note-head">
-                            <span class="period-note-title">备注</span>
-                            <span class="period-note-selected-date" id="periodNoteSelectedDate"></span>
-                            <span class="period-note-arrow">›</span>
-                        </div>
-                        <div class="period-note-preview" id="periodNotePreview">点击填写备注</div>
+                        <span class="period-note-title">备注</span>
+                        <span class="period-note-selected-date" id="periodNoteSelectedDate"></span>
+                        <span class="period-note-preview" id="periodNotePreview">点击填写备注</span>
+                        <span class="period-note-arrow">›</span>
                     </div>
                     <!-- 经期记录列表 -->
                     <div class="period-records-section" id="periodRecordsSection" style="display:none;">
@@ -2664,20 +2821,20 @@
         </div>
 
         <nav class="bottom-nav">
-            <button class="nav-item active" data-page="record">
-                <span class="nav-icon">📝</span><span class="nav-label">体重</span>
+            <button class="nav-item active" data-page="trend">
+                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-home.png'); mask-image:url('icon/icon-nav-home.png');"></span><span class="nav-label">首页</span>
+            </button>
+            <button class="nav-item" data-page="record">
+                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-weight.png'); mask-image:url('icon/icon-nav-weight.png');"></span><span class="nav-label">体重</span>
             </button>
             <button class="nav-item" data-page="notes">
-                <span class="nav-icon">🗒️</span><span class="nav-label">备忘录</span>
-            </button>
-            <button class="nav-item" data-page="trend">
-                <span class="nav-icon">📈</span><span class="nav-label">趋势</span>
+                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-notes.png'); mask-image:url('icon/icon-nav-notes.png');"></span><span class="nav-label">备忘录</span>
             </button>
             <button class="nav-item" data-page="period">
-                <span class="nav-icon">🌸</span><span class="nav-label">生理期</span>
+                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-period.png'); mask-image:url('icon/icon-nav-period.png');"></span><span class="nav-label">生理周期</span>
             </button>
             <button class="nav-item" data-page="profile">
-                <span class="nav-icon">👤</span><span class="nav-label">我的</span>
+                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-profile.png'); mask-image:url('icon/icon-nav-profile.png');"></span><span class="nav-label">我的</span>
             </button>
         </nav>
     </div>
@@ -2721,15 +2878,10 @@
         <div class="period-day-popup" id="periodNotePopup" onclick="event.stopPropagation()">
             <div class="period-day-popup-title" id="periodNotePopupTitle">备注</div>
             <textarea id="periodNotePopupInput" class="period-note-popup-input" placeholder="记录这一天的身体感受、流量、疼痛等备注"></textarea>
-            <button class="period-day-popup-btn start" onclick="savePeriodNotePopup()">
-                <span class="popup-icon">✓</span> 保存备注
-            </button>
-            <button class="period-day-popup-btn clear" onclick="clearPeriodNotePopup()">
-                <span class="popup-icon">🗑️</span> 清空备注
-            </button>
-            <button class="period-day-popup-btn cancel" onclick="closePeriodNotePopup()">
-                <span class="popup-icon">✕</span> 取消
-            </button>
+            <div class="sheet-btn-row">
+                <button class="sheet-btn secondary" onclick="closePeriodNotePopup()">取消</button>
+                <button class="sheet-btn primary" onclick="savePeriodNotePopup()">保存</button>
+            </div>
         </div>
     </div>
 
@@ -2849,7 +3001,7 @@
                 <div style="display:flex; gap:8px; flex-wrap:wrap;" id="downloadCatBtns">
                     <button class="date-quick-btn active" onclick="toggleDownloadCat('all', this)">全部</button>
                     <button class="date-quick-btn active" onclick="toggleDownloadCat('weight', this)">体重</button>
-                    <button class="date-quick-btn" onclick="toggleDownloadCat('period', this)">生理期</button>
+                    <button class="date-quick-btn" onclick="toggleDownloadCat('period', this)">生理周期</button>
                     <button class="date-quick-btn" onclick="toggleDownloadCat('profile', this)">个人信息</button>
                     <button class="date-quick-btn" onclick="toggleDownloadCat('notes', this)">备忘录</button>
                 </div>
@@ -2908,6 +3060,7 @@
         let currentPeriodCalMonth = null;
         let selectedPeriodDay = null;
         let selectedPeriodNoteDate = null;
+        let selectedCalDay = null;
 
         function loadData() {
             const stored = localStorage.getItem(STORAGE_KEY);
@@ -2962,12 +3115,19 @@
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById('page-' + page).classList.add('active');
                 document.getElementById('fabBtn').style.display = (page === 'record' || page === 'notes') ? 'flex' : 'none';
-                if (page === 'trend') setTimeout(renderTrendChart, 100);
+                if (page === 'record') setTimeout(renderTrendChart, 100);
                 if (page === 'notes') renderNotesPage();
                 if (page === 'period') renderPeriodPage();
+                if (page === 'trend') renderHomePage();
                 document.querySelector('.page-container').scrollTop = 0;
             });
         });
+
+        // 编程式切换页面（首页卡片点击等场景）
+        function switchPage(pageName) {
+            const navItem = document.querySelector(`.nav-item[data-page="${pageName}"]`);
+            if (navItem) navItem.click();
+        }
 
         // FAB 按钮：根据当前页面打开不同功能
         function onFabClick() {
@@ -4245,7 +4405,7 @@
             const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
             const catAll = Array.from(catBtns).find(b => b.textContent.trim() === '全部')?.classList.contains('active') ?? false;
             const catWeight = Array.from(catBtns).find(b => b.textContent.trim() === '体重')?.classList.contains('active') ?? false;
-            const catPeriod = Array.from(catBtns).find(b => b.textContent.trim() === '生理期')?.classList.contains('active') ?? false;
+            const catPeriod = Array.from(catBtns).find(b => b.textContent.trim() === '生理周期')?.classList.contains('active') ?? false;
             const catProfile = Array.from(catBtns).find(b => b.textContent.trim() === '个人信息')?.classList.contains('active') ?? false;
             const catNotes = Array.from(catBtns).find(b => b.textContent.trim() === '备忘录')?.classList.contains('active') ?? false;
 
@@ -4317,7 +4477,7 @@
                 XLSX.utils.book_append_sheet(wb, ws2, '个人信息');
             }
 
-            // Sheet: 生理期 (仅当勾选生理期或全部时)
+            // Sheet: 生理周期 (仅当勾选生理周期或全部时)
             if (catPeriod || catAll) {
                 const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
                 const periodData = (appData.periods || []).map(p => ({
@@ -4330,7 +4490,7 @@
                 periodData.push({ '开始日期': '【设置】', '结束日期': '', '天数': `经期天数:${ps.periodLength}`, '备注': `经期周期:${ps.cycleLength}` });
                 const ws5 = XLSX.utils.json_to_sheet(periodData);
                 ws5['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 18 }, { wch: 50 }];
-                XLSX.utils.book_append_sheet(wb, ws5, '生理期');
+                XLSX.utils.book_append_sheet(wb, ws5, '生理周期');
             }
 
             // Sheet: 备忘录 (仅当勾选备忘录或全部时)
@@ -4417,7 +4577,7 @@
             if (mode === 'overwrite') {
                 const moduleTexts = [];
                 if (included.weights) moduleTexts.push(`${wCount}条体重记录`);
-                if (included.periods) moduleTexts.push(`${pCount}条生理期`);
+                if (included.periods) moduleTexts.push(`${pCount}条生理周期`);
                 if (included.notes) moduleTexts.push(`${nCount}条备忘录`);
                 if (included.profile) moduleTexts.push('个人信息');
                 const desc = `将只覆盖导入文件中包含的模块（${moduleTexts.join('、') || '无数据'}），其他模块保持不变，是否继续？`;
@@ -4446,7 +4606,7 @@
                 // 合并模式
                 const mergeTexts = [];
                 if (included.weights) mergeTexts.push(`${wCount} 条体重记录`);
-                if (included.periods) mergeTexts.push(`${pCount} 条生理期`);
+                if (included.periods) mergeTexts.push(`${pCount} 条生理周期`);
                 if (included.notes) mergeTexts.push(`${nCount} 条备忘录`);
                 if (included.profile) mergeTexts.push('个人信息');
                 const desc = `将只合并导入文件中包含的模块（${mergeTexts.join('、') || '无数据'}），其他模块保持不变，是否继续？`;
@@ -4475,7 +4635,7 @@
                             }
                         });
                     }
-                    // 合并生理期：按 startDate 去重
+                    // 合并生理周期：按 startDate 去重
                     if (included.periods) {
                         const existingPeriods = new Set(appData.periods.map(p => p.startDate));
                         (data.periods || []).forEach(p => {
@@ -4532,7 +4692,7 @@
                     saveData(); renderAll();
                     closeImportModeSheet();
                     let msg = `合并导入完成：新增${addedW}条体重记录`;
-                    if (addedP > 0) msg += `、${addedP}条生理期`;
+                    if (addedP > 0) msg += `、${addedP}条生理周期`;
                     if (addedN > 0) msg += `、${addedN}条备忘录`;
                     if (updatedN > 0) msg += `，更新${updatedN}条备忘录`;
                     showToast(msg);
@@ -4577,7 +4737,7 @@
             const hasProfile = !!included.profile && !!data.profile && (!!data.profile.name || !!data.profile.height || !!data.profile.birthday || data.targetWeight !== undefined || !!data.avatarImage);
             const moduleTexts = [];
             if (included.weights) moduleTexts.push(`${wCount}条体重记录`);
-            if (included.periods) moduleTexts.push(`${pCount}条生理期`);
+            if (included.periods) moduleTexts.push(`${pCount}条生理周期`);
             if (included.notes) moduleTexts.push(`${nCount}条备忘录`);
             if (hasProfile) moduleTexts.push('个人信息');
             let desc = `${label}内容：${moduleTexts.join('、') || '未检测到可导入模块'}`;
@@ -4642,10 +4802,10 @@
                 if (avatarPath && imageMap[avatarPath]) importedAvatar = imageMap[avatarPath];
             }
 
-            // 解析生理期
+            // 解析生理周期
             let importedPeriodSettings = null;
             const importedPeriodNotes = {};
-            const wsPeriods = wb.Sheets['生理期'];
+            const wsPeriods = wb.Sheets['生理周期'];
             if (wsPeriods) {
                 const rows = XLSX.utils.sheet_to_json(wsPeriods);
                 rows.forEach(row => {
@@ -4836,10 +4996,26 @@
         }
 
         // 渲染：每日记录
+        // 获取当前趋势日期范围内的所有体重记录（保留每天多条，按时间倒序）
+        function getFilteredWeightRecords() {
+            let records = [...(appData.weights || [])].filter(w => w.date && !isNaN(parseFloat(w.weight)));
+            if (customDateRange) {
+                records = records.filter(w => w.date >= customDateRange.start && w.date <= customDateRange.end);
+            } else if (currentPeriod !== 'all') {
+                const days = parseInt(currentPeriod);
+                const start = new Date();
+                start.setDate(start.getDate() - days + 1);
+                const startStr = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, '0')}-${String(start.getDate()).padStart(2, '0')}`;
+                records = records.filter(w => w.date >= startStr && w.date <= todayStr());
+            }
+            return records.sort((a, b) => getWeightRecordSortTime(b).localeCompare(getWeightRecordSortTime(a)));
+        }
+
         function renderRecordPage() {
-            const sorted = getSortedWeightRecordsDesc();
+            const allSorted = getSortedWeightRecordsDesc();
+            const sorted = getFilteredWeightRecords();
             updateTodayRecordStatus();
-            const latest = sorted[0];
+            const latest = allSorted[0];
             if (latest) {
                 document.getElementById('latestWeight').textContent = latest.weight;
             }
@@ -4849,8 +5025,8 @@
             const targetText = document.getElementById('targetText');
             if (appData.targetWeight && latest) {
                 const diff = latest.weight - appData.targetWeight;
-                if (diff > 0) { targetText.textContent = `还需减 ${diff.toFixed(1)} 公斤到达目标`; targetCard.classList.remove('achieved'); }
-                else if (diff < 0) { targetText.textContent = `已低于目标 ${Math.abs(diff).toFixed(1)} 公斤`; targetCard.classList.add('achieved'); }
+                if (diff > 0) { targetText.textContent = `还需减 ${diff.toFixed(1)} kg到达目标`; targetCard.classList.remove('achieved'); }
+                else if (diff < 0) { targetText.textContent = `已低于目标 ${Math.abs(diff).toFixed(1)} kg`; targetCard.classList.add('achieved'); }
                 else { targetText.textContent = '🎉 已达成目标！'; targetCard.classList.add('achieved'); }
             } else if (appData.targetWeight) { targetText.textContent = `目标：${appData.targetWeight} kg`; targetCard.classList.remove('achieved'); }
             else { targetText.textContent = '未设置目标体重'; targetCard.classList.remove('achieved'); }
@@ -4865,8 +5041,8 @@
             document.getElementById('metricFat').innerHTML = fat != null ? `${fat.toFixed(1)}<span class="small">%</span>` : '--';
             document.getElementById('metricFatStatus').textContent = latest ? getFatStatus(fat, appData.profile.gender) : '--';
 
-            if (sorted.length >= 2) {
-                const change = sorted[0].weight - sorted[1].weight;
+            if (allSorted.length >= 2) {
+                const change = allSorted[0].weight - allSorted[1].weight;
                 const changeEl = document.getElementById('metricChange');
                 const changeStatus = document.getElementById('metricChangeStatus');
                 if (change > 0) { changeEl.innerHTML = `+${change.toFixed(2)}<span class="small">kg</span>`; changeEl.style.color = '#FFCDD2'; changeStatus.textContent = '上升'; }
@@ -4880,12 +5056,37 @@
             if (sorted.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
             emptyEl.style.display = 'none';
             const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
-            listEl.innerHTML = sorted.map((item, index) => buildWeightRecordCardHtml(item, sorted[index + 1], currentTheme)).join('');
+            // 用全局列表查找每条记录的前一条，保证体重变化对比正确
+            const allIndexMap = new Map(allSorted.map((w, i) => [w.id, i]));
+            listEl.innerHTML = sorted.map((item) => {
+                const allIdx = allIndexMap.get(item.id);
+                const prevItem = allIdx !== undefined ? allSorted[allIdx + 1] : undefined;
+                return buildWeightRecordCardHtml(item, prevItem, currentTheme);
+            }).join('');
             // 绑定左滑手势
             bindRecordSwipe();
         }
 
-        // 构建单条体重记录卡片HTML（复用于每日记录页和趋势页）
+        // 仅刷新最近记录列表（趋势图日期筛选变化时调用）
+        function renderRecordList() {
+            const allSorted = getSortedWeightRecordsDesc();
+            const sorted = getFilteredWeightRecords();
+            document.getElementById('recordCount').textContent = `${sorted.length} 条`;
+            const listEl = document.getElementById('recordList');
+            const emptyEl = document.getElementById('emptyState');
+            if (sorted.length === 0) { listEl.innerHTML = ''; emptyEl.style.display = 'block'; return; }
+            emptyEl.style.display = 'none';
+            const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
+            const allIndexMap = new Map(allSorted.map((w, i) => [w.id, i]));
+            listEl.innerHTML = sorted.map((item) => {
+                const allIdx = allIndexMap.get(item.id);
+                const prevItem = allIdx !== undefined ? allSorted[allIdx + 1] : undefined;
+                return buildWeightRecordCardHtml(item, prevItem, currentTheme);
+            }).join('');
+            bindRecordSwipe();
+        }
+
+        // 构建单条体重记录卡片HTML（复用于每日记录页和数据页）
         function buildWeightRecordCardHtml(item, prevItem, currentTheme) {
             let changeHtml = '<span class="change flat"><span class="change-icon flat" aria-label="首条"></span>0</span>';
             let emojiType = 'flat';
@@ -4909,7 +5110,7 @@
                         <img src="icon/icon-delete.png">
                     </div>
                 </div>
-                <div class="record-card" data-id="${item.id}" data-swipe-width="104" onclick="openRecordHealthPage('${item.id}')">
+                <div class="record-card" data-id="${item.id}" data-date="${item.date}" data-swipe-width="104" onclick="openRecordHealthPage('${item.id}')">
                     <div class="record-icon">${renderEmojiIcon(currentTheme[emojiType])}</div>
                     <div class="record-info"><div class="date">${dateStr}</div><div class="time">${timeStr}</div></div>
                     <div class="record-mid"><div class="status">${statusHtml}</div><div class="weight">${item.weight}<span class="unit"> kg</span></div></div>
@@ -4919,7 +5120,7 @@
             </div>`;
         }
 
-        // 渲染：趋势页
+        // 渲染：数据页
         function getWeightRecordSortTime(item) {
             const date = item.date || '';
             const time = item.time || formatTime(item.createdAt) || '00:00';
@@ -4980,9 +5181,14 @@
             if (!trendChart) trendChart = echarts.init(dom);
             trendChart.resize();
 
-            // 清除上次点击的日期记录详情
-            const detailEl = document.getElementById('trendDayDetail');
-            if (detailEl) { detailEl.style.display = 'none'; detailEl.innerHTML = ''; }
+            // 动态读取主题色
+            const rootStyle = getComputedStyle(document.documentElement);
+            const primaryColor = rootStyle.getPropertyValue('--primary').trim();
+            const hex = primaryColor.replace('#', '');
+            const pr = parseInt(hex.substr(0, 2), 16);
+            const pg = parseInt(hex.substr(2, 2), 16);
+            const pb = parseInt(hex.substr(4, 2), 16);
+            const primaryRgb = `${pr}, ${pg}, ${pb}`;
 
             // 更新日期范围显示
             updateDateRangeText();
@@ -4992,7 +5198,7 @@
                 trendChart.clear();
                 trendChart.setOption({
                     title: { text: '暂无数据', subtext: '添加记录后查看趋势', left:'center', top:'center',
-                        textStyle:{color:'rgba(255,255,255,0.6)',fontSize:16}, subtextStyle:{color:'rgba(255,255,255,0.4)',fontSize:13} }
+                        textStyle:{color:'rgba(0,0,0,0.3)',fontSize:16}, subtextStyle:{color:'rgba(0,0,0,0.2)',fontSize:13} }
                 });
                 document.getElementById('trendDays').textContent = '0天';
                 return;
@@ -5007,7 +5213,7 @@
             if (sorted.length === 0) {
                 updateTrendStats([]);
                 trendChart.clear();
-                trendChart.setOption({ title: { text: '该时间段暂无数据', left:'center', top:'center', textStyle:{color:'rgba(255,255,255,0.6)',fontSize:15} } });
+                trendChart.setOption({ title: { text: '该时间段暂无数据', left:'center', top:'center', textStyle:{color:'rgba(0,0,0,0.3)',fontSize:15} } });
                 return;
             }
 
@@ -5018,12 +5224,12 @@
             const series = [{
                 name: '体重', type: 'line', data: weights,
                 smooth: true, symbol: 'circle', symbolSize: 8,
-                lineStyle: { width: 2.5, color: '#FFFFFF' },
-                itemStyle: { color: '#FFFFFF', borderColor: 'transparent', borderWidth: 0 },
+                lineStyle: { width: 2.5, color: primaryColor },
+                itemStyle: { color: primaryColor, borderColor: 'transparent', borderWidth: 0 },
                 areaStyle: {
                     color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                        { offset: 0, color: 'rgba(255, 255, 255, 0.15)' },
-                        { offset: 1, color: 'rgba(255, 255, 255, 0.01)' }
+                        { offset: 0, color: `rgba(${primaryRgb}, 0.15)` },
+                        { offset: 1, color: `rgba(${primaryRgb}, 0.01)` }
                     ])
                 },
                 z: 10
@@ -5032,67 +5238,60 @@
             if (targetLine) {
                 series.push({
                     name: '目标', type: 'line', data: dates.map(() => targetLine),
-                    lineStyle: { color: 'rgba(255,255,255,0.7)', type: 'dashed', width: 1.5 },
+                    lineStyle: { color: 'rgba(255,107,157,0.6)', type: 'dashed', width: 1.5 },
                     symbol: 'none', silent: true,
                     markPoint: {
                         symbol: 'rect', symbolSize: [36, 16],
                         symbolOffset: ['50%', 0],
-                        label: { show: true, formatter: '目标', color: '#fff', fontSize: 10 },
+                        label: { show: true, formatter: '目标', color: '#FF6B9D', fontSize: 10 },
                         itemStyle: { color: 'transparent' },
                         data: [{ coord: [dates.length - 1, targetLine] }]
                     }
                 });
             }
 
+            trendChart.clear();
             trendChart.setOption({
+                color: [primaryColor, 'rgba(255,107,157,0.6)'],
                 tooltip: {
                     trigger: 'axis',
                     formatter: p => `<strong>${p[0].axisValue}</strong><br/>体重: <strong>${p[0].data} kg</strong>`,
                     backgroundColor: 'rgba(255,255,255,0.95)',
-                    borderColor: 'transparent', textStyle: { color: '#2C3E50', fontSize: 13 }
+                    borderColor: '#eee', textStyle: { color: '#2C3E50', fontSize: 13 }
                 },
-                grid: { left: 38, right: 20, bottom: 30, top: 20 },
+                grid: { left: 38, right: 20, bottom: 28, top: 12 },
                 xAxis: {
                     type: 'category', data: dates,
-                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.3)' } },
+                    axisLine: { lineStyle: { color: 'rgba(0,0,0,0.15)' } },
                     axisTick: { show: false },
-                    axisLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 11, rotate: dates.length > 8 ? 35 : 0 }
+                    axisLabel: { color: 'rgba(0,0,0,0.5)', fontSize: 11, rotate: dates.length > 8 ? 35 : 0 }
                 },
                 yAxis: {
                     type: 'value', scale: true,
                     axisLine: { show: false },
                     axisTick: { show: false },
-                    axisLabel: { color: 'rgba(255,255,255,0.6)', fontSize: 11, formatter: '{value}' },
-                    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.15)', type: 'dashed' } }
+                    axisLabel: { color: 'rgba(0,0,0,0.4)', fontSize: 11, formatter: '{value}' },
+                    splitLine: { lineStyle: { color: 'rgba(0,0,0,0.06)', type: 'dashed' } }
                 },
                 series: series
             }, true);
 
-            // 点击趋势图某一天，在指标下方显示该日记录卡片
+            // 点击趋势图某一天，滚动定位到最近记录列表
             trendChart.off('click');
             trendChart.on('click', function(params) {
                 if (params.componentType === 'series' || params.componentType === 'xAxis') {
                     const date = sorted[params.dataIndex]?.date;
-                    if (date) renderTrendDayDetail(date);
+                    if (date) {
+                        const card = document.querySelector(`.record-card[data-date="${date}"]`);
+                        if (card) {
+                            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            card.style.transition = 'background 0.3s';
+                            card.style.background = `rgba(${primaryRgb}, 0.08)`;
+                            setTimeout(() => { card.style.background = ''; }, 1200);
+                        }
+                    }
                 }
             });
-        }
-
-        // 渲染趋势页点击日期的记录详情
-        function renderTrendDayDetail(date) {
-            const el = document.getElementById('trendDayDetail');
-            if (!el) return;
-            const allSorted = getSortedWeightRecordsDesc();
-            const dayRecords = allSorted.filter(w => w.date === date);
-            if (dayRecords.length === 0) { el.style.display = 'none'; el.innerHTML = ''; return; }
-            const currentTheme = emojiThemes.find(t => t.id === (appData.emojiTheme || 'faces')) || emojiThemes[0];
-            const html = dayRecords.map(item => {
-                const prev = allSorted[allSorted.findIndex(w => w.id === item.id) + 1];
-                return buildWeightRecordCardHtml(item, prev, currentTheme);
-            }).join('');
-            el.innerHTML = html;
-            el.style.display = 'block';
-            bindCardSwipe('.record-card');
         }
 
         document.querySelectorAll('.trend-filter').forEach(tab => {
@@ -5102,6 +5301,7 @@
                 currentPeriod = tab.dataset.period;
                 customDateRange = null;
                 renderTrendChart();
+                renderRecordList();
             });
         });
 
@@ -5127,6 +5327,7 @@
             });
             document.getElementById('dateDropdown').classList.remove('show');
             renderTrendChart();
+            renderRecordList();
         }
 
         function formatDateShort(dateStr) {
@@ -5194,6 +5395,7 @@
             document.querySelectorAll('.date-quick-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('dateDropdown').classList.remove('show');
             renderTrendChart();
+            renderRecordList();
         }
 
         // 渲染：我的页
@@ -5748,15 +5950,27 @@
                 document.addEventListener('mouseup', swipeEnd);
                 document.addEventListener('mouseleave', swipeEnd);
                 document.addEventListener('click', function(e) {
+                    const isActBtn = !!e.target.closest('.record-actions .act-btn, .note-card-actions .act-btn');
                     const opened = swipeOpenedCards();
-                    if (opened.length && !e.target.closest('.record-actions .act-btn, .note-card-actions .act-btn')) {
+
+                    if (isActBtn) {
+                        // 点击操作按钮：立即关闭所有滑动卡片，清除抑制标志，放行点击
+                        if (opened.length) swipeCloseAll();
+                        suppressCardClick = false;
+                        return;
+                    }
+
+                    if (opened.length) {
+                        // 有打开的卡片时点击非按钮区域：关闭卡片并阻止本次点击
                         swipeCloseAll();
                         e.stopPropagation();
                         e.preventDefault();
                         suppressCardClick = false;
                         return;
                     }
+
                     if (suppressCardClick) {
+                        // 拖拽后抑制一次卡片自身点击
                         suppressCardClick = false;
                         e.stopPropagation();
                         e.preventDefault();
@@ -6472,7 +6686,7 @@
             });
         }
 
-        // ========== 生理期功能 ==========
+        // ========== 生理周期功能 ==========
         function renderPeriodPage() {
             const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
             document.getElementById('periodLengthValue').textContent = ps.periodLength;
@@ -6585,6 +6799,7 @@
                 const dateStr = formatDateStr(new Date(year, month, d));
                 let classes = 'period-cal-day';
                 if (dateStr === todayStr) classes += ' today';
+                if (dateStr === selectedCalDay) classes += ' selected';
                 if (actualDays.has(dateStr)) { classes += ' actual'; }
                 else if (predictedDays.has(dateStr)) { classes += ' predicted'; }
                 else if (ovulationDaySet.has(dateStr)) { classes += ' ovulation-day'; }
@@ -6610,6 +6825,7 @@
                 currentPeriodCalMonth.month = 11;
                 currentPeriodCalMonth.year--;
             }
+            animateCalGrid('prev');
             renderPeriodCalendar();
         }
 
@@ -6620,7 +6836,16 @@
                 currentPeriodCalMonth.month = 0;
                 currentPeriodCalMonth.year++;
             }
+            animateCalGrid('next');
             renderPeriodCalendar();
+        }
+
+        function animateCalGrid(dir) {
+            const grid = document.getElementById('periodCalGrid');
+            if (!grid) return;
+            grid.classList.remove('cal-anim-next', 'cal-anim-prev');
+            void grid.offsetWidth; // 强制重排以重启动画
+            grid.classList.add(dir === 'next' ? 'cal-anim-next' : 'cal-anim-prev');
         }
 
         function togglePeriodSettings() {
@@ -6658,6 +6883,8 @@
         function onPeriodDayClick(dateStr) {
             selectedPeriodDay = dateStr;
             selectedPeriodNoteDate = dateStr;
+            selectedCalDay = dateStr;
+            renderPeriodCalendar();
             renderPeriodNoteEditor();
             const d = new Date(dateStr + 'T00:00:00');
             const dateDisplay = `${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日`;
@@ -6889,17 +7116,30 @@
 
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const lastPeriod = sorted.find(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
-            if (!lastPeriod) return days;
-
-            const lastStart = new Date(lastPeriod.startDate + 'T00:00:00');
             const futureLimit = new Date(today.getFullYear(), today.getMonth() + 4, 0);
 
-            // 排卵日 = 下次经期开始前14天
-            let i = 0;
+            // 获取所有有开始日期的实际记录，按开始日期升序排列
+            const actualStarts = sorted
+                .filter(p => p.startDate)
+                .map(p => new Date(p.startDate + 'T00:00:00'))
+                .sort((a, b) => a - b);
+
+            if (actualStarts.length === 0) return days;
+
+            // 1. 计算实际经期记录之间的排卵日（排卵日 = 下次经期开始前14天）
+            for (let i = 0; i < actualStarts.length - 1; i++) {
+                const nextStart = actualStarts[i + 1];
+                const ovulation = new Date(nextStart);
+                ovulation.setDate(ovulation.getDate() - 14);
+                days.add(formatDateStr(ovulation));
+            }
+
+            // 2. 从最后一条实际经期开始，预测未来的排卵日
+            const lastStart = actualStarts[actualStarts.length - 1];
+            let i = 1;
             while (true) {
                 const nextStart = new Date(lastStart);
-                nextStart.setDate(nextStart.getDate() + ps.cycleLength * (i + 1));
+                nextStart.setDate(nextStart.getDate() + ps.cycleLength * i);
                 if (nextStart > futureLimit) break;
                 const ovulation = new Date(nextStart);
                 ovulation.setDate(ovulation.getDate() - 14);
@@ -7087,19 +7327,24 @@
                     daysStr = '';
                 }
                 const cycleInfo = cycleInfoMap.get(p.id || p.startDate) || { type: 'first' };
-                let cycleHtml = '<div class="period-record-tag actual">首条</div>';
-                if (cycleInfo.type === 'cycle') {
-                    const barWidth = Math.max(36, Math.min(100, Math.round(cycleInfo.days / maxCycleDays * 100)));
-                    cycleHtml = `<div class="period-cycle-chart">
-                        <div class="period-cycle-bar ${p.predicted ? 'predicted' : ''}" style="width:${barWidth}%;">${cycleInfo.days}天</div>
-                    </div>`;
+                let barBgHtml = '';
+                let labelHtml = '';
+                if (cycleInfo.type === 'first') {
+                    // 首条记录：柱形图背景默认铺满，首条标签与周期天数标签位置一致（卡片最右端）
+                    barBgHtml = `<div class="period-cycle-bar-bg ${p.predicted ? 'predicted' : ''}" style="width:100%;"></div>`;
+                    labelHtml = `<div class="period-cycle-label">首条</div>`;
+                } else {
+                    const barWidth = Math.max(20, Math.min(100, Math.round(cycleInfo.days / maxCycleDays * 100)));
+                    barBgHtml = `<div class="period-cycle-bar-bg ${p.predicted ? 'predicted' : ''}" style="width:${barWidth}%;"></div>`;
+                    labelHtml = `<div class="period-cycle-label">${cycleInfo.days}天</div>`;
                 }
                 html += `<div class="period-record-card" onclick="jumpToPeriodDate('${p.startDate}')">
+                    ${barBgHtml}
                     <div class="period-record-info">
                         <div class="period-record-dates">${datesStr}</div>
                         ${daysStr ? `<div class="period-record-days">${daysStr}</div>` : ''}
                     </div>
-                    ${cycleHtml}
+                    ${labelHtml}
                 </div>`;
             });
             list.innerHTML = html;
@@ -7111,6 +7356,7 @@
             if (isNaN(d)) return;
             currentPeriodCalMonth = { year: d.getFullYear(), month: d.getMonth() };
             selectedPeriodNoteDate = dateStr;
+            selectedCalDay = dateStr;
             renderPeriodCalendar();
             renderPeriodNoteEditor();
             const container = document.querySelector('.page-container');
@@ -7120,13 +7366,229 @@
             }
         }
 
+        function jumpToPeriodToday() {
+            const todayStr = formatDateStr(new Date());
+            jumpToPeriodDate(todayStr);
+        }
+
+        // ========== 首页渲染 ==========
+        function renderHomePage() {
+            const now = new Date();
+            const weekDays = ['日','一','二','三','四','五','六'];
+            const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+            // 日期与问候
+            document.getElementById('homeDate').textContent = `${monthNames[now.getMonth()]} ${now.getDate()}日 · 星期${weekDays[now.getDay()]}`;
+            const hour = now.getHours();
+            let greeting = '早安';
+            if (hour >= 12 && hour < 18) greeting = '下午好';
+            else if (hour >= 18) greeting = '晚上好';
+            const userName = (appData.profile && appData.profile.name) || '';
+            document.getElementById('homeGreeting').textContent = `${greeting}${userName ? '，' + userName : ''}`;
+
+            // ---- 体重卡片 ----
+            const weights = getSortedWeightRecordsDesc();
+            const todayStr = formatDateStr(now);
+            const todayRecords = weights.filter(r => r.date === todayStr);
+            const todayRecord = todayRecords[0] || null;
+
+            if (todayRecord) {
+                document.getElementById('homeWeightStatus').textContent = '体重 · 今日已记录';
+                document.getElementById('homeWeightNum').textContent = todayRecord.weight;
+                // 找上一条（非今天的最新记录）
+                const prev = weights.find(r => r.date !== todayStr);
+                if (prev) {
+                    const diff = todayRecord.weight - prev.weight;
+                    if (diff > 0) {
+                        document.getElementById('homeWeightTrend').textContent = `较上次 ↑ ${diff.toFixed(1)} kg`;
+                    } else if (diff < 0) {
+                        document.getElementById('homeWeightTrend').textContent = `较上次 ↓ ${Math.abs(diff).toFixed(1)} kg，继续保持`;
+                    } else {
+                        document.getElementById('homeWeightTrend').textContent = '较上次持平';
+                    }
+                } else {
+                    document.getElementById('homeWeightTrend').textContent = '首次记录，继续加油';
+                }
+            } else if (weights.length > 0) {
+                const latest = weights[0];
+                const daysSince = Math.round((new Date(todayStr + 'T00:00:00') - new Date(latest.date + 'T00:00:00')) / 86400000);
+                document.getElementById('homeWeightStatus').textContent = '体重 · 今日未记录';
+                document.getElementById('homeWeightNum').textContent = latest.weight;
+                document.getElementById('homeWeightTrend').textContent = daysSince === 0
+                    ? '今天还没记录，点击添加'
+                    : `${daysSince}天前记录 · 点击记录今日体重`;
+            } else {
+                document.getElementById('homeWeightStatus').textContent = '体重 · 今日未记录';
+                document.getElementById('homeWeightNum').textContent = '--';
+                document.getElementById('homeWeightTrend').textContent = '点击记录今日体重';
+            }
+
+            // ---- 本周目标 ----
+            const goalRing = document.getElementById('homeGoalRing');
+            const goalPercent = document.getElementById('homeGoalPercent');
+            const goalTitle = document.getElementById('homeGoalTitle');
+            const goalDesc = document.getElementById('homeGoalDesc');
+
+            if (appData.targetWeight && weights.length > 0) {
+                const currentWeight = weights[0].weight;
+                const initialWeight = weights[weights.length - 1].weight;
+
+                if (initialWeight > appData.targetWeight) {
+                    const totalNeeded = initialWeight - appData.targetWeight;
+                    const achieved = currentWeight - appData.targetWeight;
+                    const progress = Math.min(100, Math.max(0, ((totalNeeded - achieved) / totalNeeded) * 100));
+                    goalRing.style.strokeDashoffset = 157 - (157 * progress / 100);
+                    goalPercent.textContent = `${Math.round(progress)}%`;
+
+                    if (achieved > 0) {
+                        goalTitle.textContent = `距目标还差 ${achieved.toFixed(1)} kg`;
+                    } else {
+                        goalTitle.textContent = '已达成目标 🎉';
+                    }
+                    // 本周记录次数
+                    const weekAgo = new Date(now);
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    const weekAgoStr = formatDateStr(weekAgo);
+                    const weeklyCount = weights.filter(r => r.date >= weekAgoStr).length;
+                    goalDesc.textContent = `本周记录 ${weeklyCount} 次 · 目标 ${appData.targetWeight} kg`;
+                } else {
+                    goalRing.style.strokeDashoffset = 0;
+                    goalPercent.textContent = '100%';
+                    goalTitle.textContent = '当前体重已达目标';
+                    goalDesc.textContent = `目标体重 ${appData.targetWeight} kg`;
+                }
+            } else {
+                goalRing.style.strokeDashoffset = 157;
+                goalPercent.textContent = '0%';
+                goalTitle.textContent = '未设置目标';
+                goalDesc.textContent = '设置目标体重，追踪进度';
+            }
+
+            // ---- 周期状态 ----
+            const periodRecords = getSortedPeriods();
+            const cycleSection = document.getElementById('homeCycleSection');
+
+            if (periodRecords.length > 0) {
+                cycleSection.style.display = 'block';
+                const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const todayStr2 = formatDateStr(today);
+                const actualDays = getActualPeriodDays();
+
+                const countdownEl = document.getElementById('homeCycleCountdown');
+                const nextDateEl = document.getElementById('homeCycleNextDate');
+                const ringEl = document.getElementById('homeCycleRing');
+                const fertilityEl = document.getElementById('homeCycleFertility');
+                const ovulationEl = document.getElementById('homeCycleOvulation');
+                const ringCircumference = 345.6;
+
+                // 今天是否在经期内
+                if (actualDays.has(todayStr2)) {
+                    const activePeriod = periodRecords.find(p => {
+                        if (!p.startDate) return false;
+                        const start = new Date(p.startDate + 'T00:00:00');
+                        let end;
+                        if (p.endDate) {
+                            end = new Date(p.endDate + 'T00:00:00');
+                        } else {
+                            end = new Date(start);
+                            end.setDate(end.getDate() + ps.periodLength - 1);
+                        }
+                        return today >= start && today <= end;
+                    });
+                    if (activePeriod) {
+                        const start = new Date(activePeriod.startDate + 'T00:00:00');
+                        const dayNum = Math.round((today - start) / 86400000) + 1;
+                        countdownEl.textContent = `第${dayNum}天`;
+                        nextDateEl.textContent = '经期中';
+                        // 圆环显示经期进度
+                        const progress = Math.min(1, dayNum / ps.periodLength);
+                        ringEl.style.strokeDashoffset = ringCircumference * (1 - progress);
+                        // 经期期间受孕概率低
+                        fertilityEl.textContent = '低';
+                        // 计算下次排卵日
+                        let nextStart = new Date(start);
+                        nextStart.setDate(nextStart.getDate() + ps.cycleLength);
+                        while (new Date(nextStart.getTime() + (ps.periodLength - 1) * 86400000) < today) {
+                            nextStart.setDate(nextStart.getDate() + ps.cycleLength);
+                        }
+                        const ovulationDay = new Date(nextStart);
+                        ovulationDay.setDate(ovulationDay.getDate() - 14);
+                        const ovulationDiff = Math.round((ovulationDay - today) / 86400000);
+                        ovulationEl.textContent = ovulationDiff > 0 ? `D-${ovulationDiff}` : '已过';
+                    }
+                } else {
+                    // 计算周期日与预测下次经期
+                    const lastPeriod = periodRecords.find(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
+                    if (lastPeriod) {
+                        const lastStart = new Date(lastPeriod.startDate + 'T00:00:00');
+                        const cycleDay = Math.round((today - lastStart) / 86400000) + 1;
+
+                        // 预测下次经期
+                        let nextStart = new Date(lastStart);
+                        nextStart.setDate(nextStart.getDate() + ps.cycleLength);
+                        let predEnd = new Date(nextStart);
+                        predEnd.setDate(predEnd.getDate() + ps.periodLength - 1);
+
+                        while (predEnd < today) {
+                            nextStart.setDate(nextStart.getDate() + ps.cycleLength);
+                            predEnd = new Date(nextStart);
+                            predEnd.setDate(predEnd.getDate() + ps.periodLength - 1);
+                        }
+
+                        const diffDays = Math.round((nextStart - today) / 86400000);
+                        const ovulationDay = new Date(nextStart);
+                        ovulationDay.setDate(ovulationDay.getDate() - 14);
+                        const ovulationDiff = Math.round((ovulationDay - today) / 86400000);
+
+                        // 倒计时
+                        countdownEl.textContent = diffDays > 0 ? `D-${diffDays}` : '今天';
+                        // 日期显示 M.D 格式
+                        nextDateEl.textContent = `${nextStart.getMonth() + 1}.${nextStart.getDate()}`;
+
+                        // 圆环显示周期进度
+                        const progress = Math.min(1, cycleDay / ps.cycleLength);
+                        ringEl.style.strokeDashoffset = ringCircumference * (1 - progress);
+
+                        // 受孕概率
+                        if (ovulationDiff >= -1 && ovulationDiff <= 2) {
+                            fertilityEl.textContent = '高';
+                        } else if (ovulationDiff >= -3 && ovulationDiff <= 5) {
+                            fertilityEl.textContent = '中';
+                        } else {
+                            fertilityEl.textContent = '低';
+                        }
+
+                        // 下次排卵倒计时
+                        if (ovulationDiff > 0) {
+                            ovulationEl.textContent = `D-${ovulationDiff}`;
+                        } else if (ovulationDiff === 0) {
+                            ovulationEl.textContent = '今天';
+                        } else {
+                            ovulationEl.textContent = '已过';
+                        }
+                    } else {
+                        countdownEl.textContent = '--';
+                        nextDateEl.textContent = '待记录';
+                        ringEl.style.strokeDashoffset = ringCircumference;
+                        fertilityEl.textContent = '--';
+                        ovulationEl.textContent = '--';
+                    }
+                }
+            } else {
+                cycleSection.style.display = 'none';
+            }
+        }
+
         function renderAll() {
+            renderHomePage();
             renderRecordPage();
             renderTrendStats();
             renderProfilePage();
             renderNotesPage();
             renderPeriodPage();
-            if (document.getElementById('page-trend').classList.contains('active')) renderTrendChart();
+            if (document.getElementById('page-record').classList.contains('active')) renderTrendChart();
             if (document.getElementById('page-record-health').classList.contains('active') && currentRecordHealthId) {
                 renderRecordHealthPage(currentRecordHealthId);
             }
@@ -7161,6 +7623,31 @@
                     }
                 }
             }, { passive: true });
+        })();
+
+        // ========== 经期日历左右滑动切换月份 ==========
+        (function() {
+            const grid = document.getElementById('periodCalGrid');
+            if (!grid || grid._swipeBound) return;
+            grid._swipeBound = true;
+            let startX = 0, startY = 0, startTime = 0, tracking = false;
+            grid.addEventListener('pointerdown', function(e) {
+                startX = e.clientX; startY = e.clientY;
+                startTime = Date.now(); tracking = true;
+            });
+            grid.addEventListener('pointerup', function(e) {
+                if (!tracking) return;
+                tracking = false;
+                const deltaX = e.clientX - startX;
+                const deltaY = e.clientY - startY;
+                const elapsed = Date.now() - startTime;
+                // 水平滑动为主，距离>50px，水平位移>垂直位移，时间<600ms
+                if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5 && elapsed < 600) {
+                    if (deltaX < 0) nextPeriodMonth();
+                    else prevPeriodMonth();
+                }
+            });
+            grid.addEventListener('pointercancel', function() { tracking = false; });
         })();
 
         // ========== 底部弹窗手势（上滑铺满 / 下滑关闭 / 左滑关闭） ==========
