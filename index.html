@@ -5504,9 +5504,9 @@
                 return;
             }
             const weights = trendData.map(w => w.weight);
-            const max = Math.max(...weights);
-            const min = Math.min(...weights);
-            const total = (trendData[trendData.length - 1].weight - trendData[0].weight);
+            const max = Math.max(...weights).toFixed(2);
+            const min = Math.min(...weights).toFixed(2);
+            const total = (trendData[trendData.length - 1].weight - trendData[0].weight).toFixed(2);
             document.getElementById('trendMax').innerHTML = `${max}<span class="unit">kg</span>`;
             document.getElementById('trendMin').innerHTML = `${min}<span class="unit">kg</span>`;
             const sign = parseFloat(total) > 0 ? '+' : '';
