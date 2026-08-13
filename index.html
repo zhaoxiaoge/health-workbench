@@ -646,7 +646,7 @@
         }
         .note-meta-bar {
             display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 10px;
+            margin-bottom: 10px; position: relative;
         }
         .note-category-select {
             display: flex; align-items: center; gap: 4px;
@@ -655,9 +655,10 @@
         }
         .note-timestamp { font-size: 12px; color: var(--text-light); }
         .note-category-dropdown {
+            position: absolute; top: 100%; left: 0;
             background: var(--card-bg); border-radius: 12px;
-            box-shadow: var(--shadow-md); padding: 6px 0; margin-bottom: 10px;
-            z-index: 10;
+            box-shadow: var(--shadow-md); padding: 6px 0;
+            z-index: 10; min-width: 140px;
         }
         .note-cat-option {
             padding: 10px 16px; font-size: 14px; cursor: pointer;
@@ -882,7 +883,7 @@
         }
         .trend-sticky-nav .nav-center { color: white; }
 
-        /* ========== 数据看板趋势页 - 全屏青绿背景 ========== */
+        /* ========== 趋势 - 全屏青绿背景 ========== */
         .trend-page-bg {
             background: var(--teal-gradient);
             min-height: 100%;
@@ -916,10 +917,12 @@
             display: flex; gap: 8px; padding: 0 20px 16px;
         }
         .trend-filter {
-            padding: 6px 16px; border-radius: 20px;
+            flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            padding: 6px 0; border-radius: 20px;
             border: 1px solid var(--border);
             background: transparent; color: var(--text-secondary);
-            font-size: 13px; cursor: pointer; font-family: inherit;
+            font-size: clamp(11px, 3vw, 13px); cursor: pointer; font-family: inherit;
+            text-align: center;
             transition: all 0.2s;
         }
         .trend-filter.active {
@@ -966,14 +969,14 @@
             height: 60%; width: 1px;
             background: var(--primary-light);
         }
-        .trend-stat-item .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; }
-        .trend-stat-item .value { font-size: 17px; font-weight: 700; color: var(--primary); }
+        .trend-stat-item .label { font-size: 11px; color: var(--text-secondary); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .trend-stat-item .value { font-weight: 700; color: var(--primary); white-space: nowrap; font-size: clamp(11px, 3.5vw, 17px); }
         .trend-stat-item .value .unit { font-size: 11px; color: var(--text-secondary); }
 
         /* ========== 首页 ========== */
         .home-header {
             background: var(--teal-gradient);
-            padding: calc(env(safe-area-inset-top, 0px) + 28px) 20px 20px;
+            padding: 8px 20px 20px;
             border-radius: 0 0 28px 28px;
         }
         .home-date {
@@ -985,31 +988,110 @@
         }
         .home-content {
             padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
         .home-weight-card {
-            background: var(--teal-gradient);
+            background: var(--card-bg);
             border-radius: 20px;
             padding: 20px;
-            color: white;
+            color: var(--text);
             box-shadow: var(--shadow);
             cursor: pointer;
             transition: transform 0.15s ease;
         }
         .home-weight-card:active { transform: scale(0.98); }
-        .home-weight-top {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 8px;
+        .home-weight-status {
+            display: inline-flex; align-items: center;
+            height: 28px; padding: 0 12px; border-radius: 999px;
+            background: var(--primary); color: white;
+            font-size: 12px; font-weight: 600; white-space: nowrap;
+            cursor: pointer; flex-shrink: 0;
         }
-        .home-weight-status { font-size: 13px; opacity: 0.85; }
-        .home-weight-arrow { font-size: 22px; opacity: 0.7; }
+        .home-weight-status:active { opacity: 0.72; transform: scale(0.96); }
         .home-weight-value { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
-        .home-weight-value .number { font-size: 42px; font-weight: 800; line-height: 1; }
-        .home-weight-value .unit { font-size: 16px; opacity: 0.8; }
-        .home-weight-trend { font-size: 13px; opacity: 0.8; }
+        .home-weight-value .number { font-size: 42px; font-weight: 800; line-height: 1; color: var(--text); }
+        .home-weight-value .unit { font-size: 16px; color: var(--text-secondary); }
+        .home-weight-value .home-weight-status { margin-left: auto; align-self: center; }
+        .home-weight-trend { font-size: 13px; color: var(--text-secondary); }
+
+        .home-quick-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        .home-quick-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+        .home-quick-grid { display: flex; gap: 12px; }
+        .home-quick-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+            cursor: pointer; transition: transform 0.15s ease;
+        }
+        .home-quick-item:active { transform: scale(0.95); }
+        .home-quick-icon {
+            width: 56px; height: 56px; border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .home-quick-icon.weight { background: #E8F8F5; }
+        .home-quick-icon.cycle { background: #FCE4EC; }
+        .home-quick-icon.diary { background: #FFF8E1; }
+        .home-quick-icon-img {
+            width: 28px; height: 28px;
+            -webkit-mask-size: contain; mask-size: contain;
+            -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+            -webkit-mask-position: center; mask-position: center;
+            display: inline-block;
+        }
+        .home-quick-icon.weight .home-quick-icon-img { background-color: #2AB5B0; }
+        .home-quick-icon.cycle .home-quick-icon-img { background-color: #E91E63; }
+        .home-quick-icon.diary .home-quick-icon-img { background-color: #F9A825; }
+        .home-quick-label { font-size: 13px; font-weight: 600; color: var(--text); }
+
+        /* ========== 自定义布局页 ========== */
+        #page-layout-edit { min-height: calc(100vh - 80px); min-height: calc(100dvh - 80px); }
+        .layout-list { display: flex; flex-direction: column; gap: 12px; }
+        .layout-item {
+            display: flex; align-items: center; gap: 12px;
+            background: var(--card-bg); border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.2s, opacity 0.2s;
+        }
+        .layout-item.dragging { opacity: 0.5; box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+        .layout-item.drag-over { border: 2px dashed var(--primary); }
+        .layout-item.hidden-card { opacity: 0.45; }
+        .layout-drag-handle {
+            cursor: grab; font-size: 20px; color: var(--text-light);
+            line-height: 1; flex-shrink: 0; padding: 4px;
+            touch-action: none;
+        }
+        .layout-drag-handle:active { cursor: grabbing; }
+        .layout-item-info { flex: 1; min-width: 0; }
+        .layout-item-name { font-size: 15px; font-weight: 600; color: var(--text); }
+        .layout-item-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+        .layout-toggle {
+            position: relative; width: 44px; height: 26px;
+            background: #E0E0E0; border-radius: 999px;
+            cursor: pointer; transition: background 0.2s;
+            flex-shrink: 0;
+        }
+        .layout-toggle.on { background: var(--primary); }
+        .layout-toggle::after {
+            content: ''; position: absolute; top: 3px; left: 3px;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: white; transition: transform 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .layout-toggle.on::after { transform: translateX(18px); }
+        .layout-hint {
+            font-size: 13px; color: var(--text-secondary);
+            padding: 0 0 16px; line-height: 1.5;
+        }
 
         .home-section-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin: 24px 0 12px;
+            margin: 8px 0 12px;
         }
         .home-section-header span:first-child { font-size: 16px; font-weight: 700; color: var(--text); }
         .home-section-link { font-size: 13px; color: var(--primary); cursor: pointer; }
@@ -1046,22 +1128,23 @@
             align-items: center;
         }
         .home-cycle-card:active { transform: scale(0.98); }
-        .home-cycle-ring { position: relative; width: 130px; height: 130px; margin-bottom: 16px; }
+        .home-cycle-content { display: flex; align-items: center; width: 100%; }
+        .home-cycle-ring { position: relative; width: 50%; height: 130px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         .home-cycle-ring-content {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             text-align: center; display: flex; flex-direction: column; align-items: center;
+            width: 96px;
         }
-        .home-cycle-countdown { font-size: 30px; font-weight: 800; color: white; line-height: 1; }
+        .home-cycle-countdown { font-size: 26px; font-weight: 800; color: white; line-height: 1; white-space: nowrap; }
         .home-cycle-ring-label { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; }
         .home-cycle-ring-date { font-size: 14px; color: white; font-weight: 600; margin-top: 2px; }
         .home-cycle-bottom {
-            display: flex; width: 100%; align-items: center; justify-content: center;
-            padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.15);
+            display: flex; flex-direction: column; gap: 12px; width: 50%; align-items: flex-end;
         }
-        .home-cycle-stat { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .home-cycle-stat { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
         .home-cycle-stat-label { font-size: 11px; color: rgba(255,255,255,0.7); }
         .home-cycle-stat-value { font-size: 16px; font-weight: 700; color: white; }
-        .home-cycle-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
+        .home-cycle-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.15); }
 
         /* ========== 我的页面 ========== */
         .profile-header {
@@ -1094,6 +1177,9 @@
             padding: 18px;
             box-shadow: var(--shadow-md);
             position: relative; z-index: 10;
+        }
+        .home-content .bmi-card {
+            margin: 0;
         }
 
         .bmi-header {
@@ -1642,6 +1728,7 @@
         .period-calendar-wrap {
             background: var(--card-bg); border-radius: 16px;
             padding: 16px; box-shadow: var(--shadow);
+            touch-action: pan-y;
         }
         .period-cal-header {
             display: flex; align-items: center; justify-content: space-between;
@@ -1967,11 +2054,17 @@
         }
         .avatar-upload-hint {
             position: absolute; bottom: -2px; right: -2px;
-            width: 22px; height: 22px; border-radius: 50%;
+            width: 18px; height: 18px; border-radius: 50%;
             background: white; display: flex; align-items: center; justify-content: center;
-            font-size: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            font-size: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
             border: 2px solid var(--primary);
         }
+        .avatar-action-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 16px 20px; font-size: 15px; cursor: pointer;
+            border-bottom: 1px solid var(--border);
+        }
+        .avatar-action-item:active { background: var(--bg); }
 
         /* ========== 目标管理 - 进度卡片 ========== */
         .goal-progress-card {
@@ -2031,7 +2124,7 @@
             <div class="page" id="page-record">
                 <div class="sticky-nav-bar">
                     <div class="header-top">
-                        <div class="header-title">体重</div>
+                        <div class="header-title">体重记录</div>
                         <div class="header-icons" style="position:relative;">
                             <div class="icon-btn" onclick="openWeightDownloadSheet()"><img src="icon/icon-export.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="icon-btn" onclick="toggleDropdown('dropdownMenu')">⋯</div>
@@ -2191,25 +2284,59 @@
 
             <!-- ============ 首页 ============ -->
             <div class="page active" id="page-trend">
+                <div class="sticky-nav-bar">
+                    <div class="header-top">
+                        <div class="header-title">月半日记</div>
+                        <div class="header-icons" style="position:relative;">
+                            <div class="icon-btn" onclick="toggleDropdown('homeDropdownMenu')">⋯</div>
+                            <div class="dropdown-menu" id="homeDropdownMenu">
+                                <div class="dropdown-item" onclick="document.querySelectorAll('.dropdown-menu').forEach(m=>m.classList.remove('show')); openLayoutEdit();">
+                                    <img src="icon/icon-settings.png" style="width:18px; height:18px; object-fit:contain;"> 自定义布局
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="home-header">
                     <div class="home-date" id="homeDate"></div>
                     <div class="home-greeting" id="homeGreeting"></div>
                 </div>
-                <div class="home-content">
-                    <!-- 体重卡片 -->
-                    <div class="home-weight-card" id="homeWeightCard" onclick="switchPage('record')">
-                        <div class="home-weight-top">
-                            <span class="home-weight-status" id="homeWeightStatus">体重 · 今日未记录</span>
-                            <span class="home-weight-arrow">›</span>
+                <div class="home-content" id="homeContent">
+                    <!-- 综合快捷记录 -->
+                    <div class="home-quick-card" data-card-id="quick">
+                        <div class="home-quick-title">今天想记录什么？</div>
+                        <div class="home-quick-grid">
+                            <div class="home-quick-item" onclick="openTodayRecordSheet()">
+                                <div class="home-quick-icon weight">
+                                    <span class="home-quick-icon-img" style="-webkit-mask-image:url('icon/icon-nav-weight.png'); mask-image:url('icon/icon-nav-weight.png');"></span>
+                                </div>
+                                <span class="home-quick-label">记录体重</span>
+                            </div>
+                            <div class="home-quick-item" onclick="switchPage('notes')">
+                                <div class="home-quick-icon diary">
+                                    <span class="home-quick-icon-img" style="-webkit-mask-image:url('icon/icon-nav-notes.png'); mask-image:url('icon/icon-nav-notes.png');"></span>
+                                </div>
+                                <span class="home-quick-label">写日记</span>
+                            </div>
+                            <div class="home-quick-item" onclick="switchPage('period')">
+                                <div class="home-quick-icon cycle">
+                                    <span class="home-quick-icon-img" style="-webkit-mask-image:url('icon/icon-nav-period.png'); mask-image:url('icon/icon-nav-period.png');"></span>
+                                </div>
+                                <span class="home-quick-label">更新周期</span>
+                            </div>
                         </div>
+                    </div>
+                    <!-- 体重卡片 -->
+                    <div class="home-weight-card" data-card-id="weight" id="homeWeightCard" onclick="switchPage('record')">
                         <div class="home-weight-value">
                             <span class="number" id="homeWeightNum">--</span>
                             <span class="unit">kg</span>
+                            <span class="home-weight-status" id="homeWeightStatus" onclick="event.stopPropagation(); openTodayRecordSheet()">今日未记录</span>
                         </div>
                         <div class="home-weight-trend" id="homeWeightTrend">点击记录今日体重</div>
                     </div>
                     <!-- 本周目标 -->
-                    <div class="home-goal-card" onclick="openTargetEdit()">
+                    <div class="home-goal-card" data-card-id="goal" onclick="openTargetEdit()">
                         <div class="home-goal-ring">
                             <svg width="60" height="60" viewBox="0 0 60 60">
                                 <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="5"/>
@@ -2223,29 +2350,77 @@
                         </div>
                     </div>
                     <!-- 周期状态 -->
-                    <div id="homeCycleSection" style="display:none;">
+                    <div id="homeCycleSection" data-card-id="cycle" style="display:none;">
                         <div class="home-cycle-card" onclick="switchPage('period')">
-                            <div class="home-cycle-ring">
-                                <svg width="130" height="130" viewBox="0 0 130 130">
-                                    <circle cx="65" cy="65" r="55" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="6"/>
-                                    <circle id="homeCycleRing" cx="65" cy="65" r="55" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="6" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6" transform="rotate(-90 65 65)"/>
-                                </svg>
-                                <div class="home-cycle-ring-content">
-                                    <span class="home-cycle-countdown" id="homeCycleCountdown">--</span>
-                                    <span class="home-cycle-ring-label">下一次经期</span>
-                                    <span class="home-cycle-ring-date" id="homeCycleNextDate">--</span>
+                            <div class="home-cycle-empty" id="homeCycleEmpty" style="display:none; padding:24px 20px; text-align:center; font-size:14px; color:rgba(255,255,255,0.9);">暂无生理周期数据，点击记录</div>
+                            <div class="home-cycle-content" id="homeCycleContent">
+                                <div class="home-cycle-ring">
+                                    <svg width="130" height="130" viewBox="0 0 130 130">
+                                        <circle cx="65" cy="65" r="55" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="6"/>
+                                        <circle id="homeCycleRing" cx="65" cy="65" r="55" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="6" stroke-linecap="round" stroke-dasharray="345.6" stroke-dashoffset="345.6" transform="rotate(-90 65 65)"/>
+                                    </svg>
+                                    <div class="home-cycle-ring-content">
+                                        <span class="home-cycle-countdown" id="homeCycleCountdown">--</span>
+                                        <span class="home-cycle-ring-label" id="homeCycleRingLabel">下一次经期</span>
+                                        <span class="home-cycle-ring-date" id="homeCycleNextDate">--</span>
+                                    </div>
+                                </div>
+                                <div class="home-cycle-bottom">
+                                    <div class="home-cycle-stat">
+                                        <span class="home-cycle-stat-label">受孕概率</span>
+                                        <span class="home-cycle-stat-value" id="homeCycleFertility">--</span>
+                                    </div>
+                                    <div class="home-cycle-divider"></div>
+                                    <div class="home-cycle-stat">
+                                        <span class="home-cycle-stat-label">下次排卵</span>
+                                        <span class="home-cycle-stat-value" id="homeCycleOvulation">--</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="home-cycle-bottom">
-                                <div class="home-cycle-stat">
-                                    <span class="home-cycle-stat-label">受孕概率</span>
-                                    <span class="home-cycle-stat-value" id="homeCycleFertility">--</span>
+                        </div>
+                    </div>
+                    <!-- 健康指标 -->
+                    <div class="bmi-card" data-card-id="health">
+                        <div class="bmi-header">
+                            <h3>健康指标</h3>
+                            <span class="bmi-status-tag none" id="homeHealthBmiStatusTag">--</span>
+                        </div>
+                        <div class="bmi-body">
+                            <div class="bmi-gauge" onclick="showBmiFormulaTip(this, 'homeHealth')" title="查看 BMI 计算公式">
+                                <svg width="90" height="90" viewBox="0 0 90 90">
+                                    <circle cx="45" cy="45" r="38" fill="none" stroke="#ECF0F1" stroke-width="7"/>
+                                    <circle id="homeHealthBmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
+                                </svg>
+                                <div class="gauge-value">
+                                    <div class="num" id="homeHealthBmiNum">--</div>
+                                    <div class="lbl">BMI</div>
                                 </div>
-                                <div class="home-cycle-divider"></div>
-                                <div class="home-cycle-stat">
-                                    <span class="home-cycle-stat-label">下次排卵</span>
-                                    <span class="home-cycle-stat-value" id="homeCycleOvulation">--</span>
-                                </div>
+                            </div>
+                            <div class="bmi-details">
+                                <div class="bmi-detail-item"><span class="lbl">体脂率</span><span class="val" id="homeHealthFatRate">-- %</span></div>
+                                <div class="bmi-detail-item"><span class="lbl">理想体重</span><span class="val" id="homeHealthIdealWeight">-- kg</span></div>
+                                <div class="bmi-detail-item"><span class="lbl">目标体重</span><span class="val" id="homeHealthTargetWeight">-- kg</span></div>
+                                <div class="bmi-detail-item"><span class="lbl">距目标</span><span class="val" id="homeHealthDiffTarget">-- kg</span></div>
+                            </div>
+                        </div>
+                        <div class="bmi-scale record-health-scale">
+                            <div class="record-health-thresholds">
+                                <span id="homeHealthRangeThin" style="left:25%;">--</span>
+                                <span id="homeHealthRangeNormal" style="left:50%;">--</span>
+                                <span id="homeHealthRangeOver" style="left:75%;">--</span>
+                            </div>
+                            <div class="bmi-scale-bar record-health-scale-bar">
+                                <div class="scale-segment thin"></div>
+                                <div class="scale-segment normal"></div>
+                                <div class="scale-segment over"></div>
+                                <div class="scale-segment obese"></div>
+                                <div class="bmi-scale-marker" id="homeHealthBmiMarker" style="left:0%;"></div>
+                            </div>
+                            <div class="record-health-scale-labels">
+                                <span>偏瘦</span>
+                                <span>正常</span>
+                                <span>超重</span>
+                                <span>肥胖</span>
                             </div>
                         </div>
                     </div>
@@ -2333,62 +2508,16 @@
             </div>
 
             <!-- ============ 我的 ============ -->
+            <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
             <div class="page" id="page-profile">
                 <div class="profile-header" onclick="openProfileEdit()">
-                    <div class="profile-avatar-wrap" onclick="event.stopPropagation(); document.getElementById('avatarFileInput').click()">
+                    <div class="profile-avatar-wrap" onclick="event.stopPropagation(); openAvatarActionSheet()">
                         <div class="profile-avatar" id="avatarIcon">👤</div>
-                        <div class="avatar-upload-hint">📷</div>
+                        <div class="avatar-upload-hint"><img src="icon/icon-camera.png" style="width:10px; height:10px; object-fit:contain;"></div>
                     </div>
-                    <input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
                     <div class="profile-header-info">
                         <div class="name" id="profileName">未设置</div>
                         <div class="sub" id="profileSub">点击编辑个人信息</div>
-                    </div>
-                </div>
-
-                <!-- BMI 卡片 -->
-                <div class="bmi-card">
-                    <div class="bmi-header">
-                        <h3>健康指标</h3>
-                        <span class="bmi-status-tag none" id="profileHealthBmiStatusTag">--</span>
-                    </div>
-                    <div class="bmi-body">
-                        <div class="bmi-gauge" onclick="showBmiFormulaTip(this, 'profileHealth')" title="查看 BMI 计算公式">
-                            <svg width="90" height="90" viewBox="0 0 90 90">
-                                <circle cx="45" cy="45" r="38" fill="none" stroke="#ECF0F1" stroke-width="7"/>
-                                <circle id="profileHealthBmiArc" cx="45" cy="45" r="38" fill="none" stroke="var(--primary-light)" stroke-width="7" stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"/>
-                            </svg>
-                            <div class="gauge-value">
-                                <div class="num" id="profileHealthBmiNum">--</div>
-                                <div class="lbl">BMI</div>
-                            </div>
-                        </div>
-                        <div class="bmi-details">
-                            <div class="bmi-detail-item"><span class="lbl">体脂率</span><span class="val" id="profileHealthFatRate">-- %</span></div>
-                            <div class="bmi-detail-item"><span class="lbl">理想体重</span><span class="val" id="profileHealthIdealWeight">-- kg</span></div>
-                            <div class="bmi-detail-item"><span class="lbl">目标体重</span><span class="val" id="profileHealthTargetWeight">-- kg</span></div>
-                            <div class="bmi-detail-item"><span class="lbl">距目标</span><span class="val" id="profileHealthDiffTarget">-- kg</span></div>
-                        </div>
-                    </div>
-                    <div class="bmi-scale record-health-scale">
-                        <div class="record-health-thresholds">
-                            <span id="profileHealthRangeThin" style="left:25%;">--</span>
-                            <span id="profileHealthRangeNormal" style="left:50%;">--</span>
-                            <span id="profileHealthRangeOver" style="left:75%;">--</span>
-                        </div>
-                        <div class="bmi-scale-bar record-health-scale-bar">
-                            <div class="scale-segment thin"></div>
-                            <div class="scale-segment normal"></div>
-                            <div class="scale-segment over"></div>
-                            <div class="scale-segment obese"></div>
-                            <div class="bmi-scale-marker" id="profileHealthBmiMarker" style="left:0%;"></div>
-                        </div>
-                        <div class="record-health-scale-labels">
-                            <span>偏瘦</span>
-                            <span>正常</span>
-                            <span>超重</span>
-                            <span>肥胖</span>
-                        </div>
                     </div>
                 </div>
 
@@ -2446,7 +2575,7 @@
             <div class="page record-health-page" id="page-record-health">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                         <div class="header-title">健康指标</div>
                     </div>
                 </div>
@@ -2508,7 +2637,7 @@
             <div class="page" id="page-profile-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                         <div class="header-title">个人信息</div>
                     </div>
                 </div>
@@ -2532,7 +2661,7 @@
             <div class="page" id="page-target-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                         <div class="header-title">目标管理</div>
                     </div>
                 </div>
@@ -2582,7 +2711,7 @@
             <div class="page" id="page-data-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                         <div class="header-title">数据管理</div>
                     </div>
                 </div>
@@ -2624,7 +2753,7 @@
             <div class="page" id="page-theme-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                         <div class="header-title">主题切换</div>
                     </div>
                 </div>
@@ -2673,7 +2802,7 @@
             <div class="page" id="page-emoji-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
-                        <div class="icon-btn" onclick="goBack()" style="font-size:20px;">‹</div>
+                        <div class="icon-btn" onclick="goBack()"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                         <div class="header-title">更多体重表情</div>
                     </div>
                 </div>
@@ -2690,7 +2819,7 @@
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:space-between;">
                         <div style="display:flex;align-items:center;gap:12px;">
-                            <div class="icon-btn" onclick="backToNotes()" style="font-size:20px;">‹</div>
+                            <div class="icon-btn" onclick="backToNotes()" style="font-size:20px;"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                             <div class="header-title" id="noteEditTitle">新建笔记</div>
                         </div>
                         <div class="header-icons" id="noteEditActions">
@@ -2705,9 +2834,9 @@
                         <div class="note-category-select" id="noteCategorySelect" onclick="toggleNoteCategoryMenu()">
                             <span id="noteCategoryLabel">未分类</span><span class="arrow">▾</span>
                         </div>
+                        <div class="note-category-dropdown" id="noteCategoryDropdown" style="display:none;"></div>
                         <span class="note-timestamp" id="noteTimestamp"></span>
                     </div>
-                    <div class="note-category-dropdown" id="noteCategoryDropdown" style="display:none;"></div>
 
                     <!-- 富文本编辑区 -->
                     <div class="rich-editor-wrap">
@@ -2789,9 +2918,23 @@
                         <img class="rt-main-img" src="icon/icon-note-image.png" alt="图片"><span>图片</span>
                     </div>
                     <div class="rt-main-btn" onclick="startVoiceInput()">
-                        <span class="rt-main-icon">🎤</span><span>语音</span>
+                        <img class="rt-main-img" src="icon/icon-voice.png" alt="语音"><span>语音</span>
                     </div>
                     <input type="file" id="noteImageInput" accept="image/*" multiple style="display:none;" onchange="handleNoteImageUpload(event)">
+                </div>
+            </div>
+
+            <!-- ============ 自定义布局页 (二级页面) ============ -->
+            <div class="page" id="page-layout-edit">
+                <div class="sticky-nav-bar">
+                    <div class="header-top" style="justify-content:flex-start; gap:12px;">
+                        <div class="icon-btn" onclick="goBack()"><img src="icon/icon-return.png" style="width:20px; height:20px; object-fit:contain; filter: brightness(0) invert(1);"></div>
+                        <div class="header-title">自定义布局</div>
+                    </div>
+                </div>
+                <div style="padding:20px;">
+                    <div class="layout-hint">拖动 ⋮⋮ 调整卡片顺序，点击开关控制显示或隐藏</div>
+                    <div class="layout-list" id="layoutList"></div>
                 </div>
             </div>
 
@@ -2862,10 +3005,10 @@
                 <span class="popup-icon">🩸</span> 设为经期开始
             </button>
             <button class="period-day-popup-btn end" onclick="setPeriodDay('end')">
-                <span class="popup-icon">✋</span> 设为经期结束
+                <span class="popup-icon">🔚</span> 设为经期结束
             </button>
             <button class="period-day-popup-btn clear" id="periodDayClearBtn" onclick="setPeriodDay('clear')" style="display:none;">
-                <span class="popup-icon">🗑️</span> 清除该日期记录
+                <span class="popup-icon"><img src="icon/icon-delete.png" style="width:18px; height:18px; object-fit:contain;"></span> 清除该日期记录
             </button>
             <button class="period-day-popup-btn cancel" onclick="closePeriodDayPopup()">
                 <span class="popup-icon">✕</span> 取消
@@ -2974,6 +3117,28 @@
         </div>
     </div>
 
+    <!-- 头像操作弹窗 -->
+    <div class="sheet-overlay" id="avatarActionSheet">
+        <div class="bottom-sheet" style="padding:8px 0 calc(20px + env(safe-area-inset-bottom,0px));">
+            <div class="sheet-handle"></div>
+            <div class="avatar-action-item" onclick="viewAvatar()">
+                <img src="icon/icon-view.png" style="width:20px;height:20px;object-fit:contain;" onerror="this.style.display='none'">
+                <span>查看头像</span>
+            </div>
+            <div class="avatar-action-item" onclick="closeAvatarActionSheet(); document.getElementById('avatarFileInput').click();">
+                <img src="icon/icon-upload.png" style="width:20px;height:20px;object-fit:contain;" onerror="this.style.display='none'">
+                <span>上传头像</span>
+            </div>
+            <button class="sheet-btn secondary" onclick="closeAvatarActionSheet()" style="margin:8px 20px 0;">取消</button>
+        </div>
+    </div>
+
+    <!-- 头像全屏查看 -->
+    <div class="sheet-overlay" id="avatarViewerOverlay" onclick="closeAvatarViewer()" style="background:rgba(0,0,0,0.9); align-items:center; justify-content:center;">
+        <div id="avatarViewerContent" style="max-width:90vw; max-height:85vh;"></div>
+        <div style="position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:white; font-size:20px;">×</div>
+    </div>
+
     <!-- 下载数据弹窗 -->
     <div class="sheet-overlay" id="downloadSheet">
         <div class="bottom-sheet">
@@ -3050,7 +3215,13 @@
             periodSettings: { periodLength: 5, cycleLength: 28 },
             periodNotes: {},
             notes: [],
-            customNoteCategories: []
+            customNoteCategories: [],
+            homeLayout: [
+                { id: 'quick', visible: true },
+                { id: 'weight', visible: true },
+                { id: 'goal', visible: true },
+                { id: 'cycle', visible: true }
+            ]
         };
         let trendChart = null;
         let currentPeriod = 7;
@@ -3077,6 +3248,20 @@
                     if (!appData.periodSettings) appData.periodSettings = { periodLength: 5, cycleLength: 28 };
                     appData.periodSettings.periodLength = Math.min(9, Math.max(1, appData.periodSettings.periodLength || 5));
                     appData.periodSettings.cycleLength = Math.min(60, Math.max(10, appData.periodSettings.cycleLength || 28));
+                    if (!appData.homeLayout || !Array.isArray(appData.homeLayout)) {
+                        appData.homeLayout = [
+                            { id: 'quick', visible: true }, { id: 'health', visible: true },
+                            { id: 'weight', visible: true }, { id: 'goal', visible: true },
+                            { id: 'cycle', visible: true }
+                        ];
+                    } else if (!appData.homeLayout.find(i => i.id === 'health')) {
+                        const quickIdx = appData.homeLayout.findIndex(i => i.id === 'quick');
+                        if (quickIdx >= 0) {
+                            appData.homeLayout.splice(quickIdx + 1, 0, { id: 'health', visible: true });
+                        } else {
+                            appData.homeLayout.unshift({ id: 'health', visible: true });
+                        }
+                    }
                 } catch(e) {}
             }
         }
@@ -3176,6 +3361,26 @@
             };
             reader.readAsDataURL(file);
             event.target.value = '';
+        }
+        function openAvatarActionSheet() {
+            document.getElementById('avatarActionSheet').classList.add('show');
+        }
+        function closeAvatarActionSheet() {
+            document.getElementById('avatarActionSheet').classList.remove('show');
+        }
+        function viewAvatar() {
+            closeAvatarActionSheet();
+            const content = document.getElementById('avatarViewerContent');
+            if (appData.avatarImage) {
+                content.innerHTML = `<img src="${appData.avatarImage}" style="max-width:90vw; max-height:85vh; border-radius:50%; object-fit:cover;">`;
+            } else {
+                const emoji = appData.profile.gender === 'female' ? '👩' : (appData.profile.gender === 'male' ? '👨' : '👤');
+                content.innerHTML = `<div style="font-size:120px; text-align:center;">${emoji}</div>`;
+            }
+            document.getElementById('avatarViewerOverlay').classList.add('show');
+        }
+        function closeAvatarViewer() {
+            document.getElementById('avatarViewerOverlay').classList.remove('show');
         }
         function renderAvatar() {
             const avatarEl = document.getElementById('avatarIcon');
@@ -3809,7 +4014,8 @@
                 activePage.id !== 'page-data-edit' &&
                 activePage.id !== 'page-emoji-edit' &&
                 activePage.id !== 'page-theme-edit' &&
-                activePage.id !== 'page-note-edit') {
+                activePage.id !== 'page-note-edit' &&
+                activePage.id !== 'page-layout-edit') {
                 pageHistory.push(activePage.id);
             }
         }
@@ -3824,6 +4030,141 @@
             const fab = document.getElementById('fabBtn');
             if (fab) fab.style.display = 'flex';
             document.querySelector('.page-container').scrollTop = 0;
+        }
+
+        // ========== 自定义布局 ==========
+        const layoutCardMeta = {
+            quick:  { name: '综合快捷记录', desc: '体重、日记、周期快捷入口' },
+            weight: { name: '体重卡片',   desc: '今日体重及变化趋势' },
+            goal:   { name: '本周目标',   desc: '目标体重及进度' },
+            cycle:  { name: '周期状态',   desc: '经期倒计时及受孕概率' },
+            health: { name: '健康指标',   desc: 'BMI、体脂率及体重范围' }
+        };
+
+        function openLayoutEdit() {
+            pushPageHistory();
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-layout-edit').classList.add('active');
+            document.querySelector('.bottom-nav').style.display = 'none';
+            const fab = document.getElementById('fabBtn');
+            if (fab) fab.style.display = 'none';
+            document.querySelector('.page-container').scrollTop = 0;
+            renderLayoutList();
+        }
+
+        function renderLayoutList() {
+            const list = document.getElementById('layoutList');
+            if (!appData.homeLayout) {
+                appData.homeLayout = [
+                    { id: 'quick', visible: true }, { id: 'health', visible: true },
+                    { id: 'weight', visible: true }, { id: 'goal', visible: true },
+                    { id: 'cycle', visible: true }
+                ];
+            }
+            list.innerHTML = '';
+            appData.homeLayout.forEach(item => {
+                const meta = layoutCardMeta[item.id] || { name: item.id, desc: '' };
+                const div = document.createElement('div');
+                div.className = 'layout-item' + (item.visible ? '' : ' hidden-card');
+                div.dataset.cardId = item.id;
+                div.innerHTML = `
+                    <span class="layout-drag-handle">⋮⋮</span>
+                    <div class="layout-item-info">
+                        <div class="layout-item-name">${meta.name}</div>
+                        <div class="layout-item-desc">${meta.desc}</div>
+                    </div>
+                    <div class="layout-toggle ${item.visible ? 'on' : ''}" onclick="toggleLayoutCard('${item.id}')"></div>
+                `;
+                list.appendChild(div);
+            });
+            bindLayoutDrag();
+        }
+
+        function toggleLayoutCard(id) {
+            const item = appData.homeLayout.find(i => i.id === id);
+            if (item) {
+                item.visible = !item.visible;
+                saveData();
+                renderLayoutList();
+                applyHomeLayout();
+            }
+        }
+
+        function applyHomeLayout() {
+            const container = document.getElementById('homeContent');
+            if (!container || !appData.homeLayout) return;
+            appData.homeLayout.forEach(item => {
+                const el = container.querySelector(`[data-card-id="${item.id}"]`);
+                if (el) {
+                    container.appendChild(el); // 按顺序重新排列
+                    if (item.id === 'cycle') {
+                        // cycle 由 renderHomePage 控制可见性，这里只处理被手动隐藏的情况
+                        if (!item.visible) el.style.display = 'none';
+                    } else {
+                        el.style.display = item.visible ? '' : 'none';
+                    }
+                }
+            });
+        }
+
+        // 拖拽排序
+        function bindLayoutDrag() {
+            const list = document.getElementById('layoutList');
+            const handles = list.querySelectorAll('.layout-drag-handle');
+            let dragItem = null;
+
+            function startDrag(handle, clientY) {
+                dragItem = handle.closest('.layout-item');
+                dragItem.classList.add('dragging');
+            }
+            function moveDrag(clientY) {
+                if (!dragItem) return;
+                const items = [...list.querySelectorAll('.layout-item:not(.dragging)')];
+                let inserted = false;
+                for (const item of items) {
+                    const rect = item.getBoundingClientRect();
+                    const midY = rect.top + rect.height / 2;
+                    if (clientY < midY) {
+                        list.insertBefore(dragItem, item);
+                        inserted = true;
+                        break;
+                    }
+                }
+                if (!inserted) list.appendChild(dragItem);
+            }
+            function endDrag() {
+                if (!dragItem) return;
+                dragItem.classList.remove('dragging');
+                dragItem = null;
+                const newOrder = [...list.querySelectorAll('.layout-item')].map(el => el.dataset.cardId);
+                appData.homeLayout.sort((a, b) => newOrder.indexOf(a.id) - newOrder.indexOf(b.id));
+                saveData();
+                applyHomeLayout();
+            }
+
+            handles.forEach(handle => {
+                // Touch
+                handle.addEventListener('touchstart', e => {
+                    if (e.touches.length !== 1) return;
+                    e.preventDefault();
+                    startDrag(handle, e.touches[0].clientY);
+                }, { passive: false });
+                handle.addEventListener('touchmove', e => {
+                    if (!dragItem) return;
+                    e.preventDefault();
+                    moveDrag(e.touches[0].clientY);
+                }, { passive: false });
+                handle.addEventListener('touchend', () => endDrag());
+                // Mouse
+                handle.addEventListener('mousedown', e => {
+                    e.preventDefault();
+                    startDrag(handle, e.clientY);
+                    const mm = ev => moveDrag(ev.clientY);
+                    const mu = () => { endDrag(); document.removeEventListener('mousemove', mm); document.removeEventListener('mouseup', mu); };
+                    document.addEventListener('mousemove', mm);
+                    document.addEventListener('mouseup', mu);
+                });
+            });
         }
 
         function openProfileEdit() {
@@ -5163,9 +5504,9 @@
                 return;
             }
             const weights = trendData.map(w => w.weight);
-            const max = Math.max(...weights).toFixed(1);
-            const min = Math.min(...weights).toFixed(1);
-            const total = (trendData[trendData.length - 1].weight - trendData[0].weight).toFixed(1);
+            const max = Math.max(...weights);
+            const min = Math.min(...weights);
+            const total = (trendData[trendData.length - 1].weight - trendData[0].weight);
             document.getElementById('trendMax').innerHTML = `${max}<span class="unit">kg</span>`;
             document.getElementById('trendMin').innerHTML = `${min}<span class="unit">kg</span>`;
             const sign = parseFloat(total) > 0 ? '+' : '';
@@ -5420,10 +5761,8 @@
 
             const sorted = [...appData.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latest = sorted[0];
-            renderHealthMetricsByWeight('profileHealth', latest?.weight, '');
 
             // 目标管理 - 进度可视化
-            const diffEl = document.getElementById('profileHealthDiffTarget');
             const goalDiffNum = document.getElementById('goalDiffNum');
             const goalProgressNum = document.getElementById('goalProgressNum');
             const goalBarFill = document.getElementById('goalBarFill');
@@ -5434,8 +5773,6 @@
 
             if (latest && appData.targetWeight) {
                 const diff = (latest.weight - appData.targetWeight);
-                diffEl.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg`;
-                diffEl.style.color = diff > 0 ? 'var(--danger)' : (diff < 0 ? 'var(--success)' : 'var(--text)');
                 goalDiffNum.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg`;
                 goalDiffNum.style.color = diff > 0 ? 'var(--danger)' : (diff < 0 ? 'var(--success)' : 'var(--text)');
 
@@ -5462,7 +5799,6 @@
                     goalBarFill.className = 'goal-bar-fill';
                 }
             } else {
-                diffEl.textContent = '-- kg'; diffEl.style.color = '';
                 goalDiffNum.textContent = '--'; goalDiffNum.style.color = '';
                 goalProgressNum.textContent = '0';
                 goalBarFill.style.width = '0%';
@@ -6210,8 +6546,8 @@
             if (noteEditMode) {
                 // 编辑模式：撤销 + 回退 + 保存
                 actionsEl.innerHTML = `
-                    <div class="icon-btn" onclick="execCmd('undo')" style="font-size:16px;color:white;">↶</div>
-                    <div class="icon-btn" onclick="execCmd('redo')" style="font-size:16px;color:white;">↷</div>
+                    <div class="icon-btn" onclick="execCmd('undo')"><img src="icon/icon-undo.png" style="width:18px; height:18px; object-fit:contain; filter: brightness(0) invert(1);"></div>
+                    <div class="icon-btn" onclick="execCmd('redo')"><img src="icon/icon-redo.png" style="width:18px; height:18px; object-fit:contain; filter: brightness(0) invert(1);"></div>
                     <div class="icon-btn" onclick="saveNoteFromEdit()" style="font-size:14px;font-weight:600;color:white;">保存</div>
                 `;
             } else {
@@ -6699,6 +7035,7 @@
             renderPeriodSummary();
             renderPeriodNoteEditor();
             renderPeriodRecords();
+            bindCalSwipe();
         }
 
         function renderPeriodNoteEditor() {
@@ -7380,9 +7717,18 @@
             // 日期与问候
             document.getElementById('homeDate').textContent = `${monthNames[now.getMonth()]} ${now.getDate()}日 · 星期${weekDays[now.getDay()]}`;
             const hour = now.getHours();
-            let greeting = '早安';
-            if (hour >= 12 && hour < 18) greeting = '下午好';
-            else if (hour >= 18) greeting = '晚上好';
+            let greeting = '夜深了';
+            if (hour >= 5 && hour < 9) {
+                greeting = '早安';
+            } else if (hour >= 9 && hour < 12) {
+                    return '上午好';
+            } else if (hour >= 12 && hour < 13) {
+                greeting = '中午好';
+            } else if (hour >= 13 && hour < 18) {
+                greeting = '下午好';
+            } else if (hour >= 18 && hour < 22) {
+                greeting = '晚上好';
+            }
             const userName = (appData.profile && appData.profile.name) || '';
             document.getElementById('homeGreeting').textContent = `${greeting}${userName ? '，' + userName : ''}`;
 
@@ -7393,16 +7739,16 @@
             const todayRecord = todayRecords[0] || null;
 
             if (todayRecord) {
-                document.getElementById('homeWeightStatus').textContent = '体重 · 今日已记录';
+                document.getElementById('homeWeightStatus').textContent = '今日已记录';
                 document.getElementById('homeWeightNum').textContent = todayRecord.weight;
                 // 找上一条（非今天的最新记录）
                 const prev = weights.find(r => r.date !== todayStr);
                 if (prev) {
                     const diff = todayRecord.weight - prev.weight;
                     if (diff > 0) {
-                        document.getElementById('homeWeightTrend').textContent = `较上次 ↑ ${diff.toFixed(1)} kg`;
+                        document.getElementById('homeWeightTrend').textContent = `较上次 + ${diff.toFixed(1)} kg，继续努力~`;
                     } else if (diff < 0) {
-                        document.getElementById('homeWeightTrend').textContent = `较上次 ↓ ${Math.abs(diff).toFixed(1)} kg，继续保持`;
+                        document.getElementById('homeWeightTrend').textContent = `较上次 - ${Math.abs(diff).toFixed(1)} kg，继续保持~`;
                     } else {
                         document.getElementById('homeWeightTrend').textContent = '较上次持平';
                     }
@@ -7412,16 +7758,19 @@
             } else if (weights.length > 0) {
                 const latest = weights[0];
                 const daysSince = Math.round((new Date(todayStr + 'T00:00:00') - new Date(latest.date + 'T00:00:00')) / 86400000);
-                document.getElementById('homeWeightStatus').textContent = '体重 · 今日未记录';
+                document.getElementById('homeWeightStatus').textContent = '今日未记录';
                 document.getElementById('homeWeightNum').textContent = latest.weight;
                 document.getElementById('homeWeightTrend').textContent = daysSince === 0
                     ? '今天还没记录，点击添加'
                     : `${daysSince}天前记录 · 点击记录今日体重`;
             } else {
-                document.getElementById('homeWeightStatus').textContent = '体重 · 今日未记录';
+                document.getElementById('homeWeightStatus').textContent = '今日未记录';
                 document.getElementById('homeWeightNum').textContent = '--';
                 document.getElementById('homeWeightTrend').textContent = '点击记录今日体重';
             }
+
+            // ---- 健康指标 ----
+            renderHealthMetricsByWeight('homeHealth', weights[0]?.weight, '');
 
             // ---- 本周目标 ----
             const goalRing = document.getElementById('homeGoalRing');
@@ -7469,12 +7818,17 @@
             const cycleSection = document.getElementById('homeCycleSection');
 
             if (periodRecords.length > 0) {
-                cycleSection.style.display = 'block';
+                const cycleLayout = (appData.homeLayout || []).find(i => i.id === 'cycle');
+                const cycleVisible = cycleLayout ? cycleLayout.visible : true;
+                cycleSection.style.display = cycleVisible ? 'block' : 'none';
+                document.getElementById('homeCycleEmpty').style.display = 'none';
+                document.getElementById('homeCycleContent').style.display = '';
                 const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const todayStr2 = formatDateStr(today);
                 const actualDays = getActualPeriodDays();
+                const predictedDays = getPredictedPeriodDays();
 
                 const countdownEl = document.getElementById('homeCycleCountdown');
                 const nextDateEl = document.getElementById('homeCycleNextDate');
@@ -7483,7 +7837,7 @@
                 const ovulationEl = document.getElementById('homeCycleOvulation');
                 const ringCircumference = 345.6;
 
-                // 今天是否在经期内
+                // 今天是否在经期内（实际或预测）
                 if (actualDays.has(todayStr2)) {
                     const activePeriod = periodRecords.find(p => {
                         if (!p.startDate) return false;
@@ -7500,8 +7854,9 @@
                     if (activePeriod) {
                         const start = new Date(activePeriod.startDate + 'T00:00:00');
                         const dayNum = Math.round((today - start) / 86400000) + 1;
-                        countdownEl.textContent = `第${dayNum}天`;
-                        nextDateEl.textContent = '经期中';
+                        countdownEl.textContent = `D-${dayNum}`;
+                        document.getElementById('homeCycleRingLabel').textContent = '经期中';
+                        nextDateEl.textContent = `${start.getMonth() + 1}.${start.getDate()}`;
                         // 圆环显示经期进度
                         const progress = Math.min(1, dayNum / ps.periodLength);
                         ringEl.style.strokeDashoffset = ringCircumference * (1 - progress);
@@ -7517,6 +7872,36 @@
                         ovulationDay.setDate(ovulationDay.getDate() - 14);
                         const ovulationDiff = Math.round((ovulationDay - today) / 86400000);
                         ovulationEl.textContent = ovulationDiff > 0 ? `D-${ovulationDiff}` : '已过';
+                    }
+                } else if (predictedDays.has(todayStr2)) {
+                    // 今天在预测经期内
+                    const lastPeriod = periodRecords.find(p => p.startDate && new Date(p.startDate + 'T00:00:00') <= today);
+                    if (lastPeriod) {
+                        const lastStart = new Date(lastPeriod.startDate + 'T00:00:00');
+                        let predStart = new Date(lastStart);
+                        for (let i = 1; ; i++) {
+                            predStart = new Date(lastStart);
+                            predStart.setDate(predStart.getDate() + ps.cycleLength * i);
+                            const predEnd = new Date(predStart);
+                            predEnd.setDate(predEnd.getDate() + ps.periodLength - 1);
+                            if (today >= predStart && today <= predEnd) {
+                                const dayNum = Math.round((today - predStart) / 86400000) + 1;
+                                countdownEl.textContent = `D-${dayNum}`;
+                                document.getElementById('homeCycleRingLabel').textContent = '经期中';
+                                nextDateEl.textContent = `${predStart.getMonth() + 1}.${predStart.getDate()}`;
+                                const progress = Math.min(1, dayNum / ps.periodLength);
+                                ringEl.style.strokeDashoffset = ringCircumference * (1 - progress);
+                                fertilityEl.textContent = '低';
+                                const nextCycleStart = new Date(predStart);
+                                nextCycleStart.setDate(nextCycleStart.getDate() + ps.cycleLength);
+                                const ovulationDay = new Date(nextCycleStart);
+                                ovulationDay.setDate(ovulationDay.getDate() - 14);
+                                const ovulationDiff = Math.round((ovulationDay - today) / 86400000);
+                                ovulationEl.textContent = ovulationDiff > 0 ? `D-${ovulationDiff}` : '已过';
+                                break;
+                            }
+                            if (predStart > today) break;
+                        }
                     }
                 } else {
                     // 计算周期日与预测下次经期
@@ -7544,6 +7929,7 @@
 
                         // 倒计时
                         countdownEl.textContent = diffDays > 0 ? `D-${diffDays}` : '今天';
+                        document.getElementById('homeCycleRingLabel').textContent = '下一次经期';
                         // 日期显示 M.D 格式
                         nextDateEl.textContent = `${nextStart.getMonth() + 1}.${nextStart.getDate()}`;
 
@@ -7570,6 +7956,7 @@
                         }
                     } else {
                         countdownEl.textContent = '--';
+                        document.getElementById('homeCycleRingLabel').textContent = '下一次经期';
                         nextDateEl.textContent = '待记录';
                         ringEl.style.strokeDashoffset = ringCircumference;
                         fertilityEl.textContent = '--';
@@ -7577,8 +7964,19 @@
                     }
                 }
             } else {
-                cycleSection.style.display = 'none';
+                const cycleLayout = (appData.homeLayout || []).find(i => i.id === 'cycle');
+                const cycleVisible = cycleLayout ? cycleLayout.visible : true;
+                if (cycleVisible) {
+                    cycleSection.style.display = 'block';
+                    document.getElementById('homeCycleEmpty').style.display = '';
+                    document.getElementById('homeCycleContent').style.display = 'none';
+                } else {
+                    cycleSection.style.display = 'none';
+                }
             }
+
+            // 应用布局配置（排序+可见性）
+            applyHomeLayout();
         }
 
         function renderAll() {
@@ -7596,7 +7994,7 @@
 
         // ========== 左滑返回手势 ==========
         (function() {
-            const subPages = ['page-profile-edit', 'page-record-health', 'page-target-edit', 'page-data-edit', 'page-emoji-edit', 'page-note-edit', 'page-theme-edit'];
+            const subPages = ['page-profile-edit', 'page-record-health', 'page-target-edit', 'page-data-edit', 'page-emoji-edit', 'page-note-edit', 'page-theme-edit', 'page-layout-edit'];
             let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
             const container = document.querySelector('.page-container');
             if (!container) return;
@@ -7626,29 +8024,53 @@
         })();
 
         // ========== 经期日历左右滑动切换月份 ==========
-        (function() {
+        let calSwipeBound = false;
+        function bindCalSwipe() {
             const grid = document.getElementById('periodCalGrid');
-            if (!grid || grid._swipeBound) return;
-            grid._swipeBound = true;
+            if (!grid || calSwipeBound) return;
+            calSwipeBound = true;
             let startX = 0, startY = 0, startTime = 0, tracking = false;
-            grid.addEventListener('pointerdown', function(e) {
+
+            // Touch 事件：touchend 始终派发到 touchstart 所在元素
+            grid.addEventListener('touchstart', function(e) {
+                if (e.touches.length !== 1) { tracking = false; return; }
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                startTime = Date.now();
+                tracking = true;
+            }, { passive: true });
+
+            grid.addEventListener('touchend', function(e) {
+                if (!tracking) return;
+                tracking = false;
+                const touch = e.changedTouches[0];
+                if (!touch) return;
+                const deltaX = touch.clientX - startX;
+                const deltaY = touch.clientY - startY;
+                const elapsed = Date.now() - startTime;
+                if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5 && elapsed < 600) {
+                    if (deltaX < 0) nextPeriodMonth();
+                    else prevPeriodMonth();
+                }
+            }, { passive: true });
+
+            // Mouse 事件（桌面端测试）
+            grid.addEventListener('mousedown', function(e) {
                 startX = e.clientX; startY = e.clientY;
                 startTime = Date.now(); tracking = true;
             });
-            grid.addEventListener('pointerup', function(e) {
+            document.addEventListener('mouseup', function(e) {
                 if (!tracking) return;
                 tracking = false;
                 const deltaX = e.clientX - startX;
                 const deltaY = e.clientY - startY;
                 const elapsed = Date.now() - startTime;
-                // 水平滑动为主，距离>50px，水平位移>垂直位移，时间<600ms
                 if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5 && elapsed < 600) {
                     if (deltaX < 0) nextPeriodMonth();
                     else prevPeriodMonth();
                 }
             });
-            grid.addEventListener('pointercancel', function() { tracking = false; });
-        })();
+        }
 
         // ========== 底部弹窗手势（上滑铺满 / 下滑关闭 / 左滑关闭） ==========
         function bindSheetGestures() {
