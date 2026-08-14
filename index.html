@@ -2115,6 +2115,170 @@
         .bmi-range-labels span { text-align: center; flex: 1; }
         .bmi-range-labels span .range-name { font-weight: 600; font-size: 10px; }
         .bmi-range-labels span .range-val { display: block; font-size: 9px; opacity: 0.8; }
+
+        /* ========== 目标管理页 ========== */
+        .goal-page-fab {
+            position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); right: 20px;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none; color: white; font-size: 28px; cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+            z-index: 100;
+            display: none; align-items: center; justify-content: center;
+            transition: transform 0.2s;
+        }
+        .goal-page-fab:active { transform: scale(0.92); }
+        .goal-page-fab.show { display: flex; }
+
+        .goal-hero-card {
+            margin: 16px; border-radius: 20px; padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+        }
+        .goal-hero-top {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 14px;
+        }
+        .goal-hero-label { font-size: 14px; opacity: 0.9; font-weight: 600; }
+        .goal-hero-day { font-size: 13px; opacity: 0.85; }
+        .goal-hero-day .num { font-size: 20px; font-weight: 700; }
+        .goal-hero-bar-wrap {
+            height: 10px; background: rgba(255,255,255,0.25); border-radius: 5px;
+            overflow: visible; margin-bottom: 16px; position: relative;
+        }
+        .goal-hero-bar-fill {
+            height: 100%; background: white; border-radius: 5px;
+            transition: width 0.5s ease; min-width: 20px;
+            position: relative;
+        }
+        .goal-hero-pct-badge {
+            position: absolute; right: 0; top: 50%; transform: translate(50%, -50%);
+            background: white; color: var(--primary-dark);
+            font-size: 11px; font-weight: 700; padding: 3px 9px;
+            border-radius: 11px; white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .goal-hero-stats {
+            display: flex; gap: 0;
+        }
+        .goal-hero-stat {
+            flex: 1; text-align: center;
+            border-right: 1px solid rgba(255,255,255,0.25);
+            padding: 0 4px;
+        }
+        .goal-hero-stat:last-child { border-right: none; }
+        .goal-hero-stat .val { font-size: 17px; font-weight: 700; line-height: 1.2; }
+        .goal-hero-stat .lbl { font-size: 11px; opacity: 0.8; margin-top: 3px; }
+
+        .goal-section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px 8px;
+        }
+        .goal-section-header .left {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .goal-section-header .accent-bar {
+            width: 4px; height: 18px; border-radius: 2px; background: var(--primary);
+        }
+        .goal-section-header.completed .accent-bar { background: var(--text-light); }
+        .goal-section-header .title { font-size: 16px; font-weight: 700; color: var(--text); }
+        .goal-section-header.completed .title { color: var(--text-secondary); }
+        .goal-section-header .hint { font-size: 11px; color: var(--text-light); }
+
+        .goal-card-wrapper {
+            position: relative; margin: 0 16px 12px; overflow: hidden;
+            border-radius: 14px;
+        }
+        .goal-card-actions {
+            position: absolute; top: 0; right: 0; bottom: 0;
+            display: flex; align-items: center; gap: 8px;
+            padding: 0 10px; z-index: 0;
+        }
+        .goal-card-actions .act-btn {
+            width: 40px; height: 40px; border-radius: 50%;
+            border: none; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+        }
+        .goal-card-actions .act-btn:active { transform: scale(0.88); }
+        .goal-card-actions .act-btn img {
+            width: 20px; height: 20px; object-fit: contain;
+            filter: brightness(0) invert(1);
+        }
+        .goal-card-actions .act-btn.edit { background: #2E86C1; }
+        .goal-card-actions .act-btn.delete { background: #E74C3C; }
+
+        .goal-card {
+            position: relative; z-index: 1;
+            background: var(--card-bg); border-radius: 14px;
+            padding: 14px 16px; box-shadow: var(--shadow);
+            transition: transform 0.25s ease;
+        }
+        .goal-card.completed { background: var(--card-bg); }
+        .goal-card.completed .goal-card-name { color: var(--text-secondary); }
+        .goal-card-top {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px;
+        }
+        .goal-card-daterange { font-size: 13px; font-weight: 600; color: var(--primary); }
+        .goal-card.completed .goal-card-daterange { color: var(--text-secondary); }
+        .goal-card-tag {
+            font-size: 11px; font-weight: 600; color: var(--primary);
+            border: 1px solid var(--primary); border-radius: 10px;
+            padding: 1px 8px; line-height: 1.5; white-space: nowrap;
+        }
+        .goal-card-tag.completed-tag {
+            color: var(--text-light); border-color: var(--text-light);
+        }
+        .goal-card-name {
+            font-size: 14px; font-weight: 600; color: var(--text);
+            margin-bottom: 4px;
+        }
+        .goal-card-weight {
+            font-size: 16px; font-weight: 700; color: var(--text);
+            margin-bottom: 8px;
+        }
+        .goal-card.completed .goal-card-weight { color: var(--text-secondary); }
+        .goal-card-bottom {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; flex-wrap: wrap; gap: 4px;
+        }
+        .goal-card-progress { color: var(--primary); font-weight: 600; }
+        .goal-card-rate { color: var(--text-secondary); }
+        .goal-card-remaining { color: var(--text-secondary); }
+        .goal-card-duration { color: var(--text-secondary); }
+
+        .goal-empty-state {
+            text-align: center; padding: 40px 20px; color: var(--text-light);
+        }
+        .goal-empty-state .emoji { font-size: 48px; margin-bottom: 12px; }
+        .goal-empty-state p { font-size: 14px; }
+
+        /* 目标弹窗字段 */
+        .goal-field {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 16px; background: var(--bg); border-radius: 12px;
+            margin-bottom: 10px; cursor: pointer; transition: background 0.2s;
+        }
+        .goal-field:active { background: var(--border); }
+        .goal-field-label { font-size: 14px; color: var(--text-secondary); }
+        .goal-field-label .required { color: var(--danger); }
+        .goal-field-value { font-size: 16px; font-weight: 600; color: var(--text); }
+        .goal-field-value.placeholder { color: var(--text-light); font-weight: 400; }
+        .goal-field-arrow { color: var(--text-light); font-size: 18px; margin-left: 8px; }
+        .goal-field-input {
+            width: 100%; padding: 14px 16px; background: var(--bg);
+            border: 2px solid transparent; border-radius: 12px;
+            font-size: 18px; font-weight: 700; color: var(--text);
+            outline: none; font-family: inherit; transition: border-color 0.2s;
+        }
+        .goal-field-input:focus { border-color: var(--primary); }
+        .goal-field-helper {
+            font-size: 12px; color: var(--text-light); padding: 0 4px 10px;
+            line-height: 1.5;
+        }
+        .goal-field-unit {
+            font-size: 14px; color: var(--text-secondary); margin-left: 6px;
+        }
     </style>
 </head>
 <body>
@@ -2657,7 +2821,7 @@
                 </div>
             </div>
 
-            <!-- ============ 目标管理编辑页 (二级页面) ============ -->
+            <!-- ============ 目标管理页 (二级页面) ============ -->
             <div class="page" id="page-target-edit">
                 <div class="sticky-nav-bar">
                     <div class="header-top" style="justify-content:flex-start; gap:12px;">
@@ -2665,47 +2829,53 @@
                         <div class="header-title">目标管理</div>
                     </div>
                 </div>
-                <div style="padding:20px;">
-                    <div class="sheet-form-group"><label>目标体重 (kg)</label><input type="number" id="inputTarget" step="0.1" min="20" max="300" placeholder="例如：60.0"></div>
-                    <div id="targetSuggestion" style="font-size:13px; color:var(--text-secondary); padding:8px 0; text-align:center;"></div>
-                    <button class="sheet-btn primary" onclick="saveTarget()">保存目标</button>
 
-                    <!-- 进度可视化卡片 -->
-                    <div class="goal-progress-card" id="goalProgressCard" style="margin-top:20px;">
-                        <div class="goal-progress-top">
-                            <div>
-                                <div class="goal-progress-label">完成进度</div>
-                                <div class="goal-progress-value"><span id="goalProgressNum">0</span><span class="pct">%</span></div>
-                            </div>
-                            <div class="goal-progress-side">
-                                <div class="lbl">距目标</div>
-                                <div class="num" id="goalDiffNum">--</div>
-                            </div>
+                <!-- 英雄进度卡片 -->
+                <div class="goal-hero-card" id="goalHeroCard">
+                    <div class="goal-hero-top">
+                        <div class="goal-hero-label">目标进度</div>
+                        <div class="goal-hero-day">第 <span class="num" id="goalHeroDay">--</span> 天</div>
+                    </div>
+                    <div class="goal-hero-bar-wrap">
+                        <div class="goal-hero-bar-fill" id="goalHeroBarFill" style="width:0%;">
+                            <span class="goal-hero-pct-badge" id="goalHeroPct">0%</span>
                         </div>
-                        <div class="goal-bar-wrap">
-                            <div class="goal-bar-fill" id="goalBarFill" style="width:0%;"></div>
+                    </div>
+                    <div class="goal-hero-stats">
+                        <div class="goal-hero-stat">
+                            <div class="val" id="goalHeroStart">--</div>
+                            <div class="lbl">初始体重</div>
                         </div>
-                        <div class="goal-stats-row">
-                            <div class="goal-stat-box">
-                                <div class="stat-val" id="goalStartWeight">--</div>
-                                <div class="stat-lbl">起始体重</div>
-                            </div>
-                            <div class="goal-stat-box">
-                                <div class="stat-val" id="goalCurrentWeight">--</div>
-                                <div class="stat-lbl">当前体重</div>
-                            </div>
-                            <div class="goal-stat-box">
-                                <div class="stat-val" id="goalTargetWeight">--</div>
-                                <div class="stat-lbl">目标体重</div>
-                            </div>
-                            <div class="goal-stat-box">
-                                <div class="stat-val" id="goalLostWeight">--</div>
-                                <div class="stat-lbl">已减/增</div>
-                            </div>
+                        <div class="goal-hero-stat">
+                            <div class="val" id="goalHeroTarget">--</div>
+                            <div class="lbl">目标体重</div>
+                        </div>
+                        <div class="goal-hero-stat">
+                            <div class="val" id="goalHeroChange">--</div>
+                            <div class="lbl">体重变化</div>
                         </div>
                     </div>
                 </div>
+
+                <!-- 历史目标 -->
+                <div class="goal-section-header" id="goalListHeader" style="display:none;">
+                    <div class="left">
+                        <div class="accent-bar"></div>
+                        <div class="title">历史目标</div>
+                    </div>
+                    <div class="hint">左滑编辑 · 删除</div>
+                </div>
+                <div id="goalList"></div>
+
+                <!-- 空状态 -->
+                <div class="goal-empty-state" id="goalEmptyState">
+                    <div class="emoji">🎯</div>
+                    <p>还没有目标，点击右下角 + 创建吧</p>
+                </div>
             </div>
+
+            <!-- 目标页 FAB -->
+            <button class="goal-page-fab" id="goalFabBtn" onclick="openGoalSheet(null)">+</button>
 
             <!-- ============ 数据管理页 (二级页面) ============ -->
             <div class="page" id="page-data-edit">
@@ -3139,6 +3309,55 @@
         <div style="position:absolute; top:20px; right:20px; width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; color:white; font-size:20px;">×</div>
     </div>
 
+    <!-- 创建/编辑目标弹窗 -->
+    <div class="sheet-overlay" id="goalSheet">
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title" id="goalSheetTitle">创建目标</div>
+            <input type="hidden" id="editGoalId">
+            <!-- 目标体重（必填） -->
+            <div class="sheet-form-group">
+                <label>目标体重 <span style="color:var(--danger);">*</span></label>
+                <div style="display:flex; align-items:center; background:var(--bg); border-radius:12px; padding:0 16px;">
+                    <input type="number" id="goalTargetInput" step="0.1" min="20" max="300" placeholder="60" class="goal-field-input" style="background:transparent; border:none; padding:14px 0;">
+                    <span class="goal-field-unit">kg</span>
+                </div>
+            </div>
+            <!-- 日期范围 -->
+            <div class="sheet-form-group">
+                <label>时间范围</label>
+                <div style="display:flex; gap:10px;">
+                    <div class="goal-field" style="flex:1; flex-direction:column; align-items:flex-start; gap:4px; position:relative;">
+                        <div class="goal-field-label" style="font-size:12px;">开始日期</div>
+                        <div style="display:flex; align-items:center; width:100%; justify-content:space-between;">
+                            <span class="goal-field-value placeholder" id="goalStartDateText">未设置</span>
+                            <span class="goal-field-arrow">›</span>
+                        </div>
+                        <input type="date" id="goalStartDateInput" onchange="onGoalDateChange('start')" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                    </div>
+                    <div class="goal-field" style="flex:1; flex-direction:column; align-items:flex-start; gap:4px; position:relative;">
+                        <div class="goal-field-label" style="font-size:12px;">结束日期</div>
+                        <div style="display:flex; align-items:center; width:100%; justify-content:space-between;">
+                            <span class="goal-field-value placeholder" id="goalEndDateText">未设置</span>
+                            <span class="goal-field-arrow">›</span>
+                        </div>
+                        <input type="date" id="goalEndDateInput" onchange="onGoalDateChange('end')" style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                    </div>
+                </div>
+                <div class="goal-field-helper">未填写日期则默认为"进行中"，达成目标体重后自动完成</div>
+            </div>
+            <!-- 目标名称（选填） -->
+            <div class="sheet-form-group">
+                <label>目标名称 <span style="color:var(--text-light); font-weight:400;">（选填）</span></label>
+                <input type="text" id="goalNameInput" class="goal-field-input" placeholder="给目标起个名字" maxlength="20" style="font-size:15px; font-weight:400;">
+            </div>
+            <div class="sheet-btn-row">
+                <button class="sheet-btn secondary" onclick="closeGoalSheet()">取消</button>
+                <button class="sheet-btn primary" onclick="saveGoal()">保存</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 下载数据弹窗 -->
     <div class="sheet-overlay" id="downloadSheet">
         <div class="bottom-sheet">
@@ -3216,6 +3435,7 @@
             periodNotes: {},
             notes: [],
             customNoteCategories: [],
+            goals: [],
             homeLayout: [
                 { id: 'quick', visible: true },
                 { id: 'weight', visible: true },
@@ -3244,6 +3464,7 @@
                     if (!Array.isArray(appData.notes)) appData.notes = [];
                     if (!Array.isArray(appData.customNoteCategories)) appData.customNoteCategories = [];
                     if (!Array.isArray(appData.periods)) appData.periods = [];
+                    if (!Array.isArray(appData.goals)) appData.goals = [];
                     if (!appData.periodNotes || typeof appData.periodNotes !== 'object' || Array.isArray(appData.periodNotes)) appData.periodNotes = {};
                     if (!appData.periodSettings) appData.periodSettings = { periodLength: 5, cycleLength: 28 };
                     appData.periodSettings.periodLength = Math.min(9, Math.max(1, appData.periodSettings.periodLength || 5));
@@ -3559,7 +3780,7 @@
             const diffEl = document.getElementById(prefix + 'DiffTarget');
             if (appData.targetWeight && weight != null) {
                 const diff = weight - appData.targetWeight;
-                diffEl.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+                diffEl.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(2)} kg`;
                 diffEl.style.color = diff > 0 ? 'var(--danger)' : (diff < 0 ? 'var(--success)' : 'var(--text)');
             } else {
                 diffEl.textContent = '-- kg';
@@ -3994,6 +4215,7 @@
         document.getElementById('recordSheet').addEventListener('click', function(e) { if (e.target === this) closeRecordSheet(); });
         document.getElementById('catSheet').addEventListener('click', function(e) { if (e.target === this) closeCatSheet(); });
         document.getElementById('customColorSheet').addEventListener('click', function(e) { if (e.target === this) closeCustomColorSheet(); });
+        document.getElementById('goalSheet').addEventListener('click', function(e) { if (e.target === this) closeGoalSheet(); });
 
         function deleteRecord(id) {
             showConfirm('删除记录', '确定要删除这条体重记录吗？', () => {
@@ -4029,6 +4251,9 @@
             document.querySelector('.bottom-nav').style.display = 'flex';
             const fab = document.getElementById('fabBtn');
             if (fab) fab.style.display = 'flex';
+            // 隐藏目标页FAB
+            const goalFab = document.getElementById('goalFabBtn');
+            if (goalFab) goalFab.classList.remove('show');
             document.querySelector('.page-container').scrollTop = 0;
         }
 
@@ -4206,26 +4431,324 @@
             goBack();
         }
 
-        // 目标
+        // ========== 目标管理 ==========
         function openTargetEdit() {
             pushPageHistory();
-            document.getElementById('inputTarget').value = appData.targetWeight || '';
-            const ideal = getIdealWeight(appData.profile.height);
-            const s = document.getElementById('targetSuggestion');
-            s.textContent = ideal ? `建议目标：${ideal.toFixed(1)} kg（标准体重 = 身高 - 105）` : '请先在个人信息中设置身高';
-            // 切换到二级页面
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById('page-target-edit').classList.add('active');
             document.getElementById('fabBtn').style.display = 'none';
             document.querySelector('.bottom-nav').style.display = 'none';
             document.querySelector('.page-container').scrollTop = 0;
-            renderProfilePage();
+            // 显示目标页FAB
+            document.getElementById('goalFabBtn').classList.add('show');
+            renderGoalPage();
         }
-        function saveTarget() {
-            const target = parseFloat(document.getElementById('inputTarget').value);
-            if (isNaN(target) || target < 20 || target > 300) { showToast('请输入有效的目标体重', 'error'); return; }
-            appData.targetWeight = target; saveData(); renderAll(); showToast('目标已设置');
-            goBack();
+
+        function renderGoalPage() {
+            if (!Array.isArray(appData.goals)) appData.goals = [];
+            // 自动检查完成状态：结束日期已过 或 达到目标体重
+            const today = todayStr();
+            appData.goals.forEach(g => {
+                if (g.status !== 'completed') {
+                    const { progress } = getGoalProgress(g);
+                    const endDatePassed = g.endDate && g.endDate < today;
+                    if (progress >= 100 || endDatePassed) {
+                        g.status = 'completed';
+                        g.completedAt = new Date().toISOString();
+                    }
+                }
+            });
+
+            renderGoalHero();
+            const list = document.getElementById('goalList');
+            const header = document.getElementById('goalListHeader');
+            const emptyState = document.getElementById('goalEmptyState');
+
+            list.innerHTML = '';
+
+            if (appData.goals.length === 0) {
+                emptyState.style.display = 'block';
+                header.style.display = 'none';
+            } else {
+                emptyState.style.display = 'none';
+                header.style.display = 'flex';
+                // 按创建时间倒序排序
+                const sortedGoals = [...appData.goals].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                sortedGoals.forEach(g => list.innerHTML += buildGoalCardHtml(g));
+                bindCardSwipe('#goalList .goal-card');
+            }
+        }
+
+        function renderGoalHero() {
+            const sorted = [...(appData.weights || [])].filter(w => w.date && !isNaN(parseFloat(w.weight)));
+            const sortedAsc = [...sorted].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const latest = sorted.length > 0 ? sorted[sorted.length - 1] : null;
+            // Use earliest weight record date as day 1 if no goal start date
+            const firstDate = sortedAsc.length > 0 ? sortedAsc[0].date : null;
+            const targetWeight = appData.targetWeight;
+
+            const dayEl = document.getElementById('goalHeroDay');
+            const barFill = document.getElementById('goalHeroBarFill');
+            const pctEl = document.getElementById('goalHeroPct');
+            const startEl = document.getElementById('goalHeroStart');
+            const targetEl = document.getElementById('goalHeroTarget');
+            const changeEl = document.getElementById('goalHeroChange');
+
+            if (latest && targetWeight) {
+                const startWeight = sortedAsc[0].weight;
+                const diff = latest.weight - startWeight;
+                const totalNeeded = startWeight - targetWeight;
+                let progress = totalNeeded !== 0 ? Math.min(100, Math.max(0, (startWeight - latest.weight) / totalNeeded * 100)) : 100;
+                // Day count
+                let days = 0;
+                if (firstDate) {
+                    const start = new Date(firstDate + 'T00:00:00');
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    days = Math.max(1, Math.floor((today - start) / (1000 * 60 * 60 * 24)) + 1);
+                }
+                dayEl.textContent = days;
+                pctEl.textContent = Math.round(progress) + '%';
+                barFill.style.width = Math.max(2, progress) + '%';
+                startEl.textContent = startWeight.toFixed(2);
+                targetEl.textContent = targetWeight.toFixed(2);
+                changeEl.textContent = (diff > 0 ? '+' : '') + diff.toFixed(2) + ' kg';
+            } else {
+                dayEl.textContent = '--';
+                pctEl.textContent = '0%';
+                barFill.style.width = '0%';
+                startEl.textContent = latest ? latest.weight.toFixed(2) : '--';
+                targetEl.textContent = targetWeight ? targetWeight.toFixed(2) : '--';
+                changeEl.textContent = '--';
+            }
+        }
+
+        function getGoalStartWeight(goal) {
+            const sorted = [...(appData.weights || [])].filter(w => w.date && !isNaN(parseFloat(w.weight)))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (sorted.length === 0) return goal.startWeight || null;
+            let relevant = sorted;
+            if (goal.startDate) {
+                relevant = sorted.filter(w => w.date >= goal.startDate);
+            }
+            if (relevant.length > 0) return parseFloat(relevant[0].weight);
+            return goal.startWeight || null;
+        }
+
+        function getGoalCurrentWeight(goal) {
+            const sorted = [...(appData.weights || [])].filter(w => w.date && !isNaN(parseFloat(w.weight)))
+                .sort((a, b) => new Date(a.date) - new Date(b.date));
+            let relevant = sorted;
+            if (goal.startDate) {
+                relevant = relevant.filter(w => w.date >= goal.startDate);
+            }
+            if (goal.status === 'completed' && goal.endDate) {
+                relevant = relevant.filter(w => w.date <= goal.endDate);
+            }
+            if (relevant.length > 0) return parseFloat(relevant[relevant.length - 1].weight);
+            return goal.startWeight;
+        }
+
+        function getGoalProgress(goal) {
+            const currentWeight = getGoalCurrentWeight(goal);
+            const startWeight = getGoalStartWeight(goal);
+            if (startWeight === null) return { currentWeight, progress: 0 };
+            const totalNeeded = startWeight - goal.targetWeight;
+            const done = startWeight - currentWeight;
+            let progress = totalNeeded !== 0 ? Math.min(100, Math.max(0, (done / totalNeeded) * 100)) : 100;
+            return { currentWeight, progress };
+        }
+
+        function getGoalDays(goal) {
+            const start = goal.startDate ? new Date(goal.startDate + 'T00:00:00') : new Date(goal.createdAt);
+            let end;
+            if (goal.status === 'completed' && goal.completedAt) {
+                end = new Date(goal.completedAt);
+            } else if (goal.endDate) {
+                end = new Date(goal.endDate + 'T00:00:00');
+            } else {
+                end = new Date();
+            }
+            return Math.max(1, Math.floor((end - start) / (1000 * 60 * 60 * 24)));
+        }
+
+        function buildGoalCardHtml(goal) {
+            const isCompleted = goal.status === 'completed';
+            const { currentWeight, progress } = getGoalProgress(goal);
+            const startWeight = getGoalStartWeight(goal);
+            const days = getGoalDays(goal);
+            const remaining = Math.abs(currentWeight - goal.targetWeight);
+            const dateRange = (goal.startDate || '至今') + ' – ' + (goal.endDate || '至今');
+            const cardClass = 'goal-card' + (isCompleted ? ' completed' : '');
+
+            // 标签：进行中 或 已完成+日期
+            let tagHtml;
+            if (isCompleted) {
+                const completedDate = goal.completedAt ? new Date(goal.completedAt).toISOString().slice(0, 10) : '';
+                tagHtml = `<span class="goal-card-tag completed-tag">已完成${completedDate ? ' · ' + completedDate : ''}</span>`;
+            } else {
+                tagHtml = '<span class="goal-card-tag">进行中</span>';
+            }
+
+            const nameHtml = goal.name ? `<div class="goal-card-name">${escapeHtml(goal.name)}</div>` : '';
+
+            // 日均变化
+            const weightChange = startWeight !== null ? startWeight - currentWeight : 0;
+            const dailyAvg = days > 0 ? (weightChange / days) : 0;
+            const dailyAvgText = isCompleted
+                ? `用时 ${days} 天`
+                : `日均约${dailyAvg >= 0 ? '减' : '增'} ${Math.abs(dailyAvg).toFixed(2)} 公斤`;
+
+            const actionsHtml = `<div class="goal-card-actions">
+                    <div class="act-btn edit" onclick="event.stopPropagation(); openGoalSheet('${goal.id}')">
+                        <img src="icon/icon-edit.png">
+                    </div>
+                    <div class="act-btn delete" onclick="event.stopPropagation(); deleteGoal('${goal.id}')">
+                        <img src="icon/icon-delete.png">
+                    </div>
+                </div>`;
+            const swipeAttr = 'data-swipe-width="104"';
+
+            return `<div class="goal-card-wrapper">
+                ${actionsHtml}
+                <div class="${cardClass}" data-goal-id="${goal.id}" ${swipeAttr}>
+                    <div class="goal-card-top">
+                        <span class="goal-card-daterange">${dateRange}</span>
+                        ${tagHtml}
+                    </div>
+                    ${nameHtml}
+                    <div class="goal-card-weight">${startWeight !== null ? startWeight.toFixed(1) : '--'} → ${goal.targetWeight.toFixed(1)} 公斤</div>
+                    <div class="goal-card-bottom">
+                        <span class="goal-card-progress">达成 ${Math.round(progress)}%</span>
+                        <span class="goal-card-rate">${dailyAvgText}</span>
+                        ${isCompleted ? '' : `<span class="goal-card-remaining">距目标 ${remaining.toFixed(2)} 公斤</span>`}
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // 弹窗：创建/编辑目标
+        function openGoalSheet(id) {
+            const titleEl = document.getElementById('goalSheetTitle');
+            const idEl = document.getElementById('editGoalId');
+            const targetInput = document.getElementById('goalTargetInput');
+            const nameInput = document.getElementById('goalNameInput');
+            const startDateText = document.getElementById('goalStartDateText');
+            const endDateText = document.getElementById('goalEndDateText');
+            const startDateInput = document.getElementById('goalStartDateInput');
+            const endDateInput = document.getElementById('goalEndDateInput');
+
+            if (id) {
+                // 编辑
+                const goal = appData.goals.find(g => g.id === id);
+                if (!goal) return;
+                titleEl.textContent = '编辑目标';
+                idEl.value = goal.id;
+                targetInput.value = goal.targetWeight;
+                nameInput.value = goal.name || '';
+                startDateInput.value = goal.startDate || '';
+                endDateInput.value = goal.endDate || '';
+                if (goal.startDate) {
+                    startDateText.textContent = goal.startDate;
+                    startDateText.classList.remove('placeholder');
+                } else {
+                    startDateText.textContent = '未设置';
+                    startDateText.classList.add('placeholder');
+                }
+                if (goal.endDate) {
+                    endDateText.textContent = goal.endDate;
+                    endDateText.classList.remove('placeholder');
+                } else {
+                    endDateText.textContent = '未设置';
+                    endDateText.classList.add('placeholder');
+                }
+            } else {
+                // 创建
+                titleEl.textContent = '创建目标';
+                idEl.value = '';
+                targetInput.value = '';
+                nameInput.value = '';
+                startDateInput.value = '';
+                endDateInput.value = '';
+                startDateText.textContent = '未设置';
+                startDateText.classList.add('placeholder');
+                endDateText.textContent = '未设置';
+                endDateText.classList.add('placeholder');
+            }
+            // 关闭所有已打开的滑动卡片
+            if (typeof swipeCloseAll === 'function') swipeCloseAll();
+            document.getElementById('goalSheet').classList.add('show');
+        }
+
+        function closeGoalSheet() {
+            document.getElementById('goalSheet').classList.remove('show');
+        }
+
+        function onGoalDateChange(which) {
+            const input = document.getElementById(which === 'start' ? 'goalStartDateInput' : 'goalEndDateInput');
+            const textEl = document.getElementById(which === 'start' ? 'goalStartDateText' : 'goalEndDateText');
+            if (input.value) {
+                textEl.textContent = input.value;
+                textEl.classList.remove('placeholder');
+            } else {
+                textEl.textContent = '未设置';
+                textEl.classList.add('placeholder');
+            }
+        }
+
+        function saveGoal() {
+            const id = document.getElementById('editGoalId').value;
+            const targetWeight = parseFloat(document.getElementById('goalTargetInput').value);
+            const name = document.getElementById('goalNameInput').value.trim();
+            const startDate = document.getElementById('goalStartDateInput').value || '';
+            const endDate = document.getElementById('goalEndDateInput').value || '';
+
+            if (isNaN(targetWeight) || targetWeight < 20 || targetWeight > 300) {
+                showToast('请输入有效的目标体重', 'error'); return;
+            }
+
+            if (id) {
+                // 编辑
+                const goal = appData.goals.find(g => g.id === id);
+                if (goal) {
+                    goal.targetWeight = targetWeight;
+                    goal.name = name;
+                    goal.startDate = startDate;
+                    goal.endDate = endDate;
+                }
+            } else {
+                // 创建
+                const newGoal = {
+                    id: genId(),
+                    name: name,
+                    targetWeight: targetWeight,
+                    startWeight: null,
+                    startDate: startDate,
+                    endDate: endDate,
+                    createdAt: new Date().toISOString(),
+                    status: 'active',
+                    completedAt: null
+                };
+                appData.goals.push(newGoal);
+            }
+            // 同步 appData.targetWeight 为最新进行中目标的目标体重
+            syncTargetWeight();
+            saveData(); renderAll(); closeGoalSheet();
+            showToast(id ? '目标已更新' : '目标已创建');
+        }
+
+        function syncTargetWeight() {
+            const activeGoals = (appData.goals || []).filter(g => g.status !== 'completed')
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            appData.targetWeight = activeGoals.length > 0 ? activeGoals[0].targetWeight : null;
+        }
+
+        function deleteGoal(id) {
+            showConfirm('删除目标', '确定要删除这个目标吗？', () => {
+                appData.goals = appData.goals.filter(g => g.id !== id);
+                syncTargetWeight();
+                saveData(); renderAll(); showToast('目标已删除');
+            });
         }
 
         // ========== 颜色主题 ==========
@@ -4482,11 +5005,11 @@
                 let lostHtml = '--';
                 if (latest && appData.targetWeight) {
                     const diff = (latest.weight - appData.targetWeight);
-                    diffHtml = `${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+                    diffHtml = `${diff > 0 ? '+' : ''}${diff.toFixed(2)} kg`;
                     const sorted2 = [...appData.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
                     startW = sorted2[0].weight + ' kg';
                     const lost = sorted2[0].weight - latest.weight;
-                    lostHtml = `${lost > 0 ? '-' : '+'}${Math.abs(lost).toFixed(1)} kg`;
+                    lostHtml = `${lost > 0 ? '-' : '+'}${Math.abs(lost).toFixed(2)} kg`;
                     if (sorted2.length >= 2) {
                         const totalNeeded = sorted2[0].weight - appData.targetWeight;
                         const done = sorted2[0].weight - latest.weight;
@@ -4818,6 +5341,23 @@
                 XLSX.utils.book_append_sheet(wb, ws2, '个人信息');
             }
 
+            // Sheet: 目标管理 (仅当勾选个人信息或全部时)
+            if (catProfile || catAll) {
+                const goalsData = (appData.goals || []).map(g => ({
+                    '名称': g.name || '',
+                    '目标体重(kg)': g.targetWeight || '',
+                    '起始体重(kg)': getGoalStartWeight(g) || g.startWeight || '',
+                    '开始日期': g.startDate || '',
+                    '结束日期': g.endDate || '',
+                    '状态': g.status === 'completed' ? '已完成' : '进行中',
+                    '创建时间': g.createdAt || '',
+                    '完成时间': g.completedAt || ''
+                }));
+                const ws6 = XLSX.utils.json_to_sheet(goalsData.length > 0 ? goalsData : [{ '名称': '', '目标体重(kg)': '', '起始体重(kg)': '', '开始日期': '', '结束日期': '', '状态': '', '创建时间': '', '完成时间': '' }]);
+                ws6['!cols'] = [{ wch: 15 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 8 }, { wch: 20 }, { wch: 20 }];
+                XLSX.utils.book_append_sheet(wb, ws6, '目标管理');
+            }
+
             // Sheet: 生理周期 (仅当勾选生理周期或全部时)
             if (catPeriod || catAll) {
                 const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
@@ -4909,17 +5449,20 @@
                 weights: Array.isArray(data.weights),
                 profile: !!data.profile,
                 periods: Array.isArray(data.periods),
-                notes: Array.isArray(data.notes)
+                notes: Array.isArray(data.notes),
+                goals: Array.isArray(data.goals)
             };
             const wCount = (data.weights || []).length;
             const nCount = (data.notes || []).length;
             const pCount = (data.periods || []).length;
+            const gCount = (data.goals || []).length;
 
             if (mode === 'overwrite') {
                 const moduleTexts = [];
                 if (included.weights) moduleTexts.push(`${wCount}条体重记录`);
                 if (included.periods) moduleTexts.push(`${pCount}条生理周期`);
                 if (included.notes) moduleTexts.push(`${nCount}条备忘录`);
+                if (included.goals) moduleTexts.push(`${gCount}条目标`);
                 if (included.profile) moduleTexts.push('个人信息');
                 const desc = `将只覆盖导入文件中包含的模块（${moduleTexts.join('、') || '无数据'}），其他模块保持不变，是否继续？`;
                 showConfirm('覆盖导入', desc, () => {
@@ -4939,6 +5482,9 @@
                         appData.notes = (data.notes || []).map(n => ({ id: n.id || genId(), title: n.title || '', category: n.category || 'uncategorized', content: n.content || '', checklist: n.checklist || [], images: n.images || [], createdAt: n.createdAt || new Date().toISOString(), updatedAt: n.updatedAt || new Date().toISOString() }));
                         appData.customNoteCategories = normalizeCustomNoteCategories(data.customNoteCategories);
                     }
+                    if (included.goals) {
+                        appData.goals = (data.goals || []).map(g => ({ id: g.id || genId(), name: g.name || '', targetWeight: g.targetWeight, startWeight: g.startWeight, startDate: g.startDate || '', endDate: g.endDate || '', createdAt: g.createdAt || new Date().toISOString(), status: g.status || 'active', completedAt: g.completedAt || null }));
+                    }
                     saveData(); renderAll();
                     closeImportModeSheet();
                     showToast(`覆盖导入完成：${wCount}条记录、${nCount}条备忘录`);
@@ -4949,6 +5495,7 @@
                 if (included.weights) mergeTexts.push(`${wCount} 条体重记录`);
                 if (included.periods) mergeTexts.push(`${pCount} 条生理周期`);
                 if (included.notes) mergeTexts.push(`${nCount} 条备忘录`);
+                if (included.goals) mergeTexts.push(`${gCount} 条目标`);
                 if (included.profile) mergeTexts.push('个人信息');
                 const desc = `将只合并导入文件中包含的模块（${mergeTexts.join('、') || '无数据'}），其他模块保持不变，是否继续？`;
                 showConfirm('合并导入', desc, () => {
@@ -5021,6 +5568,22 @@
                     if (included.profile && data.targetWeight !== undefined && appData.targetWeight === null) appData.targetWeight = data.targetWeight;
                     if (included.profile && data.avatarImage && !appData.avatarImage) appData.avatarImage = data.avatarImage;
                     if (included.profile && data.emojiTheme && !appData.emojiTheme) appData.emojiTheme = data.emojiTheme;
+                    // 合并目标：按 createdAt 去重
+                    if (included.goals) {
+                        let addedG = 0;
+                        const goalCreatedAtMap = new Map(appData.goals.filter(g => g.createdAt).map(g => [g.createdAt, g]));
+                        (data.goals || []).forEach(g => {
+                            const existing = g.createdAt ? goalCreatedAtMap.get(g.createdAt) : null;
+                            if (existing) {
+                                Object.assign(existing, g, { id: existing.id });
+                            } else {
+                                const newGoal = { id: g.id || genId(), name: g.name || '', targetWeight: g.targetWeight, startWeight: g.startWeight, startDate: g.startDate || '', endDate: g.endDate || '', createdAt: g.createdAt || new Date().toISOString(), status: g.status || 'active', completedAt: g.completedAt || null };
+                                appData.goals.push(newGoal);
+                                if (newGoal.createdAt) goalCreatedAtMap.set(newGoal.createdAt, newGoal);
+                                addedG++;
+                            }
+                        });
+                    }
                     // 合并自定义分类（过滤空值）
                     if (included.notes && Array.isArray(data.customNoteCategories)) {
                         appData.customNoteCategories = normalizeCustomNoteCategories(appData.customNoteCategories);
@@ -5075,11 +5638,13 @@
             const wCount = (data.weights || []).length;
             const nCount = (data.notes || []).length;
             const pCount = (data.periods || []).length;
+            const gCount = (data.goals || []).length;
             const hasProfile = !!included.profile && !!data.profile && (!!data.profile.name || !!data.profile.height || !!data.profile.birthday || data.targetWeight !== undefined || !!data.avatarImage);
             const moduleTexts = [];
             if (included.weights) moduleTexts.push(`${wCount}条体重记录`);
             if (included.periods) moduleTexts.push(`${pCount}条生理周期`);
             if (included.notes) moduleTexts.push(`${nCount}条备忘录`);
+            if (included.goals && gCount > 0) moduleTexts.push(`${gCount}条目标`);
             if (hasProfile) moduleTexts.push('个人信息');
             let desc = `${label}内容：${moduleTexts.join('、') || '未检测到可导入模块'}`;
             if (data.avatarImage) desc += '、头像';
@@ -5215,7 +5780,35 @@
                 });
             }
 
-            if (importedWeights.length === 0 && !importedProfile && importedNotes.length === 0 && importedPeriods.length === 0) {
+            // 解析目标管理
+            let importedGoals = [];
+            const wsGoals = wb.Sheets['目标管理'];
+            if (wsGoals) {
+                const rows = XLSX.utils.sheet_to_json(wsGoals);
+                rows.forEach(row => {
+                    const targetWeight = parseFloat(row['目标体重(kg)']);
+                    const startWeight = parseFloat(row['起始体重(kg)']);
+                    if (isNaN(targetWeight)) return;
+                    const name = row['名称'] ? String(row['名称']).trim() : '';
+                    const startDate = row['开始日期'] ? String(row['开始日期']).trim() : '';
+                    const endDate = row['结束日期'] ? String(row['结束日期']).trim() : '';
+                    const status = row['状态'] ? String(row['状态']).trim() : '进行中';
+                    const createdAtStr = row['创建时间'] ? String(row['创建时间']).trim() : '';
+                    const completedAtStr = row['完成时间'] ? String(row['完成时间']).trim() : '';
+                    let createdAt = new Date().toISOString();
+                    if (createdAtStr) { const p = new Date(createdAtStr); if (!isNaN(p)) createdAt = p.toISOString(); }
+                    let completedAt = null;
+                    if (completedAtStr) { const p = new Date(completedAtStr); if (!isNaN(p)) completedAt = p.toISOString(); }
+                    importedGoals.push({
+                        id: genId(),
+                        name, targetWeight, startWeight, startDate, endDate,
+                        status: status === '已完成' ? 'completed' : 'active',
+                        createdAt, completedAt
+                    });
+                });
+            }
+
+            if (importedWeights.length === 0 && !importedProfile && importedNotes.length === 0 && importedPeriods.length === 0 && importedGoals.length === 0) {
                 showToast('未找到有效数据，请使用应用导出的ZIP或Excel文件', 'error');
                 return;
             }
@@ -5226,7 +5819,8 @@
                     weights: !!wsRecords,
                     profile: !!wsProfile,
                     periods: !!wsPeriods,
-                    notes: !!wsNotes
+                    notes: !!wsNotes,
+                    goals: !!wsGoals
                 },
                 weights: importedWeights,
                 profile: importedProfile,
@@ -5236,7 +5830,8 @@
                 periodSettings: importedPeriodSettings,
                 periodNotes: importedPeriodNotes,
                 notes: importedNotes,
-                customNoteCategories: importedCategories
+                customNoteCategories: importedCategories,
+                goals: importedGoals
             }, label, recoveredImageCount, canRecoverImages);
         }
 
@@ -5306,7 +5901,7 @@
 
         function clearAllData() {
             showConfirm('清空数据', '将删除所有体重记录和个人信息，此操作不可撤销！', () => {
-                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces', colorTheme: 'ocean', customColors: null, periods: [], periodSettings: { periodLength: 5, cycleLength: 28 }, periodNotes: {}, notes: [], customNoteCategories: [] };
+                appData = { weights: [], profile: { name: '', gender: '', birthday: '', height: '' }, targetWeight: null, avatarImage: null, emojiTheme: 'faces', colorTheme: 'ocean', customColors: null, periods: [], periodSettings: { periodLength: 5, cycleLength: 28 }, periodNotes: {}, notes: [], customNoteCategories: [], goals: [] };
                 saveData(); renderAll(); showToast('所有数据已清空');
             });
         }
@@ -5366,8 +5961,8 @@
             const targetText = document.getElementById('targetText');
             if (appData.targetWeight && latest) {
                 const diff = latest.weight - appData.targetWeight;
-                if (diff > 0) { targetText.textContent = `还需减 ${diff.toFixed(1)} kg到达目标`; targetCard.classList.remove('achieved'); }
-                else if (diff < 0) { targetText.textContent = `已低于目标 ${Math.abs(diff).toFixed(1)} kg`; targetCard.classList.add('achieved'); }
+                if (diff > 0) { targetText.textContent = `还需减 ${diff.toFixed(2)} kg到达目标`; targetCard.classList.remove('achieved'); }
+                else if (diff < 0) { targetText.textContent = `已低于目标 ${Math.abs(diff).toFixed(2)} kg`; targetCard.classList.add('achieved'); }
                 else { targetText.textContent = '🎉 已达成目标！'; targetCard.classList.add('achieved'); }
             } else if (appData.targetWeight) { targetText.textContent = `目标：${appData.targetWeight} kg`; targetCard.classList.remove('achieved'); }
             else { targetText.textContent = '未设置目标体重'; targetCard.classList.remove('achieved'); }
@@ -5762,8 +6357,9 @@
             const sorted = [...appData.weights].sort((a, b) => new Date(b.date) - new Date(a.date));
             const latest = sorted[0];
 
-            // 目标管理 - 进度可视化
+            // 目标管理 - 进度可视化（旧版页面已移除，保留兼容性检查）
             const goalDiffNum = document.getElementById('goalDiffNum');
+            if (!goalDiffNum) return; // 新版目标管理页不使用这些元素
             const goalProgressNum = document.getElementById('goalProgressNum');
             const goalBarFill = document.getElementById('goalBarFill');
             const goalStartWeight = document.getElementById('goalStartWeight');
@@ -5773,7 +6369,7 @@
 
             if (latest && appData.targetWeight) {
                 const diff = (latest.weight - appData.targetWeight);
-                goalDiffNum.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg`;
+                goalDiffNum.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(2)} kg`;
                 goalDiffNum.style.color = diff > 0 ? 'var(--danger)' : (diff < 0 ? 'var(--success)' : 'var(--text)');
 
                 const sorted2 = [...appData.weights].sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -5783,7 +6379,7 @@
                 goalTargetWeight.textContent = `${appData.targetWeight} kg`;
 
                 const lost = (startWeight - latest.weight);
-                goalLostWeight.textContent = `${lost > 0 ? '-' : '+'}${Math.abs(lost).toFixed(1)} kg`;
+                goalLostWeight.textContent = `${lost > 0 ? '-' : '+'}${Math.abs(lost).toFixed(2)} kg`;
                 goalLostWeight.className = 'stat-val ' + (lost > 0 ? 'down' : (lost < 0 ? 'up' : ''));
 
                 if (sorted2.length >= 2) {
@@ -6217,12 +6813,12 @@
         };
 
         function swipeCloseOthers(card) {
-            document.querySelectorAll('.note-card, .record-card').forEach(c => {
+            document.querySelectorAll('.note-card, .record-card, .goal-card').forEach(c => {
                 if (c !== card) c.style.transform = '';
             });
         }
         function swipeOpenedCards() {
-            return Array.from(document.querySelectorAll('.note-card, .record-card')).filter(c => c.style.transform && c.style.transform !== 'none');
+            return Array.from(document.querySelectorAll('.note-card, .record-card, .goal-card')).filter(c => c.style.transform && c.style.transform !== 'none');
         }
         function swipeCloseAll() {
             swipeOpenedCards().forEach(c => {
@@ -6286,7 +6882,7 @@
                 document.addEventListener('mouseup', swipeEnd);
                 document.addEventListener('mouseleave', swipeEnd);
                 document.addEventListener('click', function(e) {
-                    const isActBtn = !!e.target.closest('.record-actions .act-btn, .note-card-actions .act-btn');
+                    const isActBtn = !!e.target.closest('.record-actions .act-btn, .note-card-actions .act-btn, .goal-card-actions .act-btn');
                     const opened = swipeOpenedCards();
 
                     if (isActBtn) {
@@ -7790,7 +8386,7 @@
                     goalPercent.textContent = `${Math.round(progress)}%`;
 
                     if (achieved > 0) {
-                        goalTitle.textContent = `距目标还差 ${achieved.toFixed(1)} kg`;
+                        goalTitle.textContent = `距目标还差 ${achieved.toFixed(2)} kg`;
                     } else {
                         goalTitle.textContent = '已达成目标 🎉';
                     }
@@ -7986,6 +8582,7 @@
             renderProfilePage();
             renderNotesPage();
             renderPeriodPage();
+            if (document.getElementById('page-target-edit').classList.contains('active')) renderGoalPage();
             if (document.getElementById('page-record').classList.contains('active')) renderTrendChart();
             if (document.getElementById('page-record-health').classList.contains('active') && currentRecordHealthId) {
                 renderRecordHealthPage(currentRecordHealthId);
@@ -8074,7 +8671,7 @@
 
         // ========== 底部弹窗手势（上滑铺满 / 下滑关闭 / 左滑关闭） ==========
         function bindSheetGestures() {
-            const sheetIds = ['customColorSheet', 'catSheet', 'recordSheet', 'remarkSheet', 'clockSheet', 'quickSheet', 'downloadSheet', 'importModeSheet'];
+            const sheetIds = ['customColorSheet', 'catSheet', 'recordSheet', 'remarkSheet', 'clockSheet', 'quickSheet', 'downloadSheet', 'importModeSheet', 'goalSheet'];
             sheetIds.forEach(id => {
                 const overlay = document.getElementById(id);
                 if (!overlay || overlay._gestureBound) return;
