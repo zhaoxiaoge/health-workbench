@@ -7721,7 +7721,7 @@
             if (hour >= 5 && hour < 9) {
                 greeting = '早安';
             } else if (hour >= 9 && hour < 12) {
-                    return '上午好';
+                greeting = '上午好';
             } else if (hour >= 12 && hour < 13) {
                 greeting = '中午好';
             } else if (hour >= 13 && hour < 18) {
@@ -7746,9 +7746,9 @@
                 if (prev) {
                     const diff = todayRecord.weight - prev.weight;
                     if (diff > 0) {
-                        document.getElementById('homeWeightTrend').textContent = `较上次 + ${diff.toFixed(1)} kg，继续努力~`;
+                        document.getElementById('homeWeightTrend').textContent = `较上次 + ${diff.toFixed(2)} kg，继续努力~`;
                     } else if (diff < 0) {
-                        document.getElementById('homeWeightTrend').textContent = `较上次 - ${Math.abs(diff).toFixed(1)} kg，继续保持~`;
+                        document.getElementById('homeWeightTrend').textContent = `较上次 - ${Math.abs(diff).toFixed(2)} kg，继续保持~`;
                     } else {
                         document.getElementById('homeWeightTrend').textContent = '较上次持平';
                     }
