@@ -1,8 +1,8 @@
 {
     "id": "/health-workbench/",
-    "name": "月半日记",
-    "short_name": "月半日记",
-    "description": "月半日记 - 个人体重管理工具，记录体重、趋势分析、目标管理",
+    "name": "月半简记",
+    "short_name": "月半简记",
+    "description": "月半简记 - 个人健康管理工具，记录体重、追踪经期、安放心情",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",

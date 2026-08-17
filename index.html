@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>月半日记</title>
+    <title>月半简记</title>
 
     <!-- PWA 核心 -->
     <link rel="manifest" href="manifest.json">
@@ -13,7 +13,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="月半日记">
+    <meta name="apple-mobile-web-app-title" content="月半简记">
     <link rel="apple-touch-icon" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -2450,7 +2450,7 @@
             <div class="page active" id="page-trend">
                 <div class="sticky-nav-bar">
                     <div class="header-top">
-                        <div class="header-title">月半日记</div>
+                        <div class="header-title">月半简记</div>
                         <div class="header-icons" style="position:relative;">
                             <div class="icon-btn" onclick="toggleDropdown('homeDropdownMenu')">⋯</div>
                             <div class="dropdown-menu" id="homeDropdownMenu">
@@ -2731,7 +2731,7 @@
                 </div>
 
                 <div style="text-align:center; padding:16px; color:var(--text-light); font-size:12px;">
-                    月半日记 v4.0 · 数据本地存储
+                    月半简记 v1.0 · 数据本地存储
                 </div>
             </div>
 
@@ -5151,7 +5151,7 @@
         }
 
         function getExportAppName() {
-            return (document.title || '月半日记').trim() || '月半日记';
+            return (document.title || '月半简记').trim() || '月半简记';
         }
 
         function getPeriodRangeNotes(p) {
