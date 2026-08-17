@@ -377,7 +377,7 @@
         .empty-state .emoji { font-size: 56px; margin-bottom: 16px; }
         .empty-state p { font-size: 14px; }
 
-        /* ========== 备忘录页 ========== */
+        /* ========== 日记页 ========== */
         .notes-search-wrap {
             display: flex; align-items: center; gap: 8px;
             background: var(--card-bg); border-radius: 12px;
@@ -1707,7 +1707,7 @@
         .dropdown-item:active { background: var(--bg); }
         .dropdown-item .icon { font-size: 16px; width: 20px; text-align: center; }
 
-        /* ========== 生理周期页 ========== */
+        /* ========== 周期页 ========== */
         .period-page-content { padding: 16px; }
         .period-summary-card {
             display: flex; align-items: center; gap: 14px;
@@ -2396,7 +2396,7 @@
                 </div>
             </div>
 
-            <!-- ============ 备忘录 ============ -->
+            <!-- ============ 日记 ============ -->
             <div class="page" id="page-notes">
                 <div class="sticky-nav-bar">
                     <div class="header-top">
@@ -2516,7 +2516,7 @@
                     <!-- 周期状态 -->
                     <div id="homeCycleSection" data-card-id="cycle" style="display:none;">
                         <div class="home-cycle-card" onclick="switchPage('period')">
-                            <div class="home-cycle-empty" id="homeCycleEmpty" style="display:none; padding:24px 20px; text-align:center; font-size:14px; color:rgba(255,255,255,0.9);">暂无生理周期数据，点击记录</div>
+                            <div class="home-cycle-empty" id="homeCycleEmpty" style="display:none; padding:24px 20px; text-align:center; font-size:14px; color:rgba(255,255,255,0.9);">暂无周期数据，点击记录</div>
                             <div class="home-cycle-content" id="homeCycleContent">
                                 <div class="home-cycle-ring">
                                     <svg width="130" height="130" viewBox="0 0 130 130">
@@ -2595,7 +2595,7 @@
             <div class="page" id="page-period">
                 <div class="sticky-nav-bar">
                     <div class="header-top">
-                        <div class="header-title">生理周期</div>
+                        <div class="header-title">周期</div>
                         <div class="header-icons" style="position:relative;">
                             <div class="icon-btn" onclick="jumpToPeriodToday()" title="今天">
                                 <img src="icon/icon-today.png" alt="今天" class="header-today-icon">
@@ -2663,7 +2663,7 @@
                     <!-- 经期记录列表 -->
                     <div class="period-records-section" id="periodRecordsSection" style="display:none;">
                         <div class="section-title" style="padding:0 0 8px;">
-                            <span>经期记录</span>
+                            <span>历史记录</span>
                             <span class="count" id="periodRecordCount">0 条</span>
                         </div>
                         <div id="periodRecordList"></div>
@@ -2869,7 +2869,6 @@
 
                 <!-- 空状态 -->
                 <div class="goal-empty-state" id="goalEmptyState">
-                    <div class="emoji">🎯</div>
                     <p>还没有目标，点击右下角 + 创建吧</p>
                 </div>
             </div>
@@ -3141,10 +3140,10 @@
                 <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-weight.png'); mask-image:url('icon/icon-nav-weight.png');"></span><span class="nav-label">体重</span>
             </button>
             <button class="nav-item" data-page="notes">
-                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-notes.png'); mask-image:url('icon/icon-nav-notes.png');"></span><span class="nav-label">备忘录</span>
+                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-notes.png'); mask-image:url('icon/icon-nav-notes.png');"></span><span class="nav-label">日记</span>
             </button>
             <button class="nav-item" data-page="period">
-                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-period.png'); mask-image:url('icon/icon-nav-period.png');"></span><span class="nav-label">生理周期</span>
+                <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-period.png'); mask-image:url('icon/icon-nav-period.png');"></span><span class="nav-label">周期</span>
             </button>
             <button class="nav-item" data-page="profile">
                 <span class="nav-icon-img" style="-webkit-mask-image:url('icon/icon-nav-profile.png'); mask-image:url('icon/icon-nav-profile.png');"></span><span class="nav-label">我的</span>
@@ -3385,9 +3384,9 @@
                 <div style="display:flex; gap:8px; flex-wrap:wrap;" id="downloadCatBtns">
                     <button class="date-quick-btn active" onclick="toggleDownloadCat('all', this)">全部</button>
                     <button class="date-quick-btn active" onclick="toggleDownloadCat('weight', this)">体重</button>
-                    <button class="date-quick-btn" onclick="toggleDownloadCat('period', this)">生理周期</button>
+                    <button class="date-quick-btn" onclick="toggleDownloadCat('notes', this)">日记</button>
+                    <button class="date-quick-btn" onclick="toggleDownloadCat('period', this)">周期</button>
                     <button class="date-quick-btn" onclick="toggleDownloadCat('profile', this)">个人信息</button>
-                    <button class="date-quick-btn" onclick="toggleDownloadCat('notes', this)">备忘录</button>
                 </div>
             </div>
             <div class="sheet-btn-row">
@@ -3514,7 +3513,7 @@
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 const page = item.dataset.page;
-                // 离开备忘录页时退出批量删除模式
+                // 离开日记页时退出批量删除模式
                 if (batchDeleteMode && page !== 'notes') exitBatchDeleteMode();
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
@@ -5086,11 +5085,11 @@
         function openNotesDownloadSheet() {
             // 重置为默认值
             setDownloadRange('all');
-            // 默认选中备忘录
+            // 默认选中日记
             const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
             catBtns.forEach(btn => {
                 btn.classList.remove('active');
-                if (btn.textContent.trim() === '备忘录') {
+                if (btn.textContent.trim() === '日记') {
                     btn.classList.add('active');
                 }
             });
@@ -5269,9 +5268,9 @@
             const catBtns = document.querySelectorAll('#downloadCatBtns .date-quick-btn');
             const catAll = Array.from(catBtns).find(b => b.textContent.trim() === '全部')?.classList.contains('active') ?? false;
             const catWeight = Array.from(catBtns).find(b => b.textContent.trim() === '体重')?.classList.contains('active') ?? false;
-            const catPeriod = Array.from(catBtns).find(b => b.textContent.trim() === '生理周期')?.classList.contains('active') ?? false;
+            const catNotes = Array.from(catBtns).find(b => b.textContent.trim() === '日记')?.classList.contains('active') ?? false;
+            const catPeriod = Array.from(catBtns).find(b => b.textContent.trim() === '周期')?.classList.contains('active') ?? false;
             const catProfile = Array.from(catBtns).find(b => b.textContent.trim() === '个人信息')?.classList.contains('active') ?? false;
-            const catNotes = Array.from(catBtns).find(b => b.textContent.trim() === '备忘录')?.classList.contains('active') ?? false;
 
             // 按日期范围筛选笔记
             let filteredNotes = [...(appData.notes || [])];
@@ -5358,7 +5357,7 @@
                 XLSX.utils.book_append_sheet(wb, ws6, '目标管理');
             }
 
-            // Sheet: 生理周期 (仅当勾选生理周期或全部时)
+            // Sheet: 周期 (仅当勾选周期或全部时)
             if (catPeriod || catAll) {
                 const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
                 const periodData = (appData.periods || []).map(p => ({
@@ -5371,10 +5370,10 @@
                 periodData.push({ '开始日期': '【设置】', '结束日期': '', '天数': `经期天数:${ps.periodLength}`, '备注': `经期周期:${ps.cycleLength}` });
                 const ws5 = XLSX.utils.json_to_sheet(periodData);
                 ws5['!cols'] = [{ wch: 12 }, { wch: 12 }, { wch: 18 }, { wch: 50 }];
-                XLSX.utils.book_append_sheet(wb, ws5, '生理周期');
+                XLSX.utils.book_append_sheet(wb, ws5, '周期');
             }
 
-            // Sheet: 备忘录 (仅当勾选备忘录或全部时)
+            // Sheet: 日记 (仅当勾选日记或全部时)
             if (catNotes || catAll) {
                 const notesData = filteredNotes.map((n, index) => {
                     const cat = getNoteCat(n.category || 'uncategorized');
@@ -5393,7 +5392,7 @@
                 });
                 const ws4 = XLSX.utils.json_to_sheet(notesData.length > 0 ? notesData : [{ '标题': '', '分类': '', '内容': '', '清单': '', '图片数': '', '图片路径': '', '创建时间': '', '更新时间': '' }]);
                 ws4['!cols'] = [{ wch: 15 }, { wch: 10 }, { wch: 40 }, { wch: 30 }, { wch: 8 }, { wch: 45 }, { wch: 20 }, { wch: 20 }];
-                XLSX.utils.book_append_sheet(wb, ws4, '备忘录');
+                XLSX.utils.book_append_sheet(wb, ws4, '日记');
             }
 
             const xlsxData = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
@@ -5460,8 +5459,8 @@
             if (mode === 'overwrite') {
                 const moduleTexts = [];
                 if (included.weights) moduleTexts.push(`${wCount}条体重记录`);
-                if (included.periods) moduleTexts.push(`${pCount}条生理周期`);
-                if (included.notes) moduleTexts.push(`${nCount}条备忘录`);
+                if (included.periods) moduleTexts.push(`${pCount}条周期记录`);
+                if (included.notes) moduleTexts.push(`${nCount}条日记`);
                 if (included.goals) moduleTexts.push(`${gCount}条目标`);
                 if (included.profile) moduleTexts.push('个人信息');
                 const desc = `将只覆盖导入文件中包含的模块（${moduleTexts.join('、') || '无数据'}），其他模块保持不变，是否继续？`;
@@ -5487,14 +5486,14 @@
                     }
                     saveData(); renderAll();
                     closeImportModeSheet();
-                    showToast(`覆盖导入完成：${wCount}条记录、${nCount}条备忘录`);
+                    showToast(`覆盖导入完成：${wCount}条记录、${nCount}条日记`);
                 });
             } else {
                 // 合并模式
                 const mergeTexts = [];
                 if (included.weights) mergeTexts.push(`${wCount} 条体重记录`);
-                if (included.periods) mergeTexts.push(`${pCount} 条生理周期`);
-                if (included.notes) mergeTexts.push(`${nCount} 条备忘录`);
+                if (included.periods) mergeTexts.push(`${pCount} 条周期记录`);
+                if (included.notes) mergeTexts.push(`${nCount} 条日记`);
                 if (included.goals) mergeTexts.push(`${gCount} 条目标`);
                 if (included.profile) mergeTexts.push('个人信息');
                 const desc = `将只合并导入文件中包含的模块（${mergeTexts.join('、') || '无数据'}），其他模块保持不变，是否继续？`;
@@ -5523,7 +5522,7 @@
                             }
                         });
                     }
-                    // 合并生理周期：按 startDate 去重
+                    // 合并周期：按 startDate 去重
                     if (included.periods) {
                         const existingPeriods = new Set(appData.periods.map(p => p.startDate));
                         (data.periods || []).forEach(p => {
@@ -5538,7 +5537,7 @@
                             appData.periodNotes = Object.assign({}, appData.periodNotes || {}, data.periodNotes);
                         }
                     }
-                    // 合并备忘录：优先按创建时间去重，其次按 id 去重
+                    // 合并日记：优先按创建时间去重，其次按 id 去重
                     const noteIdMap = new Map(appData.notes.map(n => [n.id, n]));
                     const noteCreatedAtMap = new Map(appData.notes.filter(n => n.createdAt).map(n => [n.createdAt, n]));
                     if (included.notes) {
@@ -5596,9 +5595,9 @@
                     saveData(); renderAll();
                     closeImportModeSheet();
                     let msg = `合并导入完成：新增${addedW}条体重记录`;
-                    if (addedP > 0) msg += `、${addedP}条生理周期`;
-                    if (addedN > 0) msg += `、${addedN}条备忘录`;
-                    if (updatedN > 0) msg += `，更新${updatedN}条备忘录`;
+                    if (addedP > 0) msg += `、${addedP}条周期记录`;
+                    if (addedN > 0) msg += `、${addedN}条日记`;
+                    if (updatedN > 0) msg += `，更新${updatedN}条日记`;
                     showToast(msg);
                 });
             }
@@ -5642,14 +5641,14 @@
             const hasProfile = !!included.profile && !!data.profile && (!!data.profile.name || !!data.profile.height || !!data.profile.birthday || data.targetWeight !== undefined || !!data.avatarImage);
             const moduleTexts = [];
             if (included.weights) moduleTexts.push(`${wCount}条体重记录`);
-            if (included.periods) moduleTexts.push(`${pCount}条生理周期`);
-            if (included.notes) moduleTexts.push(`${nCount}条备忘录`);
+            if (included.periods) moduleTexts.push(`${pCount}条周期记录`);
+            if (included.notes) moduleTexts.push(`${nCount}条日记`);
             if (included.goals && gCount > 0) moduleTexts.push(`${gCount}条目标`);
             if (hasProfile) moduleTexts.push('个人信息');
             let desc = `${label}内容：${moduleTexts.join('、') || '未检测到可导入模块'}`;
             if (data.avatarImage) desc += '、头像';
             if (canRecoverImages) desc += `，已匹配${recoveredImageCount}张图片`;
-            else desc += '（未包含图片目录，备忘录图片不可恢复）';
+            else desc += '（未包含图片目录，日记图片不可恢复）';
             document.getElementById('importModeDesc').textContent = desc;
             document.getElementById('importModeSheet').classList.add('show');
         }
@@ -5708,10 +5707,10 @@
                 if (avatarPath && imageMap[avatarPath]) importedAvatar = imageMap[avatarPath];
             }
 
-            // 解析生理周期
+            // 解析周期
             let importedPeriodSettings = null;
             const importedPeriodNotes = {};
-            const wsPeriods = wb.Sheets['生理周期'];
+            const wsPeriods = wb.Sheets['周期'];
             if (wsPeriods) {
                 const rows = XLSX.utils.sheet_to_json(wsPeriods);
                 rows.forEach(row => {
@@ -5742,8 +5741,8 @@
                 });
             }
 
-            // 解析备忘录
-            const wsNotes = wb.Sheets['备忘录'];
+            // 解析日记
+            const wsNotes = wb.Sheets['日记'];
             if (wsNotes) {
                 const rows = XLSX.utils.sheet_to_json(wsNotes);
                 rows.forEach(row => {
@@ -6407,7 +6406,7 @@
             }
         }
 
-        // ========== 备忘录功能 ==========
+        // ========== 日记功能 ==========
         const DEFAULT_NOTE_CATEGORIES = [
             { id: 'all', name: '全部', color: '#2AB5B0', bg: '#E0F5F4', system: true, locked: true },
             { id: 'diary', name: '日记', color: '#E67E22', bg: '#FDF2E6', system: true, locked: false },
@@ -7618,7 +7617,7 @@
             });
         }
 
-        // ========== 生理周期功能 ==========
+        // ========== 周期功能 ==========
         function renderPeriodPage() {
             const ps = appData.periodSettings || { periodLength: 5, cycleLength: 28 };
             document.getElementById('periodLengthValue').textContent = ps.periodLength;
